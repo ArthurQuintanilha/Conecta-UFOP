@@ -58,3 +58,12 @@ O sistema promove uma mobilidade mais **sustentável**, **econômica** e **colab
 
 ---
 
+## Gerenciamento de Projeto
+
+Acompanhe o desenvolvimento do projeto através do nosso quadro no Trello:
+
+[Trello - Conecta UFOP](https://trello.com/invite/b/6910c5f7ceb11383ae405f6a/ATTI0e3a6863da4a5d147d50e8fc0d70972614598756/eng-software)
+
+---
+
+
