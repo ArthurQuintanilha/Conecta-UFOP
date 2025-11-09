@@ -62,7 +62,7 @@ O sistema promove uma mobilidade mais **sustentável**, **econômica** e **colab
 
 ### Fullstack
 - **Arthur Quintanilha 24.1.8064**
-- **Adryan Martins**
+- **Adryan Martins 24.1.8072**
 
 ### Backend
 - **Talles Lima 24.1.8057** 
