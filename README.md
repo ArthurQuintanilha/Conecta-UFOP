@@ -1,4 +1,4 @@
-# Conecta UFOP
+# Conecta UFOP 🚗
 
 > Plataforma web de caronas voltada para a comunidade acadêmica da Universidade Federal de Ouro Preto (UFOP)
 
@@ -15,7 +15,7 @@ O sistema promove uma mobilidade mais **sustentável**, **econômica** e **colab
 - Incentivar o uso coletivo de veículos
 - Promover mobilidade sustentável na comunidade acadêmica
 
-## Tecnologias
+## Tecnologias 🦾
 
 - **Angular** - Framework frontend
 - **Firebase** - Backend como serviço (Authentication, Firestore, Clound Functions, Hosting)
