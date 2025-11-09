@@ -15,6 +15,11 @@ O sistema promove uma mobilidade mais **sustentável**, **econômica** e **colab
 - Incentivar o uso coletivo de veículos
 - Promover mobilidade sustentável na comunidade acadêmica
 
+## Tecnologias
+
+- **Angular** - Framework frontend
+- **Firebase** - Backend como serviço (Authentication, Firestore, Clound Functions, Hosting)
+
 ## Funcionalidades Principais
 
 ### Autenticação e Perfil
@@ -55,6 +60,113 @@ O sistema promove uma mobilidade mais **sustentável**, **econômica** e **colab
 - [ ] Como usuário, eu gostaria de avaliar as minhas caronas
 - [ ] Como usuário, eu gostaria de visualizar meu histórico de caronas
 - [ ] Como usuário, eu quero trocar mensagens com outros usuários pelo chat interno
+
+---
+
+## Backlog da Sprint
+
+### História #1 – Cadastro e perfil do usuário
+
+**Como usuário, eu gostaria de me cadastrar no sistema e ter uma página de perfil.**
+
+#### Critérios de aceitação
+
+- O cadastro deve ser feito usando o e-mail institucional da UFOP
+- O usuário pode editar suas informações pessoais
+- O perfil exibe o histórico de caronas e avaliações do usuário
+
+#### Tarefas
+
+- Configurar Firebase Authentication (login com e-mail/senha e validação do domínio @ufop.edu.br)
+- Criar estrutura de usuário no Firestore (coleção users)
+- Implementar tela de login/cadastro em Angular
+- Criar página de perfil do usuário e integração com Firestore
+
+---
+
+### História #2 – Oferecer e gerenciar caronas
+
+**Como usuário, eu gostaria de fornecer uma carona e gerenciar as caronas que criei.**
+
+#### Critérios de aceitação
+
+- O usuário pode criar uma carona informando origem, destino, horário e vagas
+- O usuário pode editar ou deletar suas caronas
+- As caronas criadas aparecem nas buscas para outros usuários
+
+#### Tarefas
+
+- Criar coleção rides no Firestore com dados das caronas
+- Implementar telas de criação, edição e exclusão de caronas no Angular
+- Exibir lista de "Minhas Caronas" para o usuário logado
+- Garantir que apenas o criador da carona possa editá-la ou removê-la
+
+---
+
+### História #3 – Solicitar e aceitar caronas
+
+**Como usuário, eu gostaria de pedir uma carona e o motorista gostaria de aceitar ou recusar o pedido.**
+
+#### Critérios de aceitação
+
+- O usuário pode solicitar uma carona existente
+- O motorista recebe a solicitação e pode aceitar ou recusar
+- O passageiro visualiza o status da solicitação
+- O motorista pode visualizar todas as solicitações para cada viagem
+
+#### Tarefas
+
+- Criar coleção requests no Firestore para armazenar pedidos de carona
+- Implementar interface de solicitação e resposta (aceitar/recusar)
+- Exibir status de cada solicitação (pendente, aceita, recusada)
+- Integrar com a lista de caronas e perfis de usuários
+
+---
+
+### História #4 – Chat e comunicação
+
+**Como usuário, quero trocar mensagens com outros usuários pelo chat interno.**
+
+#### Critérios de aceitação
+
+- O chat permite troca de mensagens entre motorista e passageiro
+- As mensagens aparecem em tempo real
+- O histórico da conversa é salvo e pode ser visualizado depois
+
+#### Tarefas
+
+- Configurar Firebase Realtime Database para armazenar as mensagens
+- Criar interface de chat em Angular com atualização em tempo real
+- Exibir notificações visuais de novas mensagens
+- Associar as conversas às caronas ou solicitações
+
+---
+
+### História #5 – Avaliação e histórico de caronas
+
+**Como usuário, eu gostaria de avaliar minhas caronas e visualizar meu histórico de viagens.**
+
+#### Critérios de aceitação
+
+- O usuário pode avaliar o motorista e/ou passageiros após uma viagem
+- As avaliações são salvas no perfil do usuário
+- O histórico de caronas exibe viagens anteriores com data e status
+
+#### Tarefas
+
+- Criar coleção reviews no Firestore para armazenar as avaliações
+- Implementar tela de histórico de viagens e formulário de avaliação
+- Exibir avaliações médias nos perfis dos usuários
+- Conectar a tela de histórico ao perfil do usuário logado
+
+---
+
+### Observações gerais
+
+- Todas as funcionalidades utilizam Firebase como backend (Auth, Firestore e Realtime Database)
+- O frontend é totalmente implementado em Angular (HTML, CSS, TypeScript)
+- O projeto pode ser hospedado diretamente no Firebase Hosting
+- As histórias cobrem todas as principais funcionalidades do sistema e distribuem bem as tarefas entre os membros
 
 ---
 
