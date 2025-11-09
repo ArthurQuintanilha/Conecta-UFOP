@@ -2,13 +2,13 @@
 
 > Plataforma web de caronas voltada para a comunidade acadêmica da Universidade Federal de Ouro Preto (UFOP)
 
-## Sobre o Projeto
+## Sobre o Projeto 📝
 
 O **Conecta UFOP** é uma plataforma web que conecta motoristas e passageiros da comunidade acadêmica da UFOP, facilitando o compartilhamento de trajetos até o campus do **ICEA**. 
 
 O sistema promove uma mobilidade mais **sustentável**, **econômica** e **colaborativa**, reduzindo custos de transporte e incentivando o uso coletivo de veículos entre estudantes e servidores da universidade.
 
-## Objetivos
+## Objetivos 🎯
 
 - Facilitar o transporte entre estudantes e servidores da UFOP
 - Reduzir custos de deslocamento para o campus
@@ -20,7 +20,7 @@ O sistema promove uma mobilidade mais **sustentável**, **econômica** e **colab
 - **Angular** - Framework frontend
 - **Firebase** - Backend como serviço (Authentication, Firestore, Clound Functions, Hosting)
 
-## Funcionalidades Principais
+## Funcionalidades Principais ⚙️
 
 ### Autenticação e Perfil
 - Cadastro de usuários
