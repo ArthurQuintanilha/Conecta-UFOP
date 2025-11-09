@@ -58,6 +58,22 @@ O sistema promove uma mobilidade mais **sustentável**, **econômica** e **colab
 
 ---
 
+## Equipe
+
+### Fullstack
+- **Arthur**
+- **Adryan**
+
+### Backend
+- **Talles** 
+- **Mateus** 
+
+### Frontend
+- **Lucas** 
+- **Chris** 
+
+---
+
 ## Gerenciamento de Projeto
 
 Acompanhe o desenvolvimento do projeto através do nosso quadro no Trello:
