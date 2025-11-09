@@ -61,16 +61,16 @@ O sistema promove uma mobilidade mais **sustentável**, **econômica** e **colab
 ## Equipe
 
 ### Fullstack
-- **Arthur Quintanilha 24.1.8064**
-- **Adryan Martins 24.1.8072**
+- **👨Arthur Quintanilha 24.1.8064**
+- **👨Adryan Martins 24.1.8072**
 
 ### Backend
-- **Talles Lima 24.1.8057** 
-- **Mateus Peixoto 24.1.8060** 
+- **👨Talles Lima 24.1.8057** 
+- **👨Mateus Peixoto 24.1.8060** 
 
 ### Frontend
-- **Lucas Caixeta 24.1.8065** 
-- **Christiane Giestas 24.1.8071** 
+- **👨Lucas Caixeta 24.1.8065** 
+- **👩Christiane Giestas 24.1.8071** 
 
 ---
 
