@@ -1,7 +1,60 @@
-# Conecta-UFOP
+# Conecta UFOP
 
-O Conecta UFOP é uma plataforma web de caronas voltada para a comunidade acadêmica da Universidade Federal de Ouro Preto. O sistema conecta motoristas e passageiros que desejam compartilhar trajetos para o campus do ICEA.
-O objetivo é facilitar o transporte entre estudantes e servidores, reduzir custos e incentivar a mobilidade sustentável dentro da universidade.
+> Plataforma web de caronas voltada para a comunidade acadêmica da Universidade Federal de Ouro Preto (UFOP)
 
-As funcionalidades envolvem: autenticação de usuários (cadastro, login, edição de dados pessoais e recuperação de senha), fornecimento de caronas, solicitação de caronas, aceitação de caronas, cancelamento de solicitações e sistema de avaliação (tanto motorista → caroneiro quanto caroneiro → motorista).
+## Sobre o Projeto
+
+O **Conecta UFOP** é uma plataforma web que conecta motoristas e passageiros da comunidade acadêmica da UFOP, facilitando o compartilhamento de trajetos até o campus do **ICEA**. 
+
+O sistema promove uma mobilidade mais **sustentável**, **econômica** e **colaborativa**, reduzindo custos de transporte e incentivando o uso coletivo de veículos entre estudantes e servidores da universidade.
+
+## Objetivos
+
+- Facilitar o transporte entre estudantes e servidores da UFOP
+- Reduzir custos de deslocamento para o campus
+- Incentivar o uso coletivo de veículos
+- Promover mobilidade sustentável na comunidade acadêmica
+
+## Funcionalidades Principais
+
+### Autenticação e Perfil
+- Cadastro de usuários
+- Login e logout
+- Edição de dados pessoais
+- Recuperação de senha
+- Gerenciamento de perfil
+
+### Sistema de Caronas
+- **Fornecimento de caronas**: Motoristas podem oferecer trajetos
+- **Solicitação de caronas**: Passageiros podem solicitar caronas
+- **Aceitação/Recusa**: Motoristas podem aceitar ou recusar solicitações
+- **Cancelamento**: Usuários podem cancelar suas solicitações
+- **Visualização de motoristas disponíveis**: Lista de motoristas com caronas disponíveis
+
+### Avaliações
+- Sistema de avaliação bidirecional:
+  - Motorista → Caroneiro
+  - Caroneiro → Motorista
+
+### Comunicação
+- Chat interno para comunicação entre usuários
+
+### Histórico e Gestão
+- Visualização de histórico de caronas
+- Visualização de solicitações de carona realizadas para uma viagem
+
+## Backlog do Produto
+
+- [ ] Como usuário, eu gostaria de pedir uma carona
+- [ ] Como usuário, eu gostaria de fornecer uma carona
+- [ ] Como usuário, eu gostaria de aceitar ou recusar um pedido de carona
+- [ ] Como usuário, eu gostaria de editar e deletar minhas solicitações
+- [ ] Como usuário, eu gostaria de visualizar os motoristas disponíveis para carona
+- [ ] Como usuário, eu gostaria de visualizar as solicitações de carona realizadas para uma viagem
+- [ ] Como usuário, eu gostaria de me cadastrar no sistema e ter uma página de perfil
+- [ ] Como usuário, eu gostaria de avaliar as minhas caronas
+- [ ] Como usuário, eu gostaria de visualizar meu histórico de caronas
+- [ ] Como usuário, eu quero trocar mensagens com outros usuários pelo chat interno
+
+---
 
