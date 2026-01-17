@@ -1,0 +1,146 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Arial, sans-serif;
+  }
+  
+  :host {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  header {
+    padding: 24px 48px;
+    display: flex;
+    align-items: center;
+  }
+  
+  header .logo {
+    font-size: 22px;
+    font-weight: 700;
+    color: #2b1b4f;
+  }
+  
+  main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .card {
+    width: 100%;
+    max-width: 520px;
+    padding: 32px;
+  }
+  
+  .card h1 {
+    font-size: 28px;
+    margin-bottom: 6px;
+    color: #2b1b4f;
+  }
+  
+  .card .sub {
+    font-size: 14px;
+    margin-bottom: 24px;
+    color: #555;
+  }
+  
+  .card .sub a {
+    color: #3b4cff;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  
+  .group {
+    margin-bottom: 16px;
+  }
+  
+  label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 6px;
+    color: #333;
+  }
+  
+  input,
+  select {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    background: #f7f7f9;
+    outline: none;
+    font-size: 14px;
+  }
+  
+  input:focus,
+  select:focus {
+    border-color: #b51e3d;
+    background: #fff;
+  }
+  
+  .rules {
+    margin: 12px 0 24px;
+    font-size: 13px;
+    color: #555;
+    line-height: 1.6;
+  }
+  
+  .rules span {
+    display: block;
+  }
+  
+  button {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    background: #9b1b32;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  
+  button:hover {
+    background: #7f1529;
+  }
+  
+  footer {
+    background: #fafafa;
+    padding: 32px 48px;
+    border-top: 1px solid #eee;
+  }
+  
+  .footer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 24px;
+  }
+  
+  footer h4 {
+    color: #9b1b32;
+    margin-bottom: 10px;
+    font-size: 14px;
+  }
+  
+  footer p,
+  footer a {
+    font-size: 13px;
+    color: #555;
+    text-decoration: none;
+    display: block;
+    margin-bottom: 6px;
+  }
+  
+  .copy {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 12px;
+    color: #777;
+  }
+  
