@@ -4,13 +4,6 @@
   min-height: 100vh;
   background-color: white;
 
-  .top-bar{
-    background-color: #f0f0f0;
-    padding: 20px;
-    display: flex;
-    align-items: left;
-  }
-
   .content{
     display: flex;
     padding: 50px 200px 50px 200px;
@@ -43,6 +36,7 @@
       padding: 40px;
       display: flex;
       flex-direction: column;
+      //align-items: center;
 
       .tab-group {
         display: flex;
@@ -50,56 +44,56 @@
         flex-direction: column;
         h1 { font-size: 1.5rem; margin-bottom: 5px; font-weight: bold;}
         h3 { font-size: small;}
-        a { font-size: small;}
-        
-        .tab {
-          flex: 1;
-          padding: 10px;
-          border: none;
-          background: transparent;
-          cursor: pointer;
-          &.active {
-            background: #a31d32;
-            color: white;
-            border-radius: 8px;
-          }
-        }
+        p { font-size: small; &:hover{color:rgb(0, 119, 255); text-decoration: underline;}}
       }
+
+      .tab {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        &.active {
+          background: #a31d32;
+          color: white;
+          border-radius: 8px;
+        }
+       }
 
       .input-field {
         margin-bottom: 20px;
         display: flex;
-        flex-direction: column;
+        flex-direction: column; 
+        label { font-size: small; margin-bottom: 5px; }
+      }
 
-        label { font-weight: bold; font-size: 0.8rem; margin-bottom: 5px; }
-        
-        input {
-          background: #f5f5f5;
-          border: none;
-          padding: 12px;
-          border-radius: 5px;
-          outline: none;
-          &:focus { border: 1px solid #a31d32; }
-        }
+      .label-row {
+        display:flex;
+        justify-content: space-between;
+        label { font-size: small; margin-bottom: 5px; }
+        a {font-size: small; &:hover{color:rgb(0, 119, 255); text-decoration: underline;} }
+      }
+      
+      input {
+        background: #f5f5f5;
+        border: none;
+        padding: 12px;
+        border-radius: 5px;
+        outline: none;
+        &:focus { border: 1px solid #a31d32; }
       }
 
       .btn-main {
         background: #a31d32;
         color: white;
         border: none;
-        padding: 15px;
+        padding: 10px;
+        width: 100%;
         border-radius: 8px;
-        margin-top: 10px;
+        margin-top: 30px;
         cursor: pointer;
         font-weight: bold;
       }
     }
   }
-
-  .bottom-bar{
-    background-color: #f0f0f0;
-    padding: 15px 200px 200px 200px;
-    text-align: center;
-  }
-  
 }

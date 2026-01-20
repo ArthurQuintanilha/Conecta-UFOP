@@ -1,9 +1,7 @@
 <!--<p>batata com bacon</p>-->
 
 <div class="login-container">
-  <div class="top-bar">
-    <h2>ConectaUFOP</h2>
-  </div>
+  <app-header></app-header>
 
   <div class="content">
 
@@ -16,7 +14,7 @@
       <div class="bottom-content">
         <h2>Transporte com preço acessível</h2>
         <p>Pegue uma carona, economize tempo, dinheiro e ainda colabore com os motoristas!</p>
-        <div class="dots"><span></span><span class="active"></span><span></span></div>
+        <div class="dots"><span></span><span class="active"></span><span></span></div> 
       </div>
     </div>
 
@@ -24,8 +22,7 @@
 
       <div class="tab-group">
         <h1>Entre</h1>
-        <span>Não possui uma conta?</span>
-        <a href="/cadastro" class="signup-link">Cadastre-se</a>
+        <p class="signup-text">Não possui uma conta? <a href="/cadastro">Cadastre-se</a></p>
       </div>
 
       <form (submit)="fazerLogin()">
@@ -48,8 +45,5 @@
 
   </div>
   
-  <div class="bottom-bar">
-    <h2>ConectaUFOP</h2>
-  </div>
-  
+  <app-footer></app-footer>
 </div>
