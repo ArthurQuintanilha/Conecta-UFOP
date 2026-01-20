@@ -1,1 +1,55 @@
-<p>batata com bacon</p>
+<!--<p>batata com bacon</p>-->
+
+<div class="login-container">
+  <div class="top-bar">
+    <h2>ConectaUFOP</h2>
+  </div>
+
+  <div class="content">
+
+    <div class="info-card">
+      <div class="top-content">
+        <h1>Bem vindo ao Conecta UFOP</h1>
+        <p>Facilitando a vida universitária</p>
+      </div>
+      
+      <div class="bottom-content">
+        <h2>Transporte com preço acessível</h2>
+        <p>Pegue uma carona, economize tempo, dinheiro e ainda colabore com os motoristas!</p>
+        <div class="dots"><span></span><span class="active"></span><span></span></div>
+      </div>
+    </div>
+
+    <div class="form-container">
+
+      <div class="tab-group">
+        <h1>Entre</h1>
+        <span>Não possui uma conta?</span>
+        <a href="/cadastro" class="signup-link">Cadastre-se</a>
+      </div>
+
+      <form (submit)="fazerLogin()">
+        <div class="input-field">
+          <label>Email</label>
+          <input type="email" placeholder="usuário@ufop.br" [(ngModel)]="usuario.email" name="email">
+        </div>
+
+      <div class="input-field">
+        <div class="label-row">
+          <label>Senha</label>
+          <a href="#">Esqueceu a senha?</a>
+        </div>
+        <input type="password" placeholder="Digite sua senha" [(ngModel)]="usuario.senha" name="senha">
+      </div>
+
+      <button type="submit" class="btn-main">Entrar</button>
+      </form>
+    </div>
+
+  </div>
+  
+  <div class="bottom-bar">
+    <h2>ConectaUFOP</h2>
+  </div>
+  
+</div>
