@@ -1,12 +1,13 @@
 .login-container {
+  display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  padding: 25px 0;
   background-color: white;
 
   .content{
     display: flex;
-    padding: 50px 200px 50px 200px;
+    padding: 50px 200px;
     gap: 100px;
     justify-content: center;
 
