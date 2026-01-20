@@ -7,13 +7,17 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { CadastroComponent } from './cadastro/cadastro.component';
 import { CaronasComponent } from './caronas/caronas.component';
+import { HeaderComponent } from './header/header.component';
+import { FooterComponent } from './footer/footer.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     CadastroComponent,
-    CaronasComponent
+    CaronasComponent,
+    HeaderComponent,
+    FooterComponent
   ],
   imports: [
     BrowserModule,

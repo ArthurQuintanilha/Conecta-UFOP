@@ -1,1 +1,55 @@
-<p>caronas works!</p>
+<app-header></app-header>
+
+<main class="min-h-screen bg-white py-8">
+  <div class="container mx-auto px-4">
+    <h1 class="text-3xl font-bold text-gray-900 mb-8">Caronas disponíveis</h1>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+      <div
+        *ngFor="let carona of caronas"
+        class="bg-white border border-gray-200 rounded-lg p-4 md:p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+      >
+        <div class="flex justify-between items-start mb-3">
+          <div class="flex items-center gap-2 md:gap-3 flex-1 min-w-0">
+            <img
+              [src]="carona.motorista.foto"
+              [alt]="carona.motorista.nome"
+              class="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover flex-shrink-0"
+            />
+            <div class="min-w-0 flex-1">
+              <p class="font-semibold text-gray-900 text-sm md:text-base truncate">{{ carona.motorista.nome }}</p>
+              <div class="flex items-center gap-1">
+                <span class="text-yellow-400 text-xs md:text-sm">★</span>
+                <span class="text-xs md:text-sm text-gray-600">{{ carona.motorista.avaliacao }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="flex-shrink-0 ml-2">
+            <p class="text-base md:text-lg font-bold text-gray-900">R${{ carona.preco.toFixed(2).replace('.', ',') }}</p>
+          </div>
+        </div>
+
+        <p class="text-xs md:text-sm text-gray-600 mb-2 truncate">{{ carona.veiculo }}</p>
+
+        <div class="flex items-start gap-2 text-gray-700 mb-2">
+          <i class="fas fa-map-marker-alt text-primary text-xs md:text-sm flex-shrink-0 mt-0.5"></i>
+          <span class="text-xs md:text-sm leading-tight">{{ carona.rota.origem }} → {{ carona.rota.destino }}</span>
+        </div>
+
+        <div class="flex items-center gap-2 text-gray-700 mb-3">
+          <i class="far fa-clock text-gray-500 text-xs md:text-sm flex-shrink-0"></i>
+          <span class="text-xs md:text-sm">{{ carona.horario }} - {{ carona.data }}</span>
+        </div>
+
+        <div class="flex items-center justify-between">
+          <p class="text-xs md:text-sm font-medium text-green-600">
+            {{ carona.vagasDisponiveis }} vagas disponíveis
+          </p>
+          <i class="fas fa-chevron-right text-primary text-base md:text-lg flex-shrink-0"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<app-footer></app-footer>
