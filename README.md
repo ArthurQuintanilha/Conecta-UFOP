@@ -186,6 +186,12 @@ O sistema promove uma mobilidade mais **sustentável**, **econômica** e **colab
 
 ---
 
+## Backend do Projeto
+
+Acompanhe também o repositório da api do projeto: [https://github.com/ArthurQuintanilha/conecta-ufop-backend.git]
+
+---
+
 ## Gerenciamento de Projeto
 
 Acompanhe o desenvolvimento do projeto através do nosso quadro no Trello:
