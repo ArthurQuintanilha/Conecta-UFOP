@@ -1,0 +1,44 @@
+<app-header></app-header>
+<div class="user-profile-container">
+    <div class="profile-card">
+        <div class="top-content">
+            <h1>Perfil</h1>
+        </div>
+    </div>
+
+    <div class="form-container">
+        <form (submit)="alterarUser()">
+            <div class="input-field">
+                <label>Nome Completo*</label>
+                <input type="text" placeholder="Nome">
+            </div>
+
+            <div class="input-field">
+                <label>Email Institucional*</label>
+                <input type="email" placeholder="email@aluno.ufop.edu.br">
+            </div>
+
+            <!-- <div class="input-field">
+                <label>Gênero*</label>
+                <input type="gender" placeholder="escolha">
+            </div> -->
+
+            <div class="input-field">
+                <select id="genero" name="genero">
+                    <option value="male">Masculino</option>
+                    <option value="female">Feminino</option>
+                    <option value="prefer-not-to-say">Prefiro não compartilhar</option>
+                </select>
+            </div>
+
+            <div class="input-field">
+                <label>Descrição</label>
+                <input type="text" placeholder="Fale sobre você...">
+                <!--pesquisar um tipo melhor de input para esse campo-->
+            </div>
+
+            <button type="submit" class="btn-main">Salvar alterações</button>
+        </form>
+    </div>
+</div>
+<app-footer></app-footer>
