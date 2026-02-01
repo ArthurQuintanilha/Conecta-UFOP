@@ -11,14 +11,15 @@
     min-height: 100vh;
   }
   
-
-  
   main {
     flex: 1;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-  }
+    padding: 40px 0;
+  }  
+
+  // cadastro
   
   .card {
     width: 100%;
@@ -100,6 +101,87 @@
     background: #7f1529;
   }
 
-  
+// perfil
+
+.perfil {
+  width: 100%;
+  max-width: 520px;
+  padding: 32px;
+  margin-top: 40px;
+}
+
+.perfil-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.perfil-header h1 {
+  font-size: 22px;
+  color: #2b1b4f;
+}
+
+.back {
+  cursor: pointer;
+  font-size: 20px;
+  color: #2b1b4f;
+}
+
+.photo-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 28px;
+}
+
+.photo-wrapper {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.photo-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 2px dashed #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.add-photo {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #9b1b32;
+  color: #fff;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.photo-text {
+  margin-top: 12px;
+  font-size: 14px;
+  color: #555;
+}
+
+.bio-section {
+  margin-bottom: 32px;
+}
+
+.bio-section textarea {
+  min-height: 100px;
+  resize: none;
+}
+
+.primary {
+  margin-top: 12px;
+}
  
   
