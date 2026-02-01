@@ -188,13 +188,15 @@ O sistema promove uma mobilidade mais **sustentável**, **econômica** e **colab
 
 ## Backend do Projeto
 
-Acompanhe também o repositório da api do projeto: [https://github.com/ArthurQuintanilha/conecta-ufop-backend.git]
+Acompanhe também o repositório da api do projeto: 
+[API - Conecta UFOP](https://github.com/ArthurQuintanilha/conecta-ufop-backend.git)
 
 ---
 
 ## Protótipos de Tela - Figma
 
-Acesse os protótipos de tela do projeto pelo Figma: [https://www.figma.com/design/ZfC7qHVXzI8CoXiLLALVLT/Conecta-UFOP?node-id=0-1&t=lNsGxbOKnYaZsUgN-1]
+Acesse os protótipos de tela do projeto pelo Figma: 
+[Figma - Conecta UFOP](https://www.figma.com/design/ZfC7qHVXzI8CoXiLLALVLT/Conecta-UFOP?node-id=0-1&t=lNsGxbOKnYaZsUgN-1)
 
 ---
 
