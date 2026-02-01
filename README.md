@@ -192,6 +192,12 @@ Acompanhe também o repositório da api do projeto: [https://github.com/ArthurQu
 
 ---
 
+## Protótipos de Tela - Figma
+
+Acesse os protótipos de tela do projeto pelo Figma: [https://www.figma.com/design/ZfC7qHVXzI8CoXiLLALVLT/Conecta-UFOP?node-id=0-1&t=lNsGxbOKnYaZsUgN-1]
+
+---
+
 ## Gerenciamento de Projeto
 
 Acompanhe o desenvolvimento do projeto através do nosso quadro no Trello:
