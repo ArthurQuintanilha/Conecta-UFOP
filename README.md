@@ -20,6 +20,15 @@ O sistema promove uma mobilidade mais **sustentável**, **econômica** e **colab
 - **Angular** - Framework frontend
 - **Firebase** - Backend como serviço (Authentication, Firestore, Clound Functions, Hosting)
 
+## Modelagem do Sistema 📐
+
+Diagrama de classe do sistema:
+
+<div align="center">
+  <img src="https://firebasestorage.googleapis.com/v0/b/conecta-ufop.firebasestorage.app/o/diagramas%2Fdiagrama_classe_conecta_ufop-Diagrama%20de%20classe.drawio%20(3).png?alt=media&token=a7ba89b5-23f9-4a31-be8e-b4768c6cbe05" alt="Diagrama de Classes" width="100%">
+</div>
+---
+
 ## Funcionalidades Principais ⚙️
 
 ### Autenticação e Perfil
@@ -186,26 +195,12 @@ O sistema promove uma mobilidade mais **sustentável**, **econômica** e **colab
 
 ---
 
-## Backend do Projeto
+## 🔗 Links Úteis
 
-Acompanhe também o repositório da api do projeto: 
-[API - Conecta UFOP](https://github.com/ArthurQuintanilha/conecta-ufop-backend.git)
+Acompanhe também: 
 
----
-
-## Protótipos de Tela - Figma
-
-Acesse os protótipos de tela do projeto pelo Figma: 
-[Figma - Conecta UFOP](https://www.figma.com/design/ZfC7qHVXzI8CoXiLLALVLT/Conecta-UFOP?node-id=0-1&t=lNsGxbOKnYaZsUgN-1)
+- **Backend (API):** [Repositório no GitHub](https://github.com/ArthurQuintanilha/conecta-ufop-backend.git)
+- **Protótipos (Design):** [Projeto no Figma](https://www.figma.com/design/ZfC7qHVXzI8CoXiLLALVLT/Conecta-UFOP?node-id=0-1&t=lNsGxbOKnYaZsUgN-1)
+- **Gerenciamento de tarefas:** [Quadro no Trello](https://trello.com/invite/b/6910c5f7ceb11383ae405f6a/ATTI0e3a6863da4a5d147d50e8fc0d70972614598756/eng-software)
 
 ---
-
-## Gerenciamento de Projeto
-
-Acompanhe o desenvolvimento do projeto através do nosso quadro no Trello:
-
-[Trello - Conecta UFOP](https://trello.com/invite/b/6910c5f7ceb11383ae405f6a/ATTI0e3a6863da4a5d147d50e8fc0d70972614598756/eng-software)
-
----
-
-
