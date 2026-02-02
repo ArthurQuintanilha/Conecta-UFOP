@@ -1,0 +1,64 @@
+<app-header></app-header>
+
+<div class="user-profile-container">
+  <div class="profile-header">
+    <div class="title-group">
+      <button class="btn-back" (click)="voltar()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256" fill="currentColor">
+          <path d="M165.66,202.34a8,8,0,0,1-11.32,11.32l-80-80a8,8,0,0,1,0-11.32l80-80a8,8,0,0,1,11.32,11.32L91.31,128Z"></path>
+        </svg>
+      </button>
+      <h1>Perfil</h1>
+    </div>
+
+    <div class="profile-picture-wrapper">
+      <div class="profile-picture">
+        <img [src]="user.fotoUrl" alt="Foto do Usuário">
+      </div>
+      <button class="btn-camera" (click)="acionarInputArquivo()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 256 256" fill="currentColor">
+          <path d="M208,56H168V48a24,24,0,0,0-24-24H112A24,24,0,0,0,88,48v8H48A24,24,0,0,0,24,80V192a24,24,0,0,0,24,24H208a24,24,0,0,0,24-24V80A24,24,0,0,0,208,56Zm8,136a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V80a8,8,0,0,1,8-8H96a8,8,0,0,0,8-8V48a8,8,0,0,1,8-8h32a8,8,0,0,1,8,8v16a8,8,0,0,0,8,8h48a8,8,0,0,1,8,8ZM128,88a44,44,0,1,0,44,44A44.05,44.05,0,0,0,128,88Zm0,72a28,28,0,1,1,28-28A28,28,0,0,1,128,160Z"></path>
+        </svg>
+      </button>
+      <input type="file" #fileInput (change)="aoMudarFoto($event)" accept="image/*" style="display: none;">
+    </div>
+  </div>
+
+  <div class="form-container">
+    <form (submit)="alterarUser()">
+      <div class="input-field">
+        <label>Nome Completo <span class="asterisk">*</span></label>
+        <input type="text" [(ngModel)]="user.nome" name="nome" placeholder="Seu nome">
+      </div>
+
+      <div class="input-field">
+        <label>Email Institucional <span class="asterisk">*</span></label>
+        <input type="email" [(ngModel)]="user.email" name="email" placeholder="email@aluno.ufop.edu.br">
+      </div>
+
+      <div class="input-field">
+        <label>Gênero <span class="asterisk">*</span></label>
+        <select [(ngModel)]="user.genero" name="genero">
+          <option value="male">Masculino</option>
+          <option value="female">Feminino</option>
+          <option value="prefer-not-to-say">Prefiro não dizer</option>
+        </select>
+      </div>
+
+      <div class="input-field">
+        <label>Descrição</label>
+        <textarea [(ngModel)]="user.descricao" name="descricao" placeholder="Fale sobre você..." rows="3"></textarea>
+      </div>
+
+      <button type="submit" class="btn-main">Salvar alterações</button>
+    </form>
+    <div class="toast-container" [class.show]="exibirAviso">
+        <div class="toast-content">
+            <i class="ph ph-warning-circle"></i>
+            <span>{{ mensagemAviso }}</span>
+        </div>
+        </div>
+  </div>
+</div>
+
+<app-footer></app-footer>
