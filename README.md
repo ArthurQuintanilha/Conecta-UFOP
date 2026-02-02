@@ -186,18 +186,13 @@ O sistema promove uma mobilidade mais **sustentável**, **econômica** e **colab
 
 ---
 
-## Backend do Projeto
+## 🔗 Links Úteis
 
-Acompanhe também o repositório da api do projeto: [https://github.com/ArthurQuintanilha/conecta-ufop-backend.git]
+Acompanhe também: 
 
----
-
-## Gerenciamento de Projeto
-
-Acompanhe o desenvolvimento do projeto através do nosso quadro no Trello:
-
-[Trello - Conecta UFOP](https://trello.com/invite/b/6910c5f7ceb11383ae405f6a/ATTI0e3a6863da4a5d147d50e8fc0d70972614598756/eng-software)
+- **Backend (API):** [Repositório no GitHub](https://github.com/ArthurQuintanilha/conecta-ufop-backend.git)
+- **Protótipos (Design):** [Projeto no Figma](https://www.figma.com/design/ZfC7qHVXzI8CoXiLLALVLT/Conecta-UFOP?node-id=0-1&t=lNsGxbOKnYaZsUgN-1)
+- **Diagramas UML:** [Pasta no Drive](https://drive.google.com/drive/folders/1rWb60OV3qecViAoZ159EBYQEI9luDLnJ?usp=sharing)
+- **Gerenciamento de tarefas:** [Quadro no Trello](https://trello.com/invite/b/6910c5f7ceb11383ae405f6a/ATTI0e3a6863da4a5d147d50e8fc0d70972614598756/eng-software)
 
 ---
-
-
