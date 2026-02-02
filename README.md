@@ -186,21 +186,13 @@ O sistema promove uma mobilidade mais **sustentável**, **econômica** e **colab
 
 ---
 
-## Modelagem do Sistema 📐
-
-Diagrama de classe do sistema:
-
-<div align="center">
-  <img src="https://firebasestorage.googleapis.com/v0/b/conecta-ufop.firebasestorage.app/o/diagramas%2Fdiagrama_classe_conecta_ufop-Diagrama%20de%20classe.drawio%20(3).png?alt=media&token=a7ba89b5-23f9-4a31-be8e-b4768c6cbe05" alt="Diagrama de Classes">
-</div>
----
-
 ## 🔗 Links Úteis
 
 Acompanhe também: 
 
 - **Backend (API):** [Repositório no GitHub](https://github.com/ArthurQuintanilha/conecta-ufop-backend.git)
 - **Protótipos (Design):** [Projeto no Figma](https://www.figma.com/design/ZfC7qHVXzI8CoXiLLALVLT/Conecta-UFOP?node-id=0-1&t=lNsGxbOKnYaZsUgN-1)
+- **Diagramas UML:** [Pasta no Drive](https://drive.google.com/drive/folders/1rWb60OV3qecViAoZ159EBYQEI9luDLnJ?usp=sharing)
 - **Gerenciamento de tarefas:** [Quadro no Trello](https://trello.com/invite/b/6910c5f7ceb11383ae405f6a/ATTI0e3a6863da4a5d147d50e8fc0d70972614598756/eng-software)
 
 ---
