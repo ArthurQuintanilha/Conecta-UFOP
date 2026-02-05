@@ -13,6 +13,7 @@ import { CaronasComponent } from './caronas/caronas.component';
 import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
+import { RecuperarSenhaComponent } from './recuperar-senha/recuperar-senha.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { UserProfileComponent } from './user-profile/user-profile.component';
     CaronasComponent,
     HeaderComponent,
     FooterComponent,
-    UserProfileComponent
+    UserProfileComponent,
+    RecuperarSenhaComponent
   ],
   imports: [
     BrowserModule,

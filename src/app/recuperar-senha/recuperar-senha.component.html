@@ -1,0 +1,28 @@
+<app-header></app-header>
+
+<div class="recuperar-senha-container">
+  <h2>Recuperar Senha</h2>
+  <p>Digite seu e-mail para receber instruções de recuperação de senha:</p>
+
+  <form (ngSubmit)="enviarEmail()" #recuperarForm="ngForm">
+    <div class="form-group">
+      <label for="email">E-mail:</label>
+      <input
+        type="email"
+        id="email"
+        name="email"
+        [(ngModel)]="email"
+        placeholder="usuario@exemplo.com"
+        required
+      />
+    </div>
+
+    <button type="submit" [disabled]="!recuperarForm.form.valid">
+      Enviar
+    </button>
+  </form>
+
+  <p class="mensagem" *ngIf="mensagem">{{ mensagem }}</p>
+</div>
+
+<app-footer></app-footer>

@@ -4,6 +4,7 @@ import { LoginComponent } from "./login/login.component";
 import { CadastroComponent } from "./cadastro/cadastro.component";
 import { CaronasComponent } from "./caronas/caronas.component";
 import { UserProfileComponent } from "./user-profile/user-profile.component";
+import { RecuperarSenhaComponent } from './recuperar-senha/recuperar-senha.component'; /*Nova página recuperar senha*/
 
 const routes: Routes = [
   { path: "login", component: LoginComponent },
@@ -11,6 +12,8 @@ const routes: Routes = [
   { path: "caronas", component: CaronasComponent },
   { path: 'perfil', component: UserProfileComponent },
   { path: "", redirectTo: "/login", pathMatch: "full" },
+  { path: 'recuperar-senha', component: RecuperarSenhaComponent },
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
 ];
 
 @NgModule({
