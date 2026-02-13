@@ -14,6 +14,8 @@ import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
 import { RecuperarSenhaComponent } from './recuperar-senha/recuperar-senha.component';
+import { MinhasCaronasComponent } from './minhas-caronas/minhas-caronas.component';
+
 
 @NgModule({
   declarations: [
@@ -24,7 +26,8 @@ import { RecuperarSenhaComponent } from './recuperar-senha/recuperar-senha.compo
     HeaderComponent,
     FooterComponent,
     UserProfileComponent,
-    RecuperarSenhaComponent
+    RecuperarSenhaComponent,
+    MinhasCaronasComponent
   ],
   imports: [
     BrowserModule,

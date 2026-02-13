@@ -1,0 +1,35 @@
+.minhas-caronas-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 50px 20px;
+    background-color: white; 
+    width:100%;
+    .title-group{
+        display: flex;
+        align-items: center;
+        gap:20px;
+        padding: 20px;
+        width: 100%;
+        justify-content: baseline;
+        margin-bottom: 25px;
+        h1{
+            font-size: 1.8rem;
+            font-weight: 700;
+            color:#1a1a2e;
+            margin:0;
+        }
+    }
+
+    .responsive-grid{
+        display:grid;
+        grid-template-columns: repeat(auto-fill,minmax(300px, 1fr));
+        gap: 20px;
+        padding: 20px;
+        width:100%;
+        justify-content: center;
+        justify-items: center;
+    }
+}
+

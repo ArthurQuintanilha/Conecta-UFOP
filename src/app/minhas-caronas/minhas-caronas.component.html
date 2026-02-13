@@ -1,0 +1,15 @@
+<app-header></app-header>
+<div class="minhas-caronas-container">
+    <div class="title-group">
+        <h1>Minhas Caronas</h1>
+    </div>
+
+    <div class="responsive-grid">
+        <div class="card" *ngFor="let item of caronas">
+            <h3>{{ item.destino }}</h3>
+            <p>Motorista: {{ item.motorista }}</p>
+            <p>Vagas: {{ item.vagas }}</p>
+        </div>
+    </div>
+</div>
+<app-footer></app-footer>
