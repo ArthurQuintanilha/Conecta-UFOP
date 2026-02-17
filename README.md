@@ -29,22 +29,22 @@ O sistema promove uma mobilidade mais **sustentável**, **econômica** e **colab
 - Recuperação de senha
 - Gerenciamento de perfil
 
-### Sistema de Caronas
+### Sistema de Caronas 🚗
 - **Fornecimento de caronas**: Motoristas podem oferecer trajetos
 - **Solicitação de caronas**: Passageiros podem solicitar caronas
 - **Aceitação/Recusa**: Motoristas podem aceitar ou recusar solicitações
 - **Cancelamento**: Usuários podem cancelar suas solicitações
 - **Visualização de motoristas disponíveis**: Lista de motoristas com caronas disponíveis
 
-### Avaliações
+### Avaliações ✅
 - Sistema de avaliação bidirecional:
   - Motorista → Caroneiro
   - Caroneiro → Motorista
 
-### Comunicação
+### Comunicação 💬
 - Chat interno para comunicação entre usuários
 
-### Histórico e Gestão
+### Histórico e Gestão 🗒️
 - Visualização de histórico de caronas
 - Visualização de solicitações de carona realizadas para uma viagem
 
@@ -75,7 +75,7 @@ O sistema promove uma mobilidade mais **sustentável**, **econômica** e **colab
 - O usuário pode editar suas informações pessoais
 - O perfil exibe o histórico de caronas e avaliações do usuário
 
-#### Tarefas
+#### Tarefas 📌
 
 - Configurar Firebase Authentication (login com e-mail/senha e validação do domínio @ufop.edu.br)
 - Criar estrutura de usuário no Firestore (coleção users)
@@ -94,7 +94,7 @@ O sistema promove uma mobilidade mais **sustentável**, **econômica** e **colab
 - O usuário pode editar ou deletar suas caronas
 - As caronas criadas aparecem nas buscas para outros usuários
 
-#### Tarefas
+#### Tarefas 📌
 
 - Criar coleção rides no Firestore com dados das caronas
 - Implementar telas de criação, edição e exclusão de caronas no Angular
@@ -114,7 +114,7 @@ O sistema promove uma mobilidade mais **sustentável**, **econômica** e **colab
 - O passageiro visualiza o status da solicitação
 - O motorista pode visualizar todas as solicitações para cada viagem
 
-#### Tarefas
+#### Tarefas 📌
 
 - Criar coleção requests no Firestore para armazenar pedidos de carona
 - Implementar interface de solicitação e resposta (aceitar/recusar)
@@ -133,7 +133,7 @@ O sistema promove uma mobilidade mais **sustentável**, **econômica** e **colab
 - As mensagens aparecem em tempo real
 - O histórico da conversa é salvo e pode ser visualizado depois
 
-#### Tarefas
+#### Tarefas 📌
 
 - Configurar Firebase Realtime Database para armazenar as mensagens
 - Criar interface de chat em Angular com atualização em tempo real
@@ -152,7 +152,7 @@ O sistema promove uma mobilidade mais **sustentável**, **econômica** e **colab
 - As avaliações são salvas no perfil do usuário
 - O histórico de caronas exibe viagens anteriores com data e status
 
-#### Tarefas
+#### Tarefas 📌
 
 - Criar coleção reviews no Firestore para armazenar as avaliações
 - Implementar tela de histórico de viagens e formulário de avaliação
@@ -170,7 +170,7 @@ O sistema promove uma mobilidade mais **sustentável**, **econômica** e **colab
 
 ---
 
-## Equipe
+## Equipe 👥
 
 ### Fullstack
 - **👨🏻‍💻 Arthur Quintanilha 24.1.8064**
