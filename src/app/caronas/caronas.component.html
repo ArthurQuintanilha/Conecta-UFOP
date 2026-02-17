@@ -12,33 +12,33 @@
         <div class="flex justify-between items-start mb-3">
           <div class="flex items-center gap-2 md:gap-3 flex-1 min-w-0">
             <img
-              [src]="carona.motorista?.foto || 'https://via.placeholder.com/150'"
+              [src]="carona.motorista?.fotoUrl || 'assets/default-profile.png'"
               [alt]="carona.motorista?.nome || 'Motorista'"
               class="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover flex-shrink-0"
             />
             <div class="min-w-0 flex-1">
               <p class="font-semibold text-gray-900 text-sm md:text-base truncate">{{ carona.motorista?.nome || 'Motorista' }}</p>
-              <div class="flex items-center gap-1" *ngIf="carona.motorista?.avaliacao">
+              <div class="flex items-center gap-1" *ngIf="carona.motorista?.notaMedia != null">
                 <span class="text-yellow-400 text-xs md:text-sm">★</span>
-                <span class="text-xs md:text-sm text-gray-600">{{ carona.motorista?.avaliacao }}</span>
+                <span class="text-xs md:text-sm text-gray-600">{{ carona.motorista?.notaMedia }}</span>
               </div>
             </div>
           </div>
           <div class="flex-shrink-0 ml-2">
-            <p class="text-base md:text-lg font-bold text-gray-900">R${{ carona.valor.toFixed(2).replace('.', ',') }}</p>
+            <p class="text-base md:text-lg font-bold text-gray-900">R${{ (carona.valor ?? 0) | number:'1.2-2':'pt-BR' }}</p>
           </div>
         </div>
 
-        <p class="text-xs md:text-sm text-gray-600 mb-2 truncate">{{ carona.veiculo }} - {{ carona.placa }}</p>
+        <p class="text-xs md:text-sm text-gray-600 mb-2 truncate">{{ carona.veiculo || 'Veículo' }}</p>
 
         <div class="flex items-start gap-2 text-gray-700 mb-2">
           <i class="fas fa-map-marker-alt text-primary text-xs md:text-sm flex-shrink-0 mt-0.5"></i>
-          <span class="text-xs md:text-sm leading-tight">{{ formatarEndereco(carona.origem) }} → {{ formatarEndereco(carona.destino) }}</span>
+          <span class="text-xs md:text-sm leading-tight">{{ formatarEndereco(carona.origem) }} → {{ formatarEndereco(carona.destino) || '—' }}</span>
         </div>
 
         <div class="flex items-center gap-2 text-gray-700 mb-3">
           <i class="far fa-clock text-gray-500 text-xs md:text-sm flex-shrink-0"></i>
-          <span class="text-xs md:text-sm">{{ formatarHora(carona.dtPartida) }} - {{ formatarData(carona.dtPartida) }}</span>
+          <span class="text-xs md:text-sm">{{ formatarData(carona.dtPartida) }} - {{ formatarHora(carona.dtPartida) }}</span>
         </div>
 
         <div class="flex items-center justify-between">

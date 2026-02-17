@@ -61,9 +61,9 @@ export class AuthGuard implements CanActivate, CanActivateChild {
       return true;
     }
     try {
-      const userData = await this.userService.getUserById(uid);
-      if (userData) {
-        this.userService.setCurrentUser(userData);
+      const me = await this.userService.getMe();
+      if (me) {
+        this.userService.setCurrentUser({ uid, ...me });
         return true;
       }
     } catch {

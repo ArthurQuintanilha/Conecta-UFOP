@@ -40,7 +40,6 @@
         <div class="input-field">
           <div class="label-row">
             <label>Senha</label>
-            <a routerLink="/recuperar-senha">Esqueceu a senha?</a>
           </div>
           <input
             type="password"
@@ -48,8 +47,8 @@
             formControlName="password"
           />
         </div>
-
-        <button type="submit" class="btn-main" [disabled]="isAuthLoading">
+        <a routerLink="/recuperar-senha">Esqueceu a senha?</a>
+        <button type="submit" class="btn-main" [disabled]="isAuthLoading || loginForm.invalid">
           {{ isAuthLoading ? "Entrando..." : "Entrar" }}
         </button>
       </form>

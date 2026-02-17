@@ -1,20 +1,69 @@
-import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { map, Observable } from 'rxjs';
-import { UserService } from './user.service';
+import { Injectable } from "@angular/core";
+import { Router } from "@angular/router";
+import { ToastrService } from "ngx-toastr";
+import { AngularFireAuth } from "@angular/fire/compat/auth";
+import { map, Observable } from "rxjs";
+import { UserService } from "./user.service";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class AppService {
   constructor(
     private router: Router,
     private toastr: ToastrService,
     public afAuth: AngularFireAuth,
-    private userService: UserService
+    private userService: UserService,
   ) {}
+
+  private getLoginErrorMessage(error: any): { title: string; message: string } {
+    const code = error?.code || "";
+    const defaults = {
+      title: "Falha no login",
+      message: "Não foi possível entrar. Tente novamente.",
+    };
+    const messages: Record<string, { title: string; message: string }> = {
+      "auth/invalid-login-credentials": {
+        title: "E-mail ou senha incorretos",
+        message: "Verifique o e-mail e a senha e tente novamente.",
+      },
+      "auth/invalid-email": {
+        title: "E-mail inválido",
+        message: "Informe um endereço de e-mail válido.",
+      },
+      "auth/user-not-found": {
+        title: "Conta não encontrada",
+        message: "Nenhuma conta está vinculada a este e-mail.",
+      },
+      "auth/wrong-password": {
+        title: "Senha incorreta",
+        message: "A senha digitada está errada. Tente novamente.",
+      },
+      "auth/too-many-requests": {
+        title: "Muitas tentativas",
+        message:
+          "Acesso temporariamente bloqueado. Tente novamente mais tarde.",
+      },
+      "auth/network-request-failed": {
+        title: "Sem conexão",
+        message: "Verifique sua internet e tente novamente.",
+      },
+      "auth/user-disabled": {
+        title: "Conta desativada",
+        message: "Esta conta foi desativada. Entre em contato com o suporte.",
+      },
+      "auth/operation-not-allowed": {
+        title: "Login não disponível",
+        message: "O login por e-mail e senha não está habilitado neste app.",
+      },
+    };
+    return (
+      messages[code] ?? {
+        ...defaults,
+        message: error?.message || defaults.message,
+      }
+    );
+  }
 
   async loginByAuth({
     email,
@@ -26,33 +75,34 @@ export class AppService {
     try {
       const credential = await this.afAuth.signInWithEmailAndPassword(
         email,
-        password
+        password,
       );
 
-      const idTokenResult = await credential.user!.getIdTokenResult();
-      const claims = idTokenResult.claims as { role?: string };
-
-      if (claims.role !== 'admin') {
-        this.toastr.error('Não autorizado');
-        await this.logout();
-        return;
-      }
-
       const uid = credential.user!.uid;
-      const user = await this.userService.getUserById(uid);
+      const me = await this.userService.getMe();
 
-      if (!user) {
-        this.toastr.error('Usuário não encontrado no sistema');
+      if (!me) {
+        this.toastr.error(
+          "Seu e-mail está autenticado, mas não há um perfil cadastrado no sistema. Entre em contato com o suporte.",
+          "Usuário não encontrado",
+        );
+        await new Promise((r) => setTimeout(r, 1500));
         await this.logout();
         return;
       }
 
+      const user = { uid, ...me };
       this.userService.setCurrentUser(user);
 
-      await this.router.navigate(['/caronas']);
-      this.toastr.success('Login realizado com sucesso');
+      this.toastr.success(
+        `Olá, ${user.nome || "usuário"}! Redirecionando...`,
+        "Login realizado com sucesso",
+      );
+      await this.router.navigate(["/caronas"]);
     } catch (error: any) {
-      this.toastr.error(error?.message || 'Erro ao fazer login');
+      const { title, message } = this.getLoginErrorMessage(error);
+      this.toastr.error(message, title);
+      await new Promise((r) => setTimeout(r, 1500));
       await this.logout();
     }
   }
@@ -65,6 +115,6 @@ export class AppService {
     this.userService.clearCurrentUser();
     await this.afAuth.signOut();
     localStorage.clear();
-    await this.router.navigate(['/login']);
+    await this.router.navigate(["/login"]);
   }
 }

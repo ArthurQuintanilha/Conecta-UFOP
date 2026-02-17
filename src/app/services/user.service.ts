@@ -1,48 +1,38 @@
-import { Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { BehaviorSubject } from 'rxjs';
-import { firstValueFrom } from 'rxjs';
+import { Injectable } from "@angular/core";
+import { BehaviorSubject } from "rxjs";
+import { ApiService } from "./api.service";
+import type { AuthenticatedUserResponse } from "../models/api.models";
+
+export type CurrentUser = AuthenticatedUserResponse & { uid?: string };
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class UserService {
-  private currentUserSubject = new BehaviorSubject<any>(this.loadUserFromStorage());
+  private currentUserSubject = new BehaviorSubject<CurrentUser | null>(null);
   currentUser$ = this.currentUserSubject.asObservable();
-  collection = 'usuarios';
 
-  constructor(private firestore: AngularFirestore) {}
+  constructor(private api: ApiService) {}
 
-  private loadUserFromStorage(): any {
+  /** GET /users/me - Busca e armazena o usuário autenticado */
+  async getMe(): Promise<AuthenticatedUserResponse | null> {
     try {
-      const stored = localStorage.getItem('currentUser');
-      return stored ? JSON.parse(stored) : null;
+      const me = await this.api.get<AuthenticatedUserResponse>("/users/me");
+      return me ?? null;
     } catch {
       return null;
     }
   }
 
-//TODO trocar tudo por chamadas da API
-
-  async getUserById(uid: string): Promise<any> {
-    const ref = this.firestore.collection(this.collection).doc(uid);
-    const doc = await firstValueFrom(ref.valueChanges());
-    return doc ? { uid, ...doc } : null;
-  }
-
-  setCurrentUser(user: any): void {
+  setCurrentUser(user: CurrentUser | null): void {
     this.currentUserSubject.next(user);
-    if (user) {
-      localStorage.setItem('currentUser', JSON.stringify(user));
-    }
   }
 
   clearCurrentUser(): void {
     this.currentUserSubject.next(null);
-    localStorage.removeItem('currentUser');
   }
 
-  getCurrentUser(): any {
+  getCurrentUser(): CurrentUser | null {
     return this.currentUserSubject.value;
   }
 }

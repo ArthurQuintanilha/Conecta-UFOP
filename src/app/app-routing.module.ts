@@ -3,7 +3,7 @@ import { RouterModule, Routes } from "@angular/router";
 import { LoginComponent } from "./login/login.component";
 import { CadastroComponent } from "./cadastro/cadastro.component";
 import { CaronasComponent } from "./caronas/caronas.component";
-import { UserProfileComponent } from "./user-profile/user-profile.component";
+import { PerfilComponent } from "./perfil/perfil.component";
 import { MinhasCaronasComponent } from "./minhas-caronas/minhas-caronas.component";
 import { RecuperarSenhaComponent } from "./recuperar-senha/recuperar-senha.component";
 import { CadastrarCaronaComponent } from "./cadastrar-carona/cadastrar-carona.component";
@@ -14,13 +14,29 @@ const routes: Routes = [
   { path: "", redirectTo: "/login", pathMatch: "full" },
 
   { path: "login", component: LoginComponent, canActivate: [NonAuthGuard] },
-  { path: "cadastro", component: CadastroComponent, canActivate: [NonAuthGuard] },
-  { path: "recuperar-senha", component: RecuperarSenhaComponent, canActivate: [NonAuthGuard] },
+  {
+    path: "cadastro",
+    component: CadastroComponent,
+    canActivate: [NonAuthGuard],
+  },
+  {
+    path: "recuperar-senha",
+    component: RecuperarSenhaComponent,
+    canActivate: [NonAuthGuard],
+  },
+  { path: "caronas", component: CaronasComponent},
 
-  { path: "caronas", component: CaronasComponent, canActivate: [AuthGuard] },
-  { path: "minhas-caronas", component: MinhasCaronasComponent, canActivate: [AuthGuard] },
-  { path: "cadastrar-carona", component: CadastrarCaronaComponent, canActivate: [AuthGuard] },
-  { path: "perfil", component: UserProfileComponent, canActivate: [AuthGuard] },
+  {
+    path: "minhas-caronas",
+    component: MinhasCaronasComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: "cadastrar-carona",
+    component: CadastrarCaronaComponent,
+    canActivate: [AuthGuard],
+  },
+  { path: "perfil", component: PerfilComponent, canActivate: [AuthGuard] },
 ];
 
 @NgModule({

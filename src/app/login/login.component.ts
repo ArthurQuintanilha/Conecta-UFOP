@@ -4,29 +4,29 @@ import {
   OnDestroy,
   Renderer2,
   HostBinding,
-} from '@angular/core';
+} from "@angular/core";
 import {
   UntypedFormGroup,
   UntypedFormControl,
   Validators,
-} from '@angular/forms';
-import { ToastrService } from 'ngx-toastr';
-import { AppService } from '../services/app.service';
+} from "@angular/forms";
+import { ToastrService } from "ngx-toastr";
+import { AppService } from "../services/app.service";
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss'],
+  selector: "app-login",
+  templateUrl: "./login.component.html",
+  styleUrls: ["./login.component.scss"],
 })
 export class LoginComponent implements OnInit, OnDestroy {
-  @HostBinding('class') class = 'login-box';
+  @HostBinding("class") class = "login-box";
   loginForm: UntypedFormGroup;
   isAuthLoading = false;
 
   constructor(
     private renderer: Renderer2,
     private toastr: ToastrService,
-    private appService: AppService
+    private appService: AppService,
   ) {
     this.loginForm = new UntypedFormGroup({
       email: new UntypedFormControl(null, Validators.required),
@@ -35,10 +35,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.renderer.addClass(
-      document.querySelector('app-root'),
-      'login-page'
-    );
+    this.renderer.addClass(document.querySelector("app-root"), "login-page");
   }
 
   async loginByAuth(): Promise<void> {
@@ -51,14 +48,14 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.isAuthLoading = false;
       }
     } else {
-      this.toastr.error('Preencha email e senha.');
+      this.toastr.error(
+        "Os campos de e-mail e senha são obrigatórios.",
+        "Dados incompletos",
+      );
     }
   }
 
   ngOnDestroy(): void {
-    this.renderer.removeClass(
-      document.querySelector('app-root'),
-      'login-page'
-    );
+    this.renderer.removeClass(document.querySelector("app-root"), "login-page");
   }
 }
