@@ -1,22 +1,63 @@
-import { Component } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  Renderer2,
+  HostBinding,
+} from '@angular/core';
+import {
+  UntypedFormGroup,
+  UntypedFormControl,
+  Validators,
+} from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
+import { AppService } from '../services/app.service';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  styleUrls: ['./login.component.scss'],
 })
-export class LoginComponent {
-  usuario = {
-    email: '',
-    senha: ''
-  };
+export class LoginComponent implements OnInit, OnDestroy {
+  @HostBinding('class') class = 'login-box';
+  loginForm: UntypedFormGroup;
+  isAuthLoading = false;
 
-  fazerLogin(){
-    console.log('Tentando logar com:', this.usuario);
-    if(this.usuario.email==='aluno@ufop.br' && this.usuario.senha === '123'){
-      alert('login realizado com sucesso');
-    }else{
-      alert('usuario ou senha invalidos.');
+  constructor(
+    private renderer: Renderer2,
+    private toastr: ToastrService,
+    private appService: AppService
+  ) {
+    this.loginForm = new UntypedFormGroup({
+      email: new UntypedFormControl(null, Validators.required),
+      password: new UntypedFormControl(null, Validators.required),
+    });
+  }
+
+  ngOnInit(): void {
+    this.renderer.addClass(
+      document.querySelector('app-root'),
+      'login-page'
+    );
+  }
+
+  async loginByAuth(): Promise<void> {
+    if (this.loginForm.valid) {
+      this.isAuthLoading = true;
+      try {
+        await this.appService.loginByAuth(this.loginForm.value);
+      } finally {
+        this.isAuthLoading = false;
+      }
+    } else {
+      this.toastr.error('Preencha email e senha.');
     }
+  }
+
+  ngOnDestroy(): void {
+    this.renderer.removeClass(
+      document.querySelector('app-root'),
+      'login-page'
+    );
   }
 }

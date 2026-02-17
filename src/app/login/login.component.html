@@ -1,4 +1,3 @@
-<!--<p>batata com bacon</p>-->
 <app-header></app-header>
 <div class="login-container">
   <div class="content">
@@ -8,11 +7,11 @@
         <h1>Bem vindo ao Conecta UFOP</h1>
         <p>Facilitando a vida universitária</p>
       </div>
-      
+
       <div class="bottom-content">
         <h2>Transporte com preço acessível</h2>
         <p>Pegue uma carona, economize tempo, dinheiro e ainda colabore com os motoristas!</p>
-        <div class="dots"><span></span><span class="active"></span><span></span></div> 
+        <div class="dots"><span></span><span class="active"></span><span></span></div>
       </div>
     </div>
 
@@ -20,24 +19,34 @@
 
       <div class="tab-group">
         <h1>Entre</h1>
-        <p class="signup-text">Não possui uma conta? <a href="/cadastro">Cadastre-se</a></p>
+        <p class="signup-text">Não possui uma conta? <a routerLink="/cadastro">Cadastre-se</a></p>
       </div>
 
-      <form (submit)="fazerLogin()">
+      <form [formGroup]="loginForm" (ngSubmit)="loginByAuth()">
         <div class="input-field">
           <label>Email</label>
-          <input type="email" placeholder="usuário@ufop.br" [(ngModel)]="usuario.email" name="email">
+          <input
+            type="email"
+            placeholder="usuário@ufop.br"
+            formControlName="email"
+          />
         </div>
 
-      <div class="input-field">
-        <div class="label-row">
-          <label>Senha</label>
-          <a routerLink="/recuperar-senha">Esqueceu a senha?</a>
+        <div class="input-field">
+          <div class="label-row">
+            <label>Senha</label>
+            <a routerLink="/recuperar-senha">Esqueceu a senha?</a>
+          </div>
+          <input
+            type="password"
+            placeholder="Digite sua senha"
+            formControlName="password"
+          />
         </div>
-        <input type="password" placeholder="Digite sua senha" [(ngModel)]="usuario.senha" name="senha">
-      </div>
 
-      <button type="submit" class="btn-main">Entrar</button>
+        <button type="submit" class="btn-main" [disabled]="isAuthLoading">
+          {{ isAuthLoading ? 'Entrando...' : 'Entrar' }}
+        </button>
       </form>
     </div>
 
