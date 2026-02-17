@@ -1,11 +1,11 @@
 <header class="bg-white border-b border-gray-200 px-4 py-4">
   <div class="container mx-auto flex items-center justify-between">
-    <div class="flex items-center gap-2">
+    <div class="flex items-center gap-2 cursor-pointer" (click)="router.navigate(['/caronas'])">
       <img src="assets/logo.png" class="h-8 w-auto">
       <div class="text-primary font-bold text-xl">ConectaUFOP</div>
     </div>
     
-    <div class="flex items-center gap-4">
+    <div *ngIf="(currentUser$ | async) as currentUser" class="flex items-center gap-4">
       <button class="bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-primary/90 transition-colors">
         <a routerLink="/cadastrar-carona">Oferecer carona</a>
       </button>
@@ -15,12 +15,33 @@
         <span class="font-medium">Minhas caronas</span>
       </a>
       
-      <div class="relative">
-        <button class="flex items-center gap-2 text-gray-700 hover:text-primary transition-colors">
+      <div class="relative" (click)="$event.stopPropagation()">
+        <button
+          type="button"
+          (click)="toggleDropdown()"
+          class="flex items-center gap-2 text-gray-700 hover:text-primary transition-colors"
+          [class.ring-2]="isDropdownOpen"
+          [class.ring-primary]="isDropdownOpen"
+          [class.rounded-md]="isDropdownOpen"
+        >
           <i class="fas fa-user-circle text-xl"></i>
-          <span class="font-medium">Olá, John Doe</span>
-          <i class="fas fa-chevron-down text-sm"></i>
+          <span class="font-medium">Olá, {{ currentUser.nome }}</span>
+          <i class="fas fa-chevron-down text-sm transition-transform" [class.rotate-180]="isDropdownOpen"></i>
         </button>
+
+        <div
+          *ngIf="isDropdownOpen"
+          class="absolute right-0 top-full z-50 mt-2 w-48 rounded-lg border border-gray-200 bg-white py-1 shadow-lg"
+        >
+          <button
+            type="button"
+            (click)="logout()"
+            class="flex w-full items-center gap-2 px-4 py-2 text-left text-gray-700 hover:bg-gray-100 hover:text-primary"
+          >
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Sair</span>
+          </button>
+        </div>
       </div>
     </div>
   </div>

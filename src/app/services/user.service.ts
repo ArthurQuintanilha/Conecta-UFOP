@@ -7,33 +7,42 @@ import { firstValueFrom } from 'rxjs';
   providedIn: 'root',
 })
 export class UserService {
-  private currentUserDashSubject = new BehaviorSubject<any>(null);
-  currentUserDash$ = this.currentUserDashSubject.asObservable();
+  private currentUserSubject = new BehaviorSubject<any>(this.loadUserFromStorage());
+  currentUser$ = this.currentUserSubject.asObservable();
+  collection = 'usuarios';
 
   constructor(private firestore: AngularFirestore) {}
+
+  private loadUserFromStorage(): any {
+    try {
+      const stored = localStorage.getItem('currentUser');
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  }
 
 //TODO trocar tudo por chamadas da API
 
   async getUserById(uid: string): Promise<any> {
-    const doc = await firstValueFrom(
-      this.firestore.collection('users').doc(uid).valueChanges()
-    );
+    const ref = this.firestore.collection(this.collection).doc(uid);
+    const doc = await firstValueFrom(ref.valueChanges());
     return doc ? { uid, ...doc } : null;
   }
 
-  setCurrentUser(userDash: any): void {
-    this.currentUserDashSubject.next(userDash);
-    if (userDash) {
-      localStorage.setItem('currentUserDash', JSON.stringify(userDash));
+  setCurrentUser(user: any): void {
+    this.currentUserSubject.next(user);
+    if (user) {
+      localStorage.setItem('currentUser', JSON.stringify(user));
     }
   }
 
   clearCurrentUser(): void {
-    this.currentUserDashSubject.next(null);
-    localStorage.removeItem('currentUserDash');
+    this.currentUserSubject.next(null);
+    localStorage.removeItem('currentUser');
   }
 
   getCurrentUser(): any {
-    return this.currentUserDashSubject.value;
+    return this.currentUserSubject.value;
   }
 }
