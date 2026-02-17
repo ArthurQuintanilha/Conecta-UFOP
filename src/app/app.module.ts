@@ -16,6 +16,7 @@ import { UserProfileComponent } from './user-profile/user-profile.component';
 import { RecuperarSenhaComponent } from './recuperar-senha/recuperar-senha.component';
 import { MinhasCaronasComponent } from './minhas-caronas/minhas-caronas.component';
 
+import { CadastrarCaronaComponent } from './cadastrar-carona/cadastrar-carona.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { MinhasCaronasComponent } from './minhas-caronas/minhas-caronas.componen
     FooterComponent,
     UserProfileComponent,
     RecuperarSenhaComponent,
-    MinhasCaronasComponent
+    MinhasCaronasComponent,
+    CadastrarCaronaComponent
   ],
   imports: [
     BrowserModule,

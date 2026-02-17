@@ -1,0 +1,186 @@
+<app-header></app-header>
+
+<main class="container">
+
+<h1>Nova Carona</h1>
+
+<form class="form">
+
+<div class="grid-2">
+    <div class="field">
+        <label>Data da partida *</label>
+        <input type="datetime-local">
+    </div>
+
+    <div class="field">
+        <label>Previsão de chegada *</label>
+        <input type="datetime-local">
+    </div>
+</div>
+
+<div class="grid-2">
+    <div class="field">
+        <label>Vagas disponíveis *</label>
+        <input type="number" min="1" required>
+    </div>
+
+    <div class="field">
+        <label>Valor da passagem *</label>
+        <input type="text" placeholder="R$">
+    </div>
+</div>
+
+
+<h2>De onde você vai sair?</h2>
+
+<div class="grid-2">
+    <div class="field">
+        <label>Nome *</label>
+        <input type="text">
+    </div>
+
+    <div class="field">
+        <label>CEP *</label>
+        <input type="number">
+    </div>
+    <div class="field">
+        <label>Longradouro *</label>
+        <input type="text">
+    </div>
+
+    <div class="field">
+        <label>N.º *</label>
+        <input type="number">
+    </div>
+    <div class="field">
+        <label>Bairro *</label>
+        <input type="text">
+    </div>
+    <div class="field">
+        <label>Cidade *</label>
+        <input type="text">
+    </div>
+    <div class="field">
+        <label for="uf">Estado *</label>
+         <select id="uf" name="uf" required>
+          <option value=""></option>
+
+        <option value="AC">Acre</option>
+       <option value="AL">Alagoas</option>
+      <option value="AP">Amapá</option>
+     <option value="AM">Amazonas</option>
+      <option value="BA">Bahia</option>
+       <option value="CE">Ceará</option>
+        <option value="DF">Distrito Federal</option>
+       <option value="ES">Espírito Santo</option>
+      <option value="GO">Goiás</option>
+     <option value="MA">Maranhão</option>
+      <option value="MT">Mato Grosso</option>
+       <option value="MS">Mato Grosso do Sul</option>
+        <option value="MG">Minas Gerais</option>
+       <option value="PA">Pará</option>
+      <option value="PB">Paraíba</option>
+     <option value="PR">Paraná</option>
+      <option value="PE">Pernambuco</option>
+       <option value="PI">Piauí</option>
+        <option value="RJ">Rio de Janeiro</option>
+       <option value="RN">Rio Grande do Norte</option>
+      <option value="RS">Rio Grande do Sul</option>
+     <option value="RO">Rondônia</option>
+      <option value="RR">Roraima</option>
+       <option value="SC">Santa Catarina</option>
+        <option value="SP">São Paulo</option>
+       <option value="SE">Sergipe</option>
+      <option value="TO">Tocantins</option>
+
+     </select>
+    </div>
+</div>
+
+<h2>Para onde você vai?</h2>
+
+<div class="grid-2">
+    <div class="field">
+        <label>Nome *</label>
+        <input type="text">
+    </div>
+
+    <div class="field">
+        <label>CEP *</label>
+        <input type="number">
+    </div>
+    <div class="field">
+        <label>Longradouro *</label>
+        <input type="text">
+    </div>
+
+    <div class="field">
+        <label>N.º *</label>
+        <input type="number">
+    </div>
+    <div class="field">
+        <label>Bairro *</label>
+        <input type="text">
+    </div>
+    <div class="field">
+        <label>Cidade *</label>
+        <input type="text">
+    </div>
+    <div class="field">
+        <label for="uf">Estado *</label>
+         <select id="uf" name="uf" required>
+          <option value=""></option>
+
+        <option value="AC">Acre</option>
+       <option value="AL">Alagoas</option>
+      <option value="AP">Amapá</option>
+     <option value="AM">Amazonas</option>
+      <option value="BA">Bahia</option>
+       <option value="CE">Ceará</option>
+        <option value="DF">Distrito Federal</option>
+       <option value="ES">Espírito Santo</option>
+      <option value="GO">Goiás</option>
+     <option value="MA">Maranhão</option>
+      <option value="MT">Mato Grosso</option>
+       <option value="MS">Mato Grosso do Sul</option>
+        <option value="MG">Minas Gerais</option>
+       <option value="PA">Pará</option>
+      <option value="PB">Paraíba</option>
+     <option value="PR">Paraná</option>
+      <option value="PE">Pernambuco</option>
+       <option value="PI">Piauí</option>
+        <option value="RJ">Rio de Janeiro</option>
+       <option value="RN">Rio Grande do Norte</option>
+      <option value="RS">Rio Grande do Sul</option>
+     <option value="RO">Rondônia</option>
+      <option value="RR">Roraima</option>
+       <option value="SC">Santa Catarina</option>
+        <option value="SP">São Paulo</option>
+       <option value="SE">Sergipe</option>
+      <option value="TO">Tocantins</option>
+
+     </select>
+    </div>
+</div>
+
+<h2>Veículo</h2>
+
+<div class="grid-2">
+    <div class="field">
+        <label>Modelo/Ano *</label>
+        <input type="text">
+    </div>
+
+    <div class="field">
+        <label>Placa *</label>
+        <input type="text">
+    </div>
+</div>
+
+
+<button class="submit">Cadastrar</button>
+
+</form>
+</main>
+
+<app-footer></app-footer>
