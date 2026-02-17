@@ -1,15 +1,80 @@
 <app-header></app-header>
+
 <div class="minhas-caronas-container">
+  <div class="content-wrapper">
     <div class="title-group">
-        <h1>Minhas Caronas</h1>
+      <h1>Minhas Caronas</h1>
+    </div>
+
+    <div class="tabs-nav">
+      <button class="tab-item" [class.active]="abaAtiva === 'disponiveis'" (click)="abaAtiva = 'disponiveis'">
+        Buscar Caronas
+      </button>
+      <button class="tab-item" [class.active]="abaAtiva === 'proximas'" (click)="abaAtiva = 'proximas'">
+        Minhas Solicitações
+      </button>
+      <button class="tab-item" [class.active]="abaAtiva === 'historico'" (click)="abaAtiva = 'historico'">
+        Histórico
+      </button>
     </div>
 
     <div class="responsive-grid">
-        <div class="card" *ngFor="let item of caronas">
-            <h3>{{ item.destino }}</h3>
-            <p>Motorista: {{ item.motorista }}</p>
-            <p>Vagas: {{ item.vagas }}</p>
+      <div class="card" *ngFor="let item of caronasFiltradas">
+        
+        <span class="status-badge" [ngClass]="item.status" *ngIf="item.status !== 'disponivel'">
+          {{ item.status === 'solicitada' ? 'SOLICITADA' : (item.status === 'confirmada' ? 'CONFIRMADA' : 'FINALIZADA') }}
+        </span>
+
+        <div class="card-header">
+          <div class="avatar">
+            <img [src]="item.fotoMotorista" alt="Foto">
+          </div>
+          <div class="info-motorista">
+            <h3>{{ item.motorista }}</h3>
+            <p>{{ item.veiculo }}</p>
+          </div>
         </div>
+
+        <div class="card-body">
+          <div class="route-line">
+            <div class="dot-start"></div>
+            <div class="line"></div>
+            <div class="dot-end"></div>
+            <div class="text-route">
+              <p><strong>De:</strong> {{ item.origem }}</p>
+              <p><strong>Para:</strong> {{ item.destino }}</p>
+            </div>
+          </div>
+          <div class="time-info">
+            <span>🕒 {{ item.horario }} (Hoje)</span>
+          </div>
+        </div>
+        
+        <div class="card-footer">
+           <button class="btn-primary" *ngIf="item.status === 'disponivel'" (click)="solicitarCarona(item)">
+             Solicitar Carona
+           </button>
+           <button class="btn-outline" *ngIf="item.status === 'solicitada'" disabled>
+             Aguardando resposta...
+           </button>
+           <button class="btn-success" *ngIf="item.status === 'confirmada'">
+             Ver Detalhes
+           </button>
+        </div>
+      </div>
     </div>
+
+    <div class="empty-state" *ngIf="caronasFiltradas.length === 0">
+      <p>Nenhuma carona encontrada nesta categoria.</p>
+    </div>
+  </div>
 </div>
+
+<div class="toast-container" [class.show]="showToast">
+  <div class="toast-content">
+    <span class="icon">✅</span>
+    <p>{{ toastMsg }}</p>
+  </div>
+</div>
+
 <app-footer></app-footer>
