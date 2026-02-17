@@ -17,6 +17,8 @@ import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
 import { RecuperarSenhaComponent } from './recuperar-senha/recuperar-senha.component';
+import { MinhasCaronasComponent } from './minhas-caronas/minhas-caronas.component';
+
 import { CadastrarCaronaComponent } from './cadastrar-carona/cadastrar-carona.component';
 
 @NgModule({
@@ -29,6 +31,7 @@ import { CadastrarCaronaComponent } from './cadastrar-carona/cadastrar-carona.co
     FooterComponent,
     UserProfileComponent,
     RecuperarSenhaComponent,
+    MinhasCaronasComponent,
     CadastrarCaronaComponent
   ],
   imports: [

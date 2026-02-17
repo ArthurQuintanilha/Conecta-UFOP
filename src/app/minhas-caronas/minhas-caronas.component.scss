@@ -1,0 +1,203 @@
+$primary-red: #a31d32;
+$bg-light: #f8f9fa;
+$text-muted: #6c757d;
+$status-green: #4caf50;
+$status-yellow: #ffc107;
+
+.minhas-caronas-container {
+  background-color: $bg-light;
+  min-height: 80vh;
+  padding: 40px 0;
+  display: flex;
+  justify-content: center;
+
+  .content-wrapper {
+    width: 90%;
+    max-width: 1100px;
+  }
+}
+
+.title-group h1 {
+  font-size: 2rem;
+  color: #1a1a2e;
+  margin-bottom: 30px;
+  font-weight:bold;
+}
+
+// Estilo das Abas
+.tabs-nav {
+  display: flex;
+  gap: 30px;
+  border-bottom: 2px solid #ddd;
+  margin-bottom: 30px;
+  justify-content: center;
+
+  .tab-item {
+    background: none;
+    border: none;
+    padding: 10px 0;
+    font-size: 0.9rem;
+    color: $text-muted;
+    cursor: pointer;
+    position: relative;
+
+    &.active {
+      color: #3f51b5;
+      font-weight: bold;
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background-color: #3f51b5;
+      }
+    }
+  }
+}
+
+// Grid e Cards
+.responsive-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 25px;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  position: relative;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  transition: transform 0.2s;
+
+  &:hover { transform: translateY(-5px); }
+
+  .status-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 4px;
+
+    &.confirmada { background: #e8f5e9; color: $status-green; }
+    &.solicitada { background: #fffde7; color: #fbc02d; }
+  }
+
+  .card-header {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    margin-bottom: 15px;
+
+    .avatar img {
+      width: 50px;
+      height: 50px;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+
+    h3 { margin: 0; font-size: 1.1rem; }
+    p { margin: 0; font-size: 0.85rem; color: $text-muted; }
+  }
+
+  .card-body {
+    .route-info, .time-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 5px;
+      p { margin: 0; font-size: 0.9rem; color: #444; }
+    }
+  }
+}
+.card-footer {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+
+  button {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+
+    &.btn-primary {
+      background-color: #a31d32;
+      color: white;
+      &:hover { background-color: #7a1525; }
+    }
+
+    &.btn-outline {
+      background-color: #f0f0f0;
+      color: #666;
+      cursor: not-allowed;
+    }
+
+    &.btn-success {
+      background-color: #4caf50;
+      color: white;
+    }
+  }
+}
+
+// Estilo para o Badge de solicitado (Amarelo igual da imagem)
+.status-badge.solicitada {
+  background-color: #fff9c4;
+  color: #fbc02d;
+}
+
+// Linha de rota estilizada (Opcional para ficar mais bonito)
+.route-line {
+  display: flex;
+  gap: 10px;
+  margin: 15px 0;
+  .text-route p { margin: 2px 0; font-size: 0.85rem; }
+}
+
+/* Estilização do Toast */
+.toast-container {
+  position: fixed;
+  bottom: -100px; 
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #323232;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: bottom 0.5s ease-in-out; // Transição suave
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+
+  &.show {
+    bottom: 40px; // Sobe para aparecer
+  }
+
+  .toast-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .icon {
+      font-size: 1.2rem;
+    }
+
+    p {
+      margin: 0;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+  }
+}
+
+.toast-container {
+  border-left: 5px solid #4caf50;
+}
