@@ -49,7 +49,7 @@ export class AppService {
 
       this.userService.setCurrentUser(user);
 
-      await this.router.navigate(['/']);
+      await this.router.navigate(['/caronas']);
       this.toastr.success('Login realizado com sucesso');
     } catch (error: any) {
       this.toastr.error(error?.message || 'Erro ao fazer login');

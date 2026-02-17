@@ -1,7 +1,6 @@
 <app-header></app-header>
 <div class="login-container">
   <div class="content">
-
     <div class="info-card">
       <div class="top-content">
         <h1>Bem vindo ao Conecta UFOP</h1>
@@ -10,16 +9,22 @@
 
       <div class="bottom-content">
         <h2>Transporte com preço acessível</h2>
-        <p>Pegue uma carona, economize tempo, dinheiro e ainda colabore com os motoristas!</p>
-        <div class="dots"><span></span><span class="active"></span><span></span></div>
+        <p>
+          Pegue uma carona, economize tempo, dinheiro e ainda colabore com os
+          motoristas!
+        </p>
+        <div class="dots">
+          <span></span><span class="active"></span><span></span>
+        </div>
       </div>
     </div>
 
     <div class="form-container">
-
       <div class="tab-group">
         <h1>Entre</h1>
-        <p class="signup-text">Não possui uma conta? <a routerLink="/cadastro">Cadastre-se</a></p>
+        <p class="signup-text">
+          Não possui uma conta? <a routerLink="/cadastro">Cadastre-se</a>
+        </p>
       </div>
 
       <form [formGroup]="loginForm" (ngSubmit)="loginByAuth()">
@@ -45,11 +50,10 @@
         </div>
 
         <button type="submit" class="btn-main" [disabled]="isAuthLoading">
-          {{ isAuthLoading ? 'Entrando...' : 'Entrar' }}
+          {{ isAuthLoading ? "Entrando..." : "Entrar" }}
         </button>
       </form>
     </div>
-
   </div>
 </div>
 

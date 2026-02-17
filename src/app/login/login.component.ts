@@ -42,6 +42,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   async loginByAuth(): Promise<void> {
+    this.loginForm.markAllAsTouched();
     if (this.loginForm.valid) {
       this.isAuthLoading = true;
       try {
