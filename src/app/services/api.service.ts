@@ -17,7 +17,7 @@ export class ApiService {
     private injector: Injector
   ) {}
 
-  /** Resolve AppService só no 401 para evitar dependência circular (ApiService → AppService → UserService → ApiService). */
+
   private onUnauthorized(): void {
     this.injector.get(AppService).logout();
   }

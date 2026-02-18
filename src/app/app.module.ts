@@ -21,6 +21,7 @@ import { RecuperarSenhaComponent } from "./recuperar-senha/recuperar-senha.compo
 import { MinhasCaronasComponent } from "./minhas-caronas/minhas-caronas.component";
 
 import { CadastrarCaronaComponent } from "./cadastrar-carona/cadastrar-carona.component";
+import { ChatComponent } from "./chat/chat.component";
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { CadastrarCaronaComponent } from "./cadastrar-carona/cadastrar-carona.co
     RecuperarSenhaComponent,
     MinhasCaronasComponent,
     CadastrarCaronaComponent,
+    ChatComponent,
   ],
   imports: [
     BrowserModule,

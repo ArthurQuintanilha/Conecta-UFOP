@@ -1,0 +1,133 @@
+<div class="chat-wrapper">
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar">
+
+    <!-- Sidebar Header -->
+    <div class="sidebar-header">
+      <h2 class="sidebar-title">Conversas</h2>
+    </div>
+
+    <!-- Campo de Busca -->
+    <div class="search-bar">
+      <span class="search-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </span>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Buscar conversas"
+        [(ngModel)]="searchTerm"
+      />
+    </div>
+
+    <!-- Lista de Contatos -->
+    <ul class="contact-list">
+      <li
+        *ngFor="let contact of filteredContacts; trackBy: trackByContact"
+        class="contact-item"
+        [class.active]="contact.id === activeContactId"
+        (click)="selectContact(contact)"
+      >
+        <!-- Avatar -->
+        <div class="avatar">{{ contact.avatar }}</div>
+
+        <!-- Info -->
+        <div class="contact-info">
+          <div class="contact-top">
+            <span class="contact-name">{{ contact.name }}</span>
+            <span class="contact-time">{{ contact.time }}</span>
+          </div>
+          <span class="contact-subtitle">{{ contact.subtitle }}</span>
+          <div class="contact-bottom">
+            <span class="contact-last-msg">
+              <span class="last-msg-check" *ngIf="isLastMessageSent(contact)">✓</span>
+              {{ contact.lastMessage }}
+            </span>
+            <span class="badge" *ngIf="contact.unread > 0">{{ contact.unread }}</span>
+          </div>
+        </div>
+      </li>
+
+      <!-- Sem resultados -->
+      <li class="no-results" *ngIf="filteredContacts.length === 0">
+        Nenhuma conversa encontrada.
+      </li>
+    </ul>
+
+  </aside>
+
+  <!-- ===== CHAT WINDOW ===== -->
+  <section class="chat-window">
+
+    <!-- Chat Header -->
+    <div class="chat-header">
+      <div class="avatar">{{ activeContact.avatar }}</div>
+      <div class="chat-header-info">
+        <span class="chat-contact-name">{{ activeContact.name }}</span>
+        <span class="chat-contact-subtitle">{{ activeContact.subtitle }}</span>
+      </div>
+    </div>
+
+    <!-- Área de Mensagens -->
+    <div class="messages-area" #messagesContainer>
+
+      <!-- Badge HOJE -->
+      <div class="day-divider">
+        <span class="day-badge">HOJE</span>
+      </div>
+
+      <!-- Mensagens -->
+      <div
+        *ngFor="let msg of activeContact.messages; trackBy: trackByMessage"
+        class="message-row"
+        [class.sent]="msg.sent"
+        [class.received]="!msg.sent"
+      >
+        <div class="message-avatar received-only" *ngIf="!msg.sent">{{ activeContact.avatar }}</div>
+        <div class="message-wrapper">
+          <div class="message-bubble">
+            <p class="message-text">{{ msg.text }}</p>
+            <div class="message-meta">
+              <span class="message-time">{{ msg.time }}</span>
+              <span class="message-double-check" *ngIf="msg.sent">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                  class="check-second">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Input de Mensagem -->
+    <div class="chat-input-area">
+      <input
+        type="text"
+        class="message-input"
+        placeholder="Escreva uma mensagem"
+        [(ngModel)]="newMessage"
+        (keydown)="onKeyDown($event)"
+      />
+      <button class="send-btn" (click)="sendMessage()" [disabled]="!newMessage.trim()">
+        <svg class="send-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+        </svg>
+      </button>
+    </div>
+
+  </section>
+
+</div>

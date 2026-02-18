@@ -7,6 +7,7 @@ import { PerfilComponent } from "./perfil/perfil.component";
 import { MinhasCaronasComponent } from "./minhas-caronas/minhas-caronas.component";
 import { RecuperarSenhaComponent } from "./recuperar-senha/recuperar-senha.component";
 import { CadastrarCaronaComponent } from "./cadastrar-carona/cadastrar-carona.component";
+import { ChatComponent } from "./chat/chat.component";
 import { AuthGuard } from "./guards/auth.guard";
 import { NonAuthGuard } from "./guards/non-auth.guard";
 
@@ -37,6 +38,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
   },
   { path: "perfil", component: PerfilComponent, canActivate: [AuthGuard] },
+  { path: "chat", component: ChatComponent, canActivate: [AuthGuard] },
 ];
 
 @NgModule({

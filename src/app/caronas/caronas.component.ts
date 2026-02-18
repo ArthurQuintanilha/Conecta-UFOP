@@ -15,12 +15,12 @@ export class CaronasComponent implements OnInit {
   async ngOnInit() {
     try {
       this.caronas = await this.caronasService.getCaronas();
+      console.log(this.caronas);
     } catch (error) {
       console.error("Erro ao buscar caronas:", error);
     }
   }
 
-  /** Formata origem/destino (API: nomeLocal, cidade, estado) */
   formatarEndereco(endereco: OrigemCarona | Record<string, unknown> | undefined): string {
     if (!endereco || typeof endereco !== "object") return "";
     const nome = (endereco as any).nomeLocal ?? (endereco as any).nome ?? "";
@@ -54,7 +54,6 @@ export class CaronasComponent implements OnInit {
       : "";
   }
 
-  /** Vagas disponíveis (API já retorna vagasDisponiveis) */
   vagasDisponiveis(carona: ListCaronaItem): number {
     return carona.vagasDisponiveis ?? 0;
   }
