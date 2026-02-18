@@ -14,7 +14,6 @@ export class UserService {
 
   constructor(private api: ApiService) {}
 
-  /** GET /users/me - Busca e armazena o usuário autenticado */
   async getMe(): Promise<AuthenticatedUserResponse | null> {
     try {
       const me = await this.api.get<AuthenticatedUserResponse>("/users/me");

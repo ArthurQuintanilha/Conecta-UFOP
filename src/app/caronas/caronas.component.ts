@@ -1,6 +1,11 @@
 import { Component, OnInit } from "@angular/core";
 import { CaronasService } from "../services/caronas.service";
-import type { ListCaronaItem, OrigemCarona } from "../models/api.models";
+import type {
+  ListCaronaItem,
+  OrigemCarona,
+  DateTimeLike,
+  VeiculoCaronaResponse,
+} from "../models/api.models";
 
 @Component({
   selector: "app-caronas",
@@ -31,7 +36,7 @@ export class CaronasComponent implements OnInit {
     return nome || cidade || String(estado) || "—";
   }
 
-  private toDate(data: string | number | Date | null | undefined): Date | null {
+  private toDate(data: DateTimeLike | number | null | undefined): Date | null {
     if (data == null) return null;
     if (data instanceof Date) return data;
     if (typeof data === "string") return new Date(data);
@@ -42,16 +47,23 @@ export class CaronasComponent implements OnInit {
     return null;
   }
 
-  formatarData(data: string | null | undefined): string {
+  formatarData(data: DateTimeLike | null | undefined): string {
     const date = this.toDate(data);
     return date ? date.toLocaleDateString("pt-BR") : "";
   }
 
-  formatarHora(data: string | null | undefined): string {
+  formatarHora(data: DateTimeLike | null | undefined): string {
     const date = this.toDate(data);
     return date
       ? date.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
       : "";
+  }
+
+  formatarVeiculo(veiculo: string | VeiculoCaronaResponse | undefined): string {
+    if (veiculo == null) return "Veículo";
+    if (typeof veiculo === "string") return veiculo;
+    const parts = [veiculo.modelo, veiculo.placa, veiculo.cor].filter(Boolean);
+    return parts.length ? parts.join(" · ") : "Veículo";
   }
 
   vagasDisponiveis(carona: ListCaronaItem): number {

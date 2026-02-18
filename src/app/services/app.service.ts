@@ -3,6 +3,7 @@ import { Router } from "@angular/router";
 import { ToastrService } from "ngx-toastr";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { map, Observable } from "rxjs";
+import { take } from "rxjs/operators";
 import { UserService } from "./user.service";
 
 @Injectable({
@@ -15,6 +16,16 @@ export class AppService {
     public afAuth: AngularFireAuth,
     private userService: UserService,
   ) {}
+
+  restoreSession(): void {
+    this.afAuth.authState.pipe(take(1)).subscribe(async (firebaseUser) => {
+      if (!firebaseUser || this.userService.getCurrentUser()) return;
+      const me = await this.userService.getMe();
+      if (me) {
+        this.userService.setCurrentUser({ uid: firebaseUser.uid, ...me });
+      }
+    });
+  }
 
   private getLoginErrorMessage(error: any): { title: string; message: string } {
     const code = error?.code || "";

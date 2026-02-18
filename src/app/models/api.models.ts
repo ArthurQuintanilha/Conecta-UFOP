@@ -60,6 +60,17 @@ export interface OrigemCarona {
   estado: string;
 }
 
+/** Tipo para campos dt da API: date-time (string) ou timestamp já convertido (Date) */
+export type DateTimeLike = string | Date;
+
+/** Veículo na resposta de carona (GET /caronas, GET /carona/{id}) */
+export interface VeiculoCaronaResponse {
+  modelo?: string;
+  placa?: string;
+  cor?: string;
+  [key: string]: unknown;
+}
+
 /** POST /carona */
 export interface CreateCaronaRequest {
   veiculo: string;
@@ -78,24 +89,24 @@ export interface CreateCaronaResponse {
 /** Item da listagem GET /caronas */
 export interface ListCaronaItem {
   id: string;
-  criadoEm?: string;
+  criadoEm?: DateTimeLike;
   motorista?: {
     nome?: string;
     notaMedia?: number;
     fotoUrl?: string | null;
   };
-  veiculo?: string;
+  veiculo?: string | VeiculoCaronaResponse;
   valor?: number;
   vagasDisponiveis?: number;
   origem?: OrigemCarona;
   destino?: Record<string, unknown>;
-  dtPartida?: string;
-  dtChegada?: string;
+  dtPartida?: DateTimeLike;
+  dtChegada?: DateTimeLike;
 }
 
 /** GET /carona/{id} */
 export interface GetCaronaByIdResponse {
-  criadoEm?: string;
+  criadoEm?: DateTimeLike;
   motorista?: {
     createdAt?: string | null;
     nome?: string;
@@ -105,13 +116,13 @@ export interface GetCaronaByIdResponse {
     caronasCont?: number;
     perfil?: string;
   };
-  veiculo?: string;
+  veiculo?: string | VeiculoCaronaResponse;
   valor?: number;
   vagasDisponiveis?: number;
   origem?: OrigemCarona;
   destino?: Record<string, unknown>;
-  dtPartida?: string;
-  dtChegada?: string;
+  dtPartida?: DateTimeLike;
+  dtChegada?: DateTimeLike;
   passageiros?: Array<{
     nome?: string;
     fotoUrl?: string;
