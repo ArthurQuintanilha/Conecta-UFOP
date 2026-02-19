@@ -1,0 +1,49 @@
+
+<div class="dialog-overlay" (click)="onClose()">
+  
+  <div class="dialog-content" (click)="$event.stopPropagation()">
+    
+    <button class="btn-back" (click)="onClose()">
+      <i class="fas fa-chevron-left"></i>
+    </button>
+
+    <section class="profile-card">
+      <div class="profile-header">
+        <img src="assets/driver-john.jpg" alt="John Doe" class="profile-img">
+        <div class="profile-text">
+          <div class="name-rating">
+            <h2>John Doe</h2>
+            <span class="rating-tag">★ 4.5</span>
+          </div>
+          <p class="role">35 anos, Estudante de Sistemas - UFOP</p>
+          <p class="bio">
+            Moro no bairro República e vou para a UFOP toda segunda, quarta e sexta. 
+            Procuro companhia para dividir os custos e tornar o trajeto mais ágil.
+          </p>
+        </div>
+      </div>
+      
+      <div class="profile-meta">
+        <span><i class="far fa-calendar-alt"></i> Entrou em jan/2026</span>
+        <span><i class="fas fa-check-circle"></i> 20 viagens oferecidas e concluídas com sucesso</span>
+      </div>
+    </section>
+
+    <section class="reviews-section">
+      <h3>Avaliações</h3>
+      
+      <div class="review-item" *ngFor="let review of reviews">
+        <img [src]="review.avatar" [alt]="review.userName" class="review-avatar">
+        <div class="review-body">
+          <div class="review-header">
+            <span class="username">{{ review.userName }}</span>
+            <span class="stars">★★★★★ {{ review.rating }}</span>
+            <span class="timestamp">{{ review.date }}</span>
+          </div>
+          <p class="comment">{{ review.comment }}</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
