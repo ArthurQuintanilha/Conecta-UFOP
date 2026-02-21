@@ -90,4 +90,7 @@ Thumbs.db
 tmp/
 temp/
 
+# Firebase (extensão/emuladores – logs e cache)
+.firebase/
+
 
