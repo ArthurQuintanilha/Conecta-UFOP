@@ -25,6 +25,7 @@ import { ChatComponent } from "./chat/chat.component";
 import { AvaliarCaronaComponent } from "./avaliar-carona/avaliar-carona.component";
 import { EditarCaronaComponent } from "./editar-carona/editar-carona.component";
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from "ngx-mask";
+import { DetalhesCaronaComponent } from './detalhes-carona/detalhes-carona.component';
 
 @NgModule({
   declarations: [
@@ -41,6 +42,7 @@ import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from "ngx-mask";
     ChatComponent,
     AvaliarCaronaComponent,
     EditarCaronaComponent,
+    DetalhesCaronaComponent,
   ],
   imports: [
     BrowserModule,
