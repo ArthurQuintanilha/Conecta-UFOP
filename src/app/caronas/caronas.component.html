@@ -10,6 +10,7 @@
       <div
         *ngFor="let carona of caronas"
         class="bg-white border border-gray-200 rounded-lg p-4 md:p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+        (click)="verDetalhes(carona)"
       >
         <div class="flex justify-between items-start mb-3">
           <div class="flex items-center gap-2 md:gap-3 flex-1 min-w-0">
@@ -37,7 +38,7 @@
           </div>
           <div class="flex-shrink-0 ml-2">
             <p class="text-base md:text-lg font-bold text-gray-900">
-              R$ {{ (carona.valor ?? 0) | number: "1.2-2" }}
+              R$ {{ carona.valor ?? 0 | number: "1.2-2" }}
             </p>
           </div>
         </div>

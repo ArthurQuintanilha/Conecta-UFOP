@@ -1,14 +1,20 @@
+<app-header></app-header>
+
 <div class="chat-wrapper">
 
   <!-- ===== SIDEBAR ===== -->
   <aside class="sidebar">
 
-    <!-- Sidebar Header -->
     <div class="sidebar-header">
+      <button type="button" class="btn-back" (click)="voltar()" aria-label="Voltar">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+      </button>
       <h2 class="sidebar-title">Conversas</h2>
     </div>
 
-    <!-- Campo de Busca -->
     <div class="search-bar">
       <span class="search-icon">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
@@ -25,37 +31,32 @@
       />
     </div>
 
-    <!-- Lista de Contatos -->
     <ul class="contact-list">
+      <li *ngIf="loading" class="no-results">Carregando conversas...</li>
       <li
-        *ngFor="let contact of filteredContacts; trackBy: trackByContact"
+        *ngFor="let conversa of filteredConversas; trackBy: trackByCaronaId"
         class="contact-item"
-        [class.active]="contact.id === activeContactId"
-        (click)="selectContact(contact)"
+        [class.active]="conversa.caronaId === activeCaronaId"
+        (click)="selectConversa(conversa)"
       >
-        <!-- Avatar -->
-        <div class="avatar">{{ contact.avatar }}</div>
-
-        <!-- Info -->
+        <div class="avatar">{{ conversaAvatar(conversa) }}</div>
         <div class="contact-info">
           <div class="contact-top">
-            <span class="contact-name">{{ contact.name }}</span>
-            <span class="contact-time">{{ contact.time }}</span>
+            <span class="contact-name">{{ conversa.outroUsuarioNome }}</span>
+            <span class="contact-time">{{ conversaTime(conversa) }}</span>
           </div>
-          <span class="contact-subtitle">{{ contact.subtitle }}</span>
+          <span class="contact-subtitle">{{ conversa.caronaSubtitle }}</span>
           <div class="contact-bottom">
             <span class="contact-last-msg">
-              <span class="last-msg-check" *ngIf="isLastMessageSent(contact)">✓</span>
-              {{ contact.lastMessage }}
+              <span class="last-msg-check" *ngIf="isLastMessageSent(conversa)">✓</span>
+              {{ conversa.ultimaMensagem }}
             </span>
-            <span class="badge" *ngIf="contact.unread > 0">{{ contact.unread }}</span>
           </div>
         </div>
       </li>
 
-      <!-- Sem resultados -->
-      <li class="no-results" *ngIf="filteredContacts.length === 0">
-        Nenhuma conversa encontrada.
+      <li class="no-results" *ngIf="!loading && filteredConversas.length === 0">
+        Nenhuma conversa encontrada. Inicie uma conversa a partir de uma carona.
       </li>
     </ul>
 
@@ -64,70 +65,82 @@
   <!-- ===== CHAT WINDOW ===== -->
   <section class="chat-window">
 
-    <!-- Chat Header -->
-    <div class="chat-header">
-      <div class="avatar">{{ activeContact.avatar }}</div>
-      <div class="chat-header-info">
-        <span class="chat-contact-name">{{ activeContact.name }}</span>
-        <span class="chat-contact-subtitle">{{ activeContact.subtitle }}</span>
-      </div>
-    </div>
-
-    <!-- Área de Mensagens -->
-    <div class="messages-area" #messagesContainer>
-
-      <!-- Badge HOJE -->
-      <div class="day-divider">
-        <span class="day-badge">HOJE</span>
+    <ng-container *ngIf="activeConversa; else noConversation">
+      <div class="chat-header">
+        <div class="avatar">{{ activeContactAvatar }}</div>
+        <div class="chat-header-info">
+          <span class="chat-contact-name">{{ activeContactName }}</span>
+          <span class="chat-contact-subtitle">{{ activeContactSubtitle }}</span>
+        </div>
       </div>
 
-      <!-- Mensagens -->
-      <div
-        *ngFor="let msg of activeContact.messages; trackBy: trackByMessage"
-        class="message-row"
-        [class.sent]="msg.sent"
-        [class.received]="!msg.sent"
-      >
-        <div class="message-avatar received-only" *ngIf="!msg.sent">{{ activeContact.avatar }}</div>
-        <div class="message-wrapper">
-          <div class="message-bubble">
-            <p class="message-text">{{ msg.text }}</p>
-            <div class="message-meta">
-              <span class="message-time">{{ msg.time }}</span>
-              <span class="message-double-check" *ngIf="msg.sent">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="20 6 9 17 4 12"></polyline>
-                </svg>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
-                  class="check-second">
-                  <polyline points="20 6 9 17 4 12"></polyline>
-                </svg>
-              </span>
+      <div class="messages-area" #messagesContainer>
+        <div class="day-divider">
+          <span class="day-badge">HOJE</span>
+        </div>
+        <div
+          *ngFor="let msg of messages; trackBy: trackByMessageId"
+          class="message-row"
+          [class.sent]="msg.sent"
+          [class.received]="!msg.sent"
+        >
+          <div class="message-avatar received-only" *ngIf="!msg.sent">{{ activeContactAvatar }}</div>
+          <div class="message-wrapper">
+            <div class="message-bubble">
+              <p class="message-text">{{ msg.text }}</p>
+              <div class="message-meta">
+                <span class="message-time">{{ msg.time }}</span>
+                <span class="message-double-check" *ngIf="msg.sent">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                    class="check-second">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </span>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-    </div>
+      <div class="chat-input-area">
+        <p class="carona-finalizada-aviso" *ngIf="caronaFinalizada">
+          Esta carona foi finalizada. O chat é somente leitura.
+        </p>
+        <div class="chat-input-row">
+          <input
+            type="text"
+            class="message-input"
+            placeholder="Escreva uma mensagem"
+            [(ngModel)]="newMessage"
+            (keydown)="onKeyDown($event)"
+            [disabled]="caronaFinalizada"
+          />
+          <button
+            class="send-btn"
+            (click)="sendMessage()"
+            [disabled]="!newMessage.trim() || caronaFinalizada"
+          >
+            <svg class="send-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </ng-container>
 
-    <!-- Input de Mensagem -->
-    <div class="chat-input-area">
-      <input
-        type="text"
-        class="message-input"
-        placeholder="Escreva uma mensagem"
-        [(ngModel)]="newMessage"
-        (keydown)="onKeyDown($event)"
-      />
-      <button class="send-btn" (click)="sendMessage()" [disabled]="!newMessage.trim()">
-        <svg class="send-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-        </svg>
-      </button>
-    </div>
+    <ng-template #noConversation>
+      <div class="chat-empty">
+        <p>Selecione uma conversa ou inicie uma a partir de uma carona.</p>
+      </div>
+    </ng-template>
 
   </section>
 
 </div>
+
+<app-footer></app-footer>

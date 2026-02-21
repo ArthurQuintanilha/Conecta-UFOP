@@ -25,22 +25,24 @@ $radius-xl:     22px;
 $transition:    all 0.2s ease;
 
 // =============================================
-// Host — ocupa toda a altura disponível
+// Host — coluna: header em cima, conteúdo, footer embaixo
 // =============================================
 :host {
   display: flex;
+  flex-direction: column;
   flex: 1;
+  min-height: 100vh;
   overflow: hidden;
-  min-height: 0;
 }
 
 // =============================================
-// Wrapper principal
+// Wrapper principal (ocupa o espaço entre header e footer)
 // =============================================
 .chat-wrapper {
   display: flex;
+  flex: 1;
+  min-height: 0;
   width: 100%;
-  height: calc(100vh - 64px); // desconta o header
   overflow: hidden;
   background: $white;
   box-shadow: $shadow;
@@ -63,9 +65,42 @@ $transition:    all 0.2s ease;
 
 // Cabeçalho da sidebar
 .sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   padding: 18px 16px 10px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   flex-shrink: 0;
+}
+
+.btn-back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: none;
+  border-radius: $radius-sm;
+  background: transparent;
+  color: $text-dark;
+  cursor: pointer;
+  transition: $transition;
+
+  svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  &:hover {
+    background: $gray-300;
+    color: $primary;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $primary;
+    outline-offset: 2px;
+  }
 }
 
 .sidebar-title {
@@ -294,6 +329,18 @@ $transition:    all 0.2s ease;
   color: $gray-600;
 }
 
+// Estado vazio quando nenhuma conversa está selecionada
+.chat-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: 24px;
+  text-align: center;
+  color: $gray-600;
+  font-size: 0.95rem;
+}
+
 // Área de mensagens (fundo cinza muito claro como na print)
 .messages-area {
   flex: 1;
@@ -422,12 +469,28 @@ $transition:    all 0.2s ease;
 // =============================================
 .chat-input-area {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  flex-direction: column;
+  gap: 8px;
   padding: 12px 16px;
   background: $white;
   border-top: 1px solid $gray-300;
   flex-shrink: 0;
+}
+
+.carona-finalizada-aviso {
+  margin: 0;
+  font-size: 0.8rem;
+  color: $gray-600;
+}
+
+.chat-input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chat-input-row .message-input {
+  flex: 1;
 }
 
 .message-input {

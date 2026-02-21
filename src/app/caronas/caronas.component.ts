@@ -26,7 +26,9 @@ export class CaronasComponent implements OnInit {
     }
   }
 
-  formatarEndereco(endereco: OrigemCarona | Record<string, unknown> | undefined): string {
+  formatarEndereco(
+    endereco: OrigemCarona | Record<string, unknown> | undefined,
+  ): string {
     if (!endereco || typeof endereco !== "object") return "";
     const nome = (endereco as any).nomeLocal ?? (endereco as any).nome ?? "";
     const cidade = (endereco as any).cidade ?? "";
@@ -68,5 +70,9 @@ export class CaronasComponent implements OnInit {
 
   vagasDisponiveis(carona: ListCaronaItem): number {
     return carona.vagasDisponiveis ?? 0;
+  }
+
+  verDetalhes(carona: ListCaronaItem) {
+    console.log(carona);
   }
 }
