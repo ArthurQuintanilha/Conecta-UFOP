@@ -96,6 +96,13 @@ export class EditarCaronaComponent implements OnInit {
     this.loadCarona();
   }
 
+  get placaMask(): string {
+    const v = (this.form.get("placa")?.value ?? "").toString();
+    const clean = v.replace(/[^A-Za-z0-9]/g, "");
+    if (clean.length >= 4 && /\d/.test(clean.charAt(3))) return "AAA0A00";
+    return "AAA-0000";
+  }
+
   getControl(path: string) {
     return this.form.get(path);
   }
@@ -199,6 +206,13 @@ export class EditarCaronaComponent implements OnInit {
     }
   }
 
+  private formatDdMmYyyy(d: Date): string {
+    const day = String(d.getDate()).padStart(2, "0");
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const year = d.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
+
   private timestampToDateAndTime(
     ts: firebase.firestore.Timestamp | undefined,
     dateKey: string,
@@ -207,9 +221,33 @@ export class EditarCaronaComponent implements OnInit {
     if (!ts || !(ts instanceof firebase.firestore.Timestamp))
       return { [dateKey]: "", [timeKey]: "" };
     const d = ts.toDate();
-    const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    const dateStr = this.formatDdMmYyyy(d);
     const timeStr = `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
     return { [dateKey]: dateStr, [timeKey]: timeStr };
+  }
+
+  private parseTimeToMinutes(timeStr: string): number | null {
+    if (!timeStr?.trim()) return null;
+    const raw = (timeStr ?? "").toString().trim().replace(/\D/g, "");
+    if (raw.length < 2) return null;
+    const h = raw.length >= 4 ? parseInt(raw.slice(0, 2), 10) : parseInt(raw.slice(0, 2), 10);
+    const m = raw.length >= 4 ? parseInt(raw.slice(2, 4), 10) : 0;
+    const hours = Math.min(23, Math.max(0, isNaN(h) ? 0 : h));
+    const minutes = Math.min(59, Math.max(0, isNaN(m) ? 0 : m));
+    return hours * 60 + minutes;
+  }
+
+  private parseDdMmYyyy(value: string): { day: number; month: number; year: number } | null {
+    const v = (value ?? "").toString().trim().replace(/\D/g, "");
+    if (v.length !== 8) return null;
+    const day = parseInt(v.slice(0, 2), 10);
+    const month = parseInt(v.slice(2, 4), 10);
+    const year = parseInt(v.slice(4, 8), 10);
+    if (month < 1 || month > 12) return null;
+    const date = new Date(year, month - 1, day);
+    if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day)
+      return null;
+    return { day, month, year };
   }
 
   private dateAndTimeToTimestamp(
@@ -217,11 +255,13 @@ export class EditarCaronaComponent implements OnInit {
     timeStr: string,
   ): firebase.firestore.Timestamp | null {
     if (!dateStr?.trim() || !timeStr?.trim()) return null;
-    const parts = timeStr.trim().split(":");
-    const hours = Math.min(23, Math.max(0, Number(parts[0]) || 0));
-    const minutes = Math.min(59, Math.max(0, Number(parts[1]) || 0));
-    const d = new Date(dateStr);
-    d.setHours(hours, minutes, 0, 0);
+    const parsed = this.parseDdMmYyyy(dateStr);
+    if (!parsed) return null;
+    const mins = this.parseTimeToMinutes(timeStr);
+    if (mins === null) return null;
+    const hours = Math.floor(mins / 60);
+    const minutes = mins % 60;
+    const d = new Date(parsed.year, parsed.month - 1, parsed.day, hours, minutes, 0, 0);
     return firebase.firestore.Timestamp.fromDate(d);
   }
 
@@ -236,13 +276,35 @@ export class EditarCaronaComponent implements OnInit {
 
     const v = this.form.value;
     const dtPartida = this.dateAndTimeToTimestamp(v.dataPartidaData, v.dataPartidaHora);
-    const dtChegada = this.dateAndTimeToTimestamp(v.previsaoChegadaData, v.previsaoChegadaHora);
 
     if (!dtPartida) {
       this.form.get("dataPartidaData")?.setErrors({ required: true });
       this.form.get("dataPartidaHora")?.setErrors({ required: true });
       this.toastr.warning("Informe data e hora de partida.");
       return;
+    }
+
+    const dtChegada = this.dateAndTimeToTimestamp(v.previsaoChegadaData, v.previsaoChegadaHora);
+    // Validação separada: data e hora (só quando dtChegada foi preenchido)
+    if (dtChegada) {
+      const dataPartida = this.parseDdMmYyyy(v.dataPartidaData);
+      const dataChegada = this.parseDdMmYyyy(v.previsaoChegadaData);
+      const horaPartida = this.parseTimeToMinutes(v.dataPartidaHora);
+      const horaChegada = this.parseTimeToMinutes(v.previsaoChegadaHora);
+
+      if (dataPartida && dataChegada && horaPartida !== null && horaChegada !== null) {
+        const dataPartidaVal = dataPartida.year * 10000 + dataPartida.month * 100 + dataPartida.day;
+        const dataChegadaVal = dataChegada.year * 10000 + dataChegada.month * 100 + dataChegada.day;
+
+        if (dataChegadaVal < dataPartidaVal) {
+          this.toastr.warning("A data de chegada não pode ser anterior à data de partida.");
+          return;
+        }
+        if (dataChegadaVal === dataPartidaVal && horaChegada <= horaPartida) {
+          this.toastr.warning("A hora de chegada deve ser posterior à hora de partida.");
+          return;
+        }
+      }
     }
 
     const origem: EnderecoCaronaDoc = {
@@ -272,12 +334,12 @@ export class EditarCaronaComponent implements OnInit {
         .doc(this.caronaId)
         .update({
           dtPartida,
-          dtChegada: dtChegada ?? null,
+          dtChegada: dtChegada ?? null, // dtChegada definido acima
           vagas: Number(v.vagasDisponiveis) || 0,
           valor: this.parseValorDecimal(v.valorPassagem) || 0,
           origem,
           destino,
-          placa: v.placa,
+          placa: (v.placa ?? "").toString().trim().toUpperCase(),
           veiculo: v.modeloAno,
         });
       this.toastr.success("Carona atualizada com sucesso.");

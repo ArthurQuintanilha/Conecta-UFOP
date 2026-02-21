@@ -74,7 +74,7 @@ export interface VeiculoCaronaResponse {
 
 /** POST /carona */
 export interface CreateCaronaRequest {
-  veiculo: string;
+  veiculo: { modelo: string; placa: string };
   vagas: number;
   valor: number;
   dtPartida: string;

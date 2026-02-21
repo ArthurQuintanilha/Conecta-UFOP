@@ -1,6 +1,11 @@
 import { Injectable } from "@angular/core";
 import { ApiService } from "./api.service";
-import type { ListCaronaItem, MinhasCaronasResponse } from "../models/api.models";
+import type {
+  ListCaronaItem,
+  MinhasCaronasResponse,
+  CreateCaronaRequest,
+  CreateCaronaResponse,
+} from "../models/api.models";
 
 @Injectable({
   providedIn: "root",
@@ -12,6 +17,11 @@ export class CaronasService {
   async getCaronas(): Promise<ListCaronaItem[]> {
     const list = await this.api.get<ListCaronaItem[]>("/caronas");
     return Array.isArray(list) ? list : [];
+  }
+
+  /** POST /carona - Criar nova carona */
+  async createCarona(body: CreateCaronaRequest): Promise<CreateCaronaResponse> {
+    return this.api.post<CreateCaronaResponse>("/carona", body);
   }
 
   /** GET /caronas/minhasCaronas - Listar minhas caronas (como motorista e como passageiro) */

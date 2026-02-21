@@ -1,186 +1,203 @@
 <app-header></app-header>
 
 <main class="container">
+  <h1>Nova Carona</h1>
 
-<h1>Nova Carona</h1>
+  <form
+    [formGroup]="form"
+    class="form form-padrao"
+    (ngSubmit)="onSubmit()"
+  >
+    <h2>Informações da Carona</h2>
 
-<form class="form form-padrao">
-
-<div class="grid-2">
-    <div class="field">
+    <div class="grid-2">
+      <div class="field">
         <label>Data da partida *</label>
-        <input type="datetime-local">
-    </div>
-
-    <div class="field">
+        <div class="date-time-row">
+          <input
+            type="text"
+            formControlName="dataPartidaData"
+            mask="00/00/0000"
+            placeholder="dd/mm/aaaa"
+          />
+          <input
+            type="text"
+            formControlName="dataPartidaHora"
+            mask="00:00"
+            placeholder="00:00"
+            maxlength="5"
+            (blur)="clampTimeField('dataPartidaHora')"
+          />
+        </div>
+        <span class="error-text" *ngIf="getErrorMessage('dataPartidaData')">{{ getErrorMessage('dataPartidaData') }}</span>
+        <span class="error-text" *ngIf="getErrorMessage('dataPartidaHora')">{{ getErrorMessage('dataPartidaHora') }}</span>
+      </div>
+      <div class="field">
         <label>Previsão de chegada *</label>
-        <input type="datetime-local">
+        <div class="date-time-row">
+          <input
+            type="text"
+            formControlName="previsaoChegadaData"
+            mask="00/00/0000"
+            placeholder="dd/mm/aaaa"
+          />
+          <input
+            type="text"
+            formControlName="previsaoChegadaHora"
+            mask="00:00"
+            placeholder="00:00"
+            maxlength="5"
+            (blur)="clampTimeField('previsaoChegadaHora')"
+          />
+        </div>
+        <span class="error-text" *ngIf="getErrorMessage('previsaoChegadaData')">{{ getErrorMessage('previsaoChegadaData') }}</span>
+        <span class="error-text" *ngIf="getErrorMessage('previsaoChegadaHora')">{{ getErrorMessage('previsaoChegadaHora') }}</span>
+      </div>
     </div>
-</div>
 
-<div class="grid-2">
-    <div class="field">
+    <div class="grid-2">
+      <div class="field">
         <label>Vagas disponíveis *</label>
-        <input type="number" min="1" required>
+        <input type="number" formControlName="vagasDisponiveis" min="1" />
+        <span class="error-text" *ngIf="getErrorMessage('vagasDisponiveis')">{{ getErrorMessage('vagasDisponiveis') }}</span>
+      </div>
+      <div class="field">
+        <label>Valor da passagem (R$) *</label>
+        <input
+          type="text"
+          formControlName="valorPassagem"
+          mask="separator.2"
+          [decimalMarker]="','"
+          [thousandSeparator]="'.'"
+          placeholder="0,00"
+        />
+        <span class="error-text" *ngIf="getErrorMessage('valorPassagem')">{{ getErrorMessage('valorPassagem') }}</span>
+      </div>
     </div>
 
-    <div class="field">
-        <label>Valor da passagem *</label>
-        <input type="text" placeholder="R$">
-    </div>
-</div>
+    <h2>De onde você vai sair?</h2>
 
-
-<h2>De onde você vai sair?</h2>
-
-<div class="grid-2">
-    <div class="field">
+    <div formGroupName="origem" class="grid-2">
+      <div class="field">
         <label>Nome *</label>
-        <input type="text">
-    </div>
-
-    <div class="field">
+        <input
+          type="text"
+          formControlName="nome"
+          placeholder="EX: Campus Morro do Cruzeiro"
+        />
+        <span class="error-text" *ngIf="getErrorMessage('origem.nome')">{{ getErrorMessage('origem.nome') }}</span>
+      </div>
+      <div class="field">
         <label>CEP *</label>
-        <input type="number">
-    </div>
-    <div class="field">
-        <label>Longradouro *</label>
-        <input type="text">
-    </div>
-
-    <div class="field">
-        <label>N.º *</label>
-        <input type="number">
-    </div>
-    <div class="field">
+        <input type="text" formControlName="cep" mask="00000-000" />
+        <span class="error-text" *ngIf="getErrorMessage('origem.cep')">{{ getErrorMessage('origem.cep') }}</span>
+      </div>
+      <div class="field">
+        <label>Logradouro *</label>
+        <input type="text" formControlName="logradouro" />
+        <span class="error-text" *ngIf="getErrorMessage('origem.logradouro')">{{ getErrorMessage('origem.logradouro') }}</span>
+      </div>
+      <div class="field">
+        <label>N° *</label>
+        <input type="text" formControlName="numero" />
+        <span class="error-text" *ngIf="getErrorMessage('origem.numero')">{{ getErrorMessage('origem.numero') }}</span>
+      </div>
+      <div class="field">
         <label>Bairro *</label>
-        <input type="text">
-    </div>
-    <div class="field">
+        <input type="text" formControlName="bairro" />
+        <span class="error-text" *ngIf="getErrorMessage('origem.bairro')">{{ getErrorMessage('origem.bairro') }}</span>
+      </div>
+      <div class="field">
         <label>Cidade *</label>
-        <input type="text">
+        <input type="text" formControlName="cidade" />
+        <span class="error-text" *ngIf="getErrorMessage('origem.cidade')">{{ getErrorMessage('origem.cidade') }}</span>
+      </div>
+      <div class="field">
+        <label>UF *</label>
+        <select formControlName="uf">
+          <option value="">Selecione</option>
+          <option *ngFor="let uf of ufs" [value]="uf.value">
+            {{ uf.label }}
+          </option>
+        </select>
+        <span class="error-text" *ngIf="getErrorMessage('origem.uf')">{{ getErrorMessage('origem.uf') }}</span>
+      </div>
     </div>
-    <div class="field">
-        <label for="uf">Estado *</label>
-         <select id="uf" name="uf" required>
-          <option value=""></option>
 
-        <option value="AC">Acre</option>
-       <option value="AL">Alagoas</option>
-      <option value="AP">Amapá</option>
-     <option value="AM">Amazonas</option>
-      <option value="BA">Bahia</option>
-       <option value="CE">Ceará</option>
-        <option value="DF">Distrito Federal</option>
-       <option value="ES">Espírito Santo</option>
-      <option value="GO">Goiás</option>
-     <option value="MA">Maranhão</option>
-      <option value="MT">Mato Grosso</option>
-       <option value="MS">Mato Grosso do Sul</option>
-        <option value="MG">Minas Gerais</option>
-       <option value="PA">Pará</option>
-      <option value="PB">Paraíba</option>
-     <option value="PR">Paraná</option>
-      <option value="PE">Pernambuco</option>
-       <option value="PI">Piauí</option>
-        <option value="RJ">Rio de Janeiro</option>
-       <option value="RN">Rio Grande do Norte</option>
-      <option value="RS">Rio Grande do Sul</option>
-     <option value="RO">Rondônia</option>
-      <option value="RR">Roraima</option>
-       <option value="SC">Santa Catarina</option>
-        <option value="SP">São Paulo</option>
-       <option value="SE">Sergipe</option>
-      <option value="TO">Tocantins</option>
+    <h2>Pra onde você vai?</h2>
 
-     </select>
-    </div>
-</div>
-
-<h2>Para onde você vai?</h2>
-
-<div class="grid-2">
-    <div class="field">
+    <div formGroupName="destino" class="grid-2">
+      <div class="field">
         <label>Nome *</label>
-        <input type="text">
-    </div>
-
-    <div class="field">
+        <input
+          type="text"
+          formControlName="nome"
+          placeholder="EX: Hiper Comercial"
+        />
+        <span class="error-text" *ngIf="getErrorMessage('destino.nome')">{{ getErrorMessage('destino.nome') }}</span>
+      </div>
+      <div class="field">
         <label>CEP *</label>
-        <input type="number">
-    </div>
-    <div class="field">
-        <label>Longradouro *</label>
-        <input type="text">
-    </div>
-
-    <div class="field">
-        <label>N.º *</label>
-        <input type="number">
-    </div>
-    <div class="field">
+        <input type="text" formControlName="cep" mask="00000-000" />
+        <span class="error-text" *ngIf="getErrorMessage('destino.cep')">{{ getErrorMessage('destino.cep') }}</span>
+      </div>
+      <div class="field">
+        <label>Logradouro *</label>
+        <input type="text" formControlName="logradouro" />
+        <span class="error-text" *ngIf="getErrorMessage('destino.logradouro')">{{ getErrorMessage('destino.logradouro') }}</span>
+      </div>
+      <div class="field">
+        <label>N° *</label>
+        <input type="text" formControlName="numero" />
+        <span class="error-text" *ngIf="getErrorMessage('destino.numero')">{{ getErrorMessage('destino.numero') }}</span>
+      </div>
+      <div class="field">
         <label>Bairro *</label>
-        <input type="text">
-    </div>
-    <div class="field">
+        <input type="text" formControlName="bairro" />
+        <span class="error-text" *ngIf="getErrorMessage('destino.bairro')">{{ getErrorMessage('destino.bairro') }}</span>
+      </div>
+      <div class="field">
         <label>Cidade *</label>
-        <input type="text">
-    </div>
-    <div class="field">
-        <label for="uf">Estado *</label>
-         <select id="uf" name="uf" required>
-          <option value=""></option>
-
-        <option value="AC">Acre</option>
-       <option value="AL">Alagoas</option>
-      <option value="AP">Amapá</option>
-     <option value="AM">Amazonas</option>
-      <option value="BA">Bahia</option>
-       <option value="CE">Ceará</option>
-        <option value="DF">Distrito Federal</option>
-       <option value="ES">Espírito Santo</option>
-      <option value="GO">Goiás</option>
-     <option value="MA">Maranhão</option>
-      <option value="MT">Mato Grosso</option>
-       <option value="MS">Mato Grosso do Sul</option>
-        <option value="MG">Minas Gerais</option>
-       <option value="PA">Pará</option>
-      <option value="PB">Paraíba</option>
-     <option value="PR">Paraná</option>
-      <option value="PE">Pernambuco</option>
-       <option value="PI">Piauí</option>
-        <option value="RJ">Rio de Janeiro</option>
-       <option value="RN">Rio Grande do Norte</option>
-      <option value="RS">Rio Grande do Sul</option>
-     <option value="RO">Rondônia</option>
-      <option value="RR">Roraima</option>
-       <option value="SC">Santa Catarina</option>
-        <option value="SP">São Paulo</option>
-       <option value="SE">Sergipe</option>
-      <option value="TO">Tocantins</option>
-
-     </select>
-    </div>
-</div>
-
-<h2>Veículo</h2>
-
-<div class="grid-2">
-    <div class="field">
-        <label>Modelo/Ano *</label>
-        <input type="text">
+        <input type="text" formControlName="cidade" />
+        <span class="error-text" *ngIf="getErrorMessage('destino.cidade')">{{ getErrorMessage('destino.cidade') }}</span>
+      </div>
+      <div class="field">
+        <label>UF *</label>
+        <select formControlName="uf">
+          <option value="">Selecione</option>
+          <option *ngFor="let uf of ufs" [value]="uf.value">
+            {{ uf.label }}
+          </option>
+        </select>
+        <span class="error-text" *ngIf="getErrorMessage('destino.uf')">{{ getErrorMessage('destino.uf') }}</span>
+      </div>
     </div>
 
-    <div class="field">
+    <h2>Veículo</h2>
+
+    <div class="grid-2">
+      <div class="field">
+        <label>Modelo/ano *</label>
+        <input type="text" formControlName="modeloAno" placeholder="EX: Fiat Uno 2015" />
+        <span class="error-text" *ngIf="getErrorMessage('modeloAno')">{{ getErrorMessage('modeloAno') }}</span>
+      </div>
+      <div class="field">
         <label>Placa *</label>
-        <input type="text">
+        <input
+          type="text"
+          formControlName="placa"
+          [mask]="placaMask"
+          class="placa-uppercase"
+          placeholder="ABC-1234 ou ABC1D23"
+        />
+        <span class="error-text" *ngIf="getErrorMessage('placa')">{{ getErrorMessage('placa') }}</span>
+      </div>
     </div>
-</div>
 
-
-<button class="submit">Cadastrar</button>
-
-</form>
+    <button type="submit" class="submit" [disabled]="form.invalid || saving">
+      {{ saving ? "Cadastrando..." : "Cadastrar" }}
+    </button>
+  </form>
 </main>
 
 <app-footer></app-footer>

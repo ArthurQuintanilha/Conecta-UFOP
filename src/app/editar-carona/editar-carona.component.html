@@ -18,7 +18,12 @@
         <div class="field">
           <label>Data da partida *</label>
           <div class="date-time-row">
-            <input type="date" formControlName="dataPartidaData" />
+            <input
+              type="text"
+              formControlName="dataPartidaData"
+              mask="00/00/0000"
+              placeholder="dd/mm/aaaa"
+            />
             <input
               type="text"
               formControlName="dataPartidaHora"
@@ -34,7 +39,12 @@
         <div class="field">
           <label>Previsão de chegada *</label>
           <div class="date-time-row">
-            <input type="date" formControlName="previsaoChegadaData" />
+            <input
+              type="text"
+              formControlName="previsaoChegadaData"
+              mask="00/00/0000"
+              placeholder="dd/mm/aaaa"
+            />
             <input
               type="text"
               formControlName="previsaoChegadaHora"
@@ -177,7 +187,13 @@
         </div>
         <div class="field">
           <label>Placa *</label>
-          <input type="text" formControlName="placa" />
+          <input
+            type="text"
+            formControlName="placa"
+            [mask]="placaMask"
+            class="placa-uppercase"
+            placeholder="ABC-1234 ou ABC1D23"
+          />
           <span class="error-text" *ngIf="getErrorMessage('placa')">{{ getErrorMessage('placa') }}</span>
         </div>
       </div>
