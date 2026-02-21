@@ -10,6 +10,7 @@ import { CadastrarCaronaComponent } from "./cadastrar-carona/cadastrar-carona.co
 import { ChatComponent } from "./chat/chat.component";
 import { AuthGuard } from "./guards/auth.guard";
 import { NonAuthGuard } from "./guards/non-auth.guard";
+import { AvaliarCaronaComponent } from "./avaliar-carona/avaliar-carona.component";
 
 const routes: Routes = [
   { path: "", redirectTo: "/login", pathMatch: "full" },
@@ -39,6 +40,7 @@ const routes: Routes = [
   },
   { path: "perfil", component: PerfilComponent, canActivate: [AuthGuard] },
   { path: "chat", component: ChatComponent, canActivate: [AuthGuard] },
+  { path: "avaliar-carona", component: AvaliarCaronaComponent},
 ];
 
 @NgModule({
