@@ -1,25 +1,30 @@
-<header class="bg-white border-b border-gray-200 px-4 py-4">
+<header class="bg-white border-b border-gray-200 px-4 py-4 relative">
   <div class="container mx-auto flex items-center justify-between">
     <div class="flex items-center gap-2 cursor-pointer" (click)="router.navigate(['/caronas'])">
-      <img src="assets/logo.png" class="h-8 w-auto">
-      <div class="text-primary font-bold text-xl">ConectaUFOP</div>
+      <img src="assets/logo.png" alt="ConectaUFOP" class="h-8 w-auto flex-shrink-0" />
+      <div class="text-primary font-bold text-xl hidden md:block">ConectaUFOP</div>
     </div>
-    
-    <div *ngIf="(currentUser$ | async) as currentUser" class="flex items-center gap-4">
+
+    <a
+      *ngIf="!(currentUser$ | async)"
+      routerLink="/login"
+      class="flex items-center gap-2 text-gray-700 hover:text-primary transition-colors font-medium px-4 py-2 rounded-lg hover:bg-gray-100"
+    >
+      Login
+    </a>
+
+    <div *ngIf="(currentUser$ | async) as currentUser" class="hidden md:flex items-center gap-4">
       <button class="bg-primary text-white px-4 py-2 rounded-lg font-medium hover:bg-primary/90 transition-colors">
         <a routerLink="/cadastrar-carona">Oferecer carona</a>
       </button>
-      
-      <a href="/minhas-caronas" class="flex items-center gap-2 text-gray-700 hover:text-primary transition-colors">
+      <a routerLink="/minhas-caronas" class="flex items-center gap-2 text-gray-700 hover:text-primary transition-colors">
         <i class="fas fa-car text-lg"></i>
         <span class="font-medium">Minhas caronas</span>
       </a>
-
       <a routerLink="/chat" class="flex items-center gap-2 text-gray-700 hover:text-primary transition-colors">
         <i class="fas fa-comments text-lg"></i>
         <span class="font-medium">Chat</span>
       </a>
-      
       <div class="relative" (click)="$event.stopPropagation()">
         <button
           type="button"
@@ -33,19 +38,18 @@
           <span class="font-medium">Olá, {{ currentUser.nome }}</span>
           <i class="fas fa-chevron-down text-sm transition-transform" [class.rotate-180]="isDropdownOpen"></i>
         </button>
-
         <div
           *ngIf="isDropdownOpen"
           class="absolute right-0 top-full z-50 mt-2 w-48 rounded-lg border border-gray-200 bg-white py-1 shadow-lg"
         >
-        <button
-        type="button"
-        (click)="router.navigate(['/perfil'])"
-        class="flex w-full items-center gap-2 px-4 py-2 text-left text-gray-700 hover:bg-gray-100 hover:text-primary"
-      >
-        <i class="fas fa-user-circle"></i>
-        <span>Perfil</span>
-      </button>
+          <button
+            type="button"
+            (click)="navTo('/perfil')"
+            class="flex w-full items-center gap-2 px-4 py-2 text-left text-gray-700 hover:bg-gray-100 hover:text-primary"
+          >
+            <i class="fas fa-user-circle"></i>
+            <span>Perfil</span>
+          </button>
           <button
             type="button"
             (click)="logout()"
@@ -57,5 +61,70 @@
         </div>
       </div>
     </div>
+
+    <!-- Logado: botão hambúrguer (só em telas pequenas) -->
+    <div *ngIf="(currentUser$ | async) as currentUser" class="flex md:hidden items-center">
+      <button
+        type="button"
+        (click)="toggleMobileMenu(); $event.stopPropagation()"
+        class="p-2 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-primary transition-colors"
+        aria-label="Abrir menu"
+      >
+        <i class="fas fa-bars text-xl"></i>
+      </button>
+    </div>
   </div>
+
+  <!-- Menu mobile (telas pequenas, quando logado) -->
+  <ng-container *ngIf="currentUser$ | async as currentUser">
+    <div
+      *ngIf="isMobileMenuOpen"
+      class="md:hidden absolute left-0 right-0 top-full z-50 bg-white border-b border-gray-200 shadow-lg"
+      (click)="$event.stopPropagation()"
+    >
+    <nav class="container mx-auto py-3 px-4 flex flex-col gap-1">
+      <a
+        routerLink="/cadastrar-carona"
+        (click)="closeMobileMenu()"
+        class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-primary font-medium"
+      >
+        <i class="fas fa-plus-circle text-lg w-6 text-center"></i>
+        <span>Oferecer carona</span>
+      </a>
+      <a
+        routerLink="/minhas-caronas"
+        (click)="closeMobileMenu()"
+        class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-primary font-medium"
+      >
+        <i class="fas fa-car text-lg w-6 text-center"></i>
+        <span>Minhas caronas</span>
+      </a>
+      <a
+        routerLink="/chat"
+        (click)="closeMobileMenu()"
+        class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-primary font-medium"
+      >
+        <i class="fas fa-comments text-lg w-6 text-center"></i>
+        <span>Chat</span>
+      </a>
+      <div class="border-t border-gray-200 my-2"></div>
+      <button
+        type="button"
+        (click)="navTo('/perfil')"
+        class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-primary font-medium w-full text-left"
+      >
+        <i class="fas fa-user-circle text-lg w-6 text-center"></i>
+        <span>Perfil</span>
+      </button>
+      <button
+        type="button"
+        (click)="logout()"
+        class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-primary font-medium w-full text-left"
+      >
+        <i class="fas fa-sign-out-alt text-lg w-6 text-center"></i>
+        <span>Sair</span>
+      </button>
+    </nav>
+  </div>
+  </ng-container>
 </header>

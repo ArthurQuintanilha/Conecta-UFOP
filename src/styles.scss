@@ -1,3 +1,40 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Formulários padrão: login, cadastro, perfil, etc. */
+.form-padrao {
+  input:not([type="file"]):not([type="submit"]):not([type="button"]):not([type="checkbox"]):not([type="radio"]),
+  textarea,
+  select {
+    background: #f5f5f5;
+    border: 1px solid transparent;
+    padding: 12px 14px;
+    border-radius: 8px;
+    outline: none;
+    font-size: 14px;
+    width: 100%;
+    font-family: inherit;
+    transition: border-color 0.2s, background 0.2s;
+    box-sizing: border-box;
+  }
+
+  input:focus,
+  textarea:focus,
+  select:focus {
+    border-color: #a31d32;
+    background: #fff;
+  }
+
+  textarea {
+    min-height: 80px;
+    resize: vertical;
+  }
+
+  label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 6px;
+    color: #333;
+  }
+}

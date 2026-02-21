@@ -99,46 +99,11 @@ $border-color: #e0e0e0;
         flex-direction: column;
 
         label {
-          font-size: 0.9rem;
-          font-weight: 400;
-          color: #444;
-          margin-bottom: 8px;
-
           .asterisk {
             color: $primary-red;
             font-weight: 700;
             margin-left: 2px;
           }
-        }
-
-        input, select, textarea {
-          background-color: $light-gray;
-          border: 1px solid transparent;
-          padding: 14px 16px;
-          border-radius: 12px;
-          outline: none;
-          font-family: inherit;
-          font-size: 0.95rem;
-          font-weight: 400;
-          transition: all 0.2s ease;
-
-          &:focus {
-            background-color: #eee;
-            border-color: rgba($primary-red, 0.2);
-          }
-        }
-
-        textarea {
-          resize: none;
-        }
-
-        select {
-          cursor: pointer;
-          appearance: none;
-          background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a31d32' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-          background-repeat: no-repeat;
-          background-position: right 18px center;
-          font-weight: 400;
         }
       }
 
@@ -153,7 +118,9 @@ $border-color: #e0e0e0;
         cursor: pointer;
         font-weight: 600;
         font-size: 1rem;
-        transition: background 0.3s, transform 0.1s;
+        transition:
+          background 0.3s,
+          transform 0.1s;
 
         &:active {
           transform: scale(0.98);

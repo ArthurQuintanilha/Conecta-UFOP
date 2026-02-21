@@ -1,20 +1,21 @@
 <app-header></app-header>
 
 <main>
-  <div class="card">
+  <!-- Etapa 1: Nome, email, gênero, senha -->
+  <div class="card form-padrao" *ngIf="step === 1">
     <h1>Cadastro</h1>
     <div class="sub">
-      Já possui uma conta? <a href="#">Entre</a>
+      Já possui uma conta? <a routerLink="/login">Entre</a>
     </div>
 
     <div class="group">
       <label>Nome Completo *</label>
-      <input type="text">
+      <input type="text" />
     </div>
 
     <div class="group">
       <label>Email (institucional) *</label>
-      <input type="email" placeholder="Digite seu email">
+      <input type="email" placeholder="Digite seu email" />
     </div>
 
     <div class="group">
@@ -29,7 +30,7 @@
 
     <div class="group">
       <label>Senha *</label>
-      <input type="password" placeholder="Digite sua senha">
+      <input type="password" placeholder="Digite sua senha" />
     </div>
 
     <div class="rules">
@@ -39,32 +40,36 @@
       <span>* Pelo menos 8 dígitos</span>
     </div>
 
-    <button>Cadastrar</button>
+    <button type="button" (click)="nextStep()">Continuar</button>
   </div>
 
-  
-   <section class="perfil">
-
+  <!-- Etapa 2: Foto e fale sobre você -->
+  <section class="perfil card form-padrao" *ngIf="step === 2">
     <header class="perfil-header">
-      <span class="back">←</span>
+      <span class="back" (click)="prevStep()" role="button" tabindex="0" (keydown.enter)="prevStep()">
+      <i class="fas fa-arrow-left"></i>
+      </span>
       <h1>Perfil</h1>
     </header>
 
     <div class="photo-section">
       <div class="photo-wrapper">
-        <div class="photo-circle"></div>
-        <button class="add-photo">+</button>
+        <div class="photo-circle">
+          <i class="fas fa-camera photo-icon"></i>
+        </div>
+        <button class="add-photo" type="button" aria-label="Adicionar foto">
+          <i class="fas fa-plus"></i>
+        </button>
       </div>
       <p class="photo-text">Escolha uma foto de perfil</p>
     </div>
 
     <div class="bio-section">
-      <label>Fale sobre você <span>*</span></label>
-      <textarea placeholder="Que tal nos contar um pouco mais sobre você."></textarea>
+      <label>Fale sobre você <span class="asterisk">*</span></label>
+      <textarea placeholder="Que tal nos contar um pouco mais sobre você." rows="4"></textarea>
     </div>
 
-    <button class="primary">Finalizar Perfil</button>
-
+    <button class="primary" type="button">Finalizar cadastro</button>
   </section>
 </main>
 

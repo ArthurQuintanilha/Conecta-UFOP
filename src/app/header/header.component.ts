@@ -11,6 +11,7 @@ import { Router } from "@angular/router";
 export class HeaderComponent {
   currentUser$ = this.userService.currentUser$;
   isDropdownOpen = false;
+  isMobileMenuOpen = false;
 
   constructor(
     private userService: UserService,
@@ -26,15 +27,28 @@ export class HeaderComponent {
     this.isDropdownOpen = false;
   }
 
+  toggleMobileMenu(): void {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+  }
+
+  closeMobileMenu(): void {
+    this.isMobileMenuOpen = false;
+  }
+
   @HostListener("document:click")
   onDocumentClick(): void {
-    if (this.isDropdownOpen) {
-      this.closeDropdown();
-    }
+    if (this.isDropdownOpen) this.closeDropdown();
+    if (this.isMobileMenuOpen) this.closeMobileMenu();
   }
 
   logout(): void {
     this.closeDropdown();
+    this.closeMobileMenu();
     this.appService.logout();
+  }
+
+  navTo(path: string): void {
+    this.closeMobileMenu();
+    this.router.navigate([path]);
   }
 }

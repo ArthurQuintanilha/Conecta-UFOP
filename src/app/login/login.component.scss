@@ -4,97 +4,138 @@
   align-items: center;
   padding: 25px 0;
   background-color: white;
+  min-height: calc(90vh - 140px);
+}
 
-  .content{
+.content {
+  display: flex;
+  padding: 50px;
+  gap: 100px;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 100%;
+}
+
+.info-card {
+  background-image: linear-gradient(rgba(163, 29, 50, 0.2), rgba(163, 29, 50, 0.8)), url("/assets/imagem_login.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 400px;
+  height: 550px;
+  padding: 30px 5px 30px 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-radius: 15px;
+  color: white;
+  text-align: center;
+  flex-shrink: 0;
+
+  h1 { font-size: 1.5rem; margin-bottom: 5px; font-weight: bold; }
+  h2 { font-size: 1.2rem; margin-bottom: 10px; font-weight: 500; }
+  p { font-size: 0.9rem; opacity: 0.8; }
+}
+
+.form-container {
+  background: white;
+  width: 100%;
+  max-width: 400px;
+  min-height: 550px;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+
+  .tab-group {
     display: flex;
-    padding: 50px 200px;
-    gap: 100px;
-    justify-content: center;
+    margin-bottom: 30px;
+    flex-direction: column;
+    h1 { font-size: 1.5rem; margin-bottom: 5px; font-weight: bold; }
+    h3 { font-size: small; }
+    p { font-size: small; &:hover { color: rgb(0, 119, 255); text-decoration: underline; } }
+  }
 
-    .info-card {
-      background-image: linear-gradient(rgba(163, 29, 50, 0.2), rgba(163, 29, 50, 0.8)), url("/assets/imagem_login.jpg");
-      background-repeat: no-repeat;
-      background-size: cover;
-      width: 400px;
-      height: 550px;
-      padding: 30px 5px 30px 5px;
-      display:flex;
-      flex-direction: column;
-      justify-content: space-between; 
-      border-radius: 15px;
+  .link-cadastre-se {
+    display: inline-block;
+    padding: 8px 4px;
+    margin: -8px -4px;
+    color: rgb(0, 119, 255);
+    text-decoration: none;
+    font-weight: 500;
+    position: relative;
+    z-index: 1;
+    cursor: pointer;
+    min-height: 44px;
+    line-height: 28px;
+    box-sizing: content-box;
+  }
+  .link-cadastre-se:hover {
+    text-decoration: underline;
+  }
+
+  .tab {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    &.active {
+      background: #a31d32;
       color: white;
-      text-align: center;
-
-      h1 { font-size: 1.5rem; margin-bottom: 5px; font-weight: bold;}
-      h2 { font-size: 1.2rem; margin-bottom: 10px; font-weight: 500; }
-      p { font-size: 0.9rem; opacity: 0.8; }
+      border-radius: 8px;
     }
+  }
 
-    .form-container {
-      background: white;
-      width: 400px;
-      height: 550px;
-      padding: 40px;
-      display: flex;
-      flex-direction: column;
-      //align-items: center;
+  .input-field {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    label { font-size: small; margin-bottom: 5px; }
+  }
 
-      .tab-group {
-        display: flex;
-        margin-bottom: 30px;
-        flex-direction: column;
-        h1 { font-size: 1.5rem; margin-bottom: 5px; font-weight: bold;}
-        h3 { font-size: small;}
-        p { font-size: small; &:hover{color:rgb(0, 119, 255); text-decoration: underline;}}
-      }
+  .label-row {
+    display: flex;
+    justify-content: space-between;
+    label { font-size: small; margin-bottom: 5px; }
+    a { font-size: small; &:hover { color: rgb(0, 119, 255); text-decoration: underline; } }
+  }
 
-      .tab {
-        flex: 1;
-        padding: 10px;
-        border: none;
-        background: transparent;
-        cursor: pointer;
-        &.active {
-          background: #a31d32;
-          color: white;
-          border-radius: 8px;
-        }
-       }
+  .btn-main {
+    background: #a31d32;
+    color: white;
+    border: none;
+    padding: 10px;
+    width: 100%;
+    border-radius: 8px;
+    margin-top: 30px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+}
 
-      .input-field {
-        margin-bottom: 20px;
-        display: flex;
-        flex-direction: column; 
-        label { font-size: small; margin-bottom: 5px; }
-      }
+// Mobile: esconde o card da imagem e deixa só o formulário (estilo cadastro)
+@media (max-width: 767px) {
+  .login-container {
+    padding: 20px 0;
+    align-items: flex-start;
+  }
 
-      .label-row {
-        display:flex;
-        justify-content: space-between;
-        label { font-size: small; margin-bottom: 5px; }
-        a {font-size: small; &:hover{color:rgb(0, 119, 255); text-decoration: underline;} }
-      }
-      
-      input {
-        background: #f5f5f5;
-        border: none;
-        padding: 12px;
-        border-radius: 5px;
-        outline: none;
-        &:focus { border: 1px solid #a31d32; }
-      }
+  .content {
+    flex-direction: column;
+    padding: 16px;
+    gap: 0;
+    max-width: 520px;
+    margin: 0 auto;
+  }
 
-      .btn-main {
-        background: #a31d32;
-        color: white;
-        border: none;
-        padding: 10px;
-        width: 100%;
-        border-radius: 8px;
-        margin-top: 30px;
-        cursor: pointer;
-        font-weight: bold;
-      }
-    }
+  .info-card {
+    display: none;
+  }
+
+  .form-container {
+    max-width: 100%;
+    min-height: auto;
+    padding: 24px 16px;
+    width: 100%;
   }
 }

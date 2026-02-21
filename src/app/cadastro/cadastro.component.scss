@@ -1,105 +1,101 @@
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: "Segoe UI", Arial, sans-serif;
-  }
-  
-  :host {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-  }
-  
-  main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 40px 0;
-  }  
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
 
-  // cadastro
-  
-  .card {
-    width: 100%;
-    max-width: 520px;
-    padding: 32px;
-  }
-  
-  .card h1 {
-    font-size: 28px;
-    margin-bottom: 6px;
-    color: #2b1b4f;
-  }
-  
-  .card .sub {
-    font-size: 14px;
-    margin-bottom: 24px;
-    color: #555;
-  }
-  
-  .card .sub a {
-    color: #3b4cff;
-    text-decoration: none;
-    font-weight: 500;
-  }
-  
-  .group {
-    margin-bottom: 16px;
-  }
-  
-  label {
-    display: block;
-    font-size: 14px;
-    margin-bottom: 6px;
-    color: #333;
-  }
-  
-  input,
-  select {
-    width: 100%;
-    padding: 12px 14px;
-    border-radius: 6px;
-    border: 1px solid #ddd;
-    background: #f7f7f9;
-    outline: none;
-    font-size: 14px;
-  }
-  
-  input:focus,
-  select:focus {
-    border-color: #b51e3d;
-    background: #fff;
-  }
-  
-  .rules {
-    margin: 12px 0 24px;
-    font-size: 13px;
-    color: #555;
-    line-height: 1.6;
-  }
-  
-  .rules span {
-    display: block;
-  }
-  
-  button {
-    width: 100%;
-    padding: 14px;
-    border: none;
-    border-radius: 8px;
-    background: #9b1b32;
-    color: #fff;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.2s;
-  }
-  
-  button:hover {
-    background: #7f1529;
-  }
+/* Restaura Font Awesome nos ícones (o * acima sobrescreve a fonte) */
+.fas,
+.far,
+.fab,
+.fa,
+i[class^="fa-"] {
+  font-family: "Font Awesome 6 Free" !important;
+  font-weight: 900;
+}
+.far {
+  font-weight: 400;
+}
+
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 0;
+}
+
+// cadastro
+
+.card {
+  width: 100%;
+  max-width: 520px;
+  padding: 32px;
+}
+
+.card h1 {
+  font-size: 28px;
+  margin-bottom: 6px;
+  color: #2b1b4f;
+}
+
+.card .sub {
+  font-size: 14px;
+  margin-bottom: 24px;
+  color: #555;
+}
+
+.card .sub a {
+  color: #3b4cff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.group {
+  margin-bottom: 16px;
+}
+
+label {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: #333;
+}
+
+.rules {
+  margin: 12px 0 24px;
+  font-size: 13px;
+  color: #555;
+  line-height: 1.6;
+}
+
+.rules span {
+  display: block;
+}
+
+button {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  background: #9b1b32;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+button:hover {
+  background: #7f1529;
+}
 
 // perfil
 
@@ -124,8 +120,18 @@
 
 .back {
   cursor: pointer;
-  font-size: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   color: #2b1b4f;
+  font-size: 16px;
+  transition: background 0.2s;
+}
+.back:hover {
+  background: #f5f5f5;
 }
 
 .photo-section {
@@ -149,20 +155,33 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  background: #fafafa;
+}
+
+.photo-icon {
+  font-size: 36px;
+  color: #b0b0b0;
 }
 
 .add-photo {
   position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 32px;
-  height: 32px;
+  bottom: -4px;
+  right: -4px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background: #9b1b32;
   color: #fff;
   border: none;
-  font-size: 20px;
+  font-size: 16px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+.add-photo:hover {
+  background: #7f1529;
 }
 
 .photo-text {
@@ -175,13 +194,32 @@
   margin-bottom: 32px;
 }
 
+.bio-section label {
+  margin-bottom: 8px;
+}
+
+.bio-section .asterisk {
+  color: #9b1b32;
+}
+
 .bio-section textarea {
-  min-height: 100px;
-  resize: none;
+  width: 100%;
+  min-height: 120px;
+  padding: 12px 14px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background: #f7f7f9;
+  outline: none;
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.bio-section textarea:focus {
+  border-color: #9b1b32;
+  background: #fff;
 }
 
 .primary {
   margin-top: 12px;
 }
- 
-  
