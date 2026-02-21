@@ -118,6 +118,42 @@ export class AppService {
     }
   }
 
+  /**
+   * Login sem redirecionar, para uso após cadastro (POST /users).
+   * Retorna true em sucesso; em erro exibe toast e retorna false.
+   */
+  async loginByAuthForCadastro({
+    email,
+    password,
+  }: {
+    email: string;
+    password: string;
+  }): Promise<boolean> {
+    try {
+      const credential = await this.afAuth.signInWithEmailAndPassword(
+        email,
+        password,
+      );
+      const uid = credential.user!.uid;
+      const me = await this.userService.getMe();
+      if (!me) {
+        this.toastr.error(
+          "Seu e-mail está autenticado, mas não há um perfil cadastrado no sistema.",
+          "Usuário não encontrado",
+        );
+        await this.logout();
+        return false;
+      }
+      this.userService.setCurrentUser({ uid, ...me });
+      return true;
+    } catch (error: any) {
+      const { title, message } = this.getLoginErrorMessage(error);
+      this.toastr.error(message, title);
+      await this.logout();
+      return false;
+    }
+  }
+
   getProfile(): Observable<boolean> {
     return this.afAuth.authState.pipe(map((user) => !!user));
   }

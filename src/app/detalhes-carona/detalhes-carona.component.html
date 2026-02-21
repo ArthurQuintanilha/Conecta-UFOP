@@ -1,159 +1,115 @@
 <app-header></app-header>
 
 <div class="page">
+  <ng-container *ngIf="loading">
+    <div class="loading">Carregando detalhes da carona...</div>
+  </ng-container>
 
+  <ng-container *ngIf="!loading && notFound">
+    <div class="not-found">
+      <h1>Carona não encontrada</h1>
+      <p>O link pode estar incorreto ou a carona não existe mais.</p>
+      <button type="button" class="btn-voltar" (click)="voltar()">Voltar para caronas</button>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="!loading && !notFound && carona">
     <div class="top-section">
       <div>
         <h1>Detalhes da viagem</h1>
-  
         <div class="status-row">
-          <span class="badge">CONFIRMADA</span>
-          <span class="price">• Valor à pagar: R$ 28,00</span>
+          <span class="badge" [ngClass]="statusBadgeClass">{{ statusLabel }}</span>
+          <span class="price">Valor da passagem: R$ {{ formatarValor(carona.valor) }}</span>
         </div>
       </div>
-  
-      <button class="btn-cancelar">
-        CANCELAR RESERVA
-      </button>
+      <button type="button" class="btn-voltar" (click)="voltar()">Voltar</button>
     </div>
-  
+
     <div class="card rota-card">
       <div class="timeline">
-  
         <div class="timeline-item">
-          <div class="time">Hoje, 09:30</div>
+          <div class="time">{{ formatarDataCompleta(carona.dtPartida) }}</div>
           <div class="dot"></div>
           <div class="content">
             <div class="title">Local de saída</div>
-            <div class="address">
-              Endereço completo aqui
-            </div>
+            <div class="address">{{ formatarEndereco(carona.origem) }}</div>
           </div>
         </div>
-  
+
         <div class="line"></div>
-  
+
         <div class="timeline-item">
-          <div class="time">Hoje, 09:45</div>
+          <div class="time">{{ carona.dtChegada ? formatarDataCompleta(carona.dtChegada) : "—" }}</div>
           <div class="dot"></div>
           <div class="content">
             <div class="title">Destino</div>
-            <div class="address">
-              Endereço completo aqui
-            </div>
+            <div class="address">{{ formatarEndereco(carona.destino) }}</div>
           </div>
         </div>
-  
       </div>
     </div>
-  
-    <div class="card motorista-card">
-  
-    
-      <img src="" alt="Foto do motorista" class="avatar">
-  
+
+    <div class="card motorista-card" *ngIf="motorista">
+      <img
+        *ngIf="motorista.foto"
+        [src]="motorista.foto"
+        alt="Foto do motorista"
+        class="avatar"
+      />
+      <div *ngIf="!motorista.foto" class="avatar avatar-iniciais">{{ motorista.nome.charAt(0).toUpperCase() }}</div>
       <div class="motorista-info">
-  
         <div class="motorista-header">
           <div class="nome">
-            Nome do Motorista
-            <span class="rating">★ 4.5</span>
+            {{ motorista.nome }}
+            <span class="rating" *ngIf="motorista.avaliacoes != null">★ {{ motorista.avaliacoes | number:'1.1-1' }}</span>
           </div>
-  
-          
-          <button class="icon-button">
-            <img src="assets/chat.png" alt="Notificação">
+          <button type="button" class="icon-button" (click)="irParaChat()" title="Enviar mensagem">
+            <img src="assets/chat.png" alt="Chat" />
           </button>
         </div>
-  
-        <div class="subtitle">
-          Idade, Curso - Universidade
-        </div>
-  
-        <p class="descricao">
-          Descrição do motorista aqui.
-        </p>
-  
+        <div class="subtitle" *ngIf="motorista.curso">{{ motorista.curso }}</div>
         <div class="divider"></div>
-  
         <div class="infos">
-
-            <div class="info-item">
-              <div class="icon">
-                <img src="assets/calendar.png" alt="Entrou em">
-              </div>
-              <div class="text">
-                Entrou em <!-- mês/ano -->
-              </div>
+          <div class="info-item">
+            <div class="icon">
+              <img src="assets/car.png" alt="Veículo" />
             </div>
-          
-            <div class="info-item">
-              <div class="icon">
-                <img src="assets/trip.png" alt="Viagens">
-              </div>
-              <div class="text">
-                   <!-- número de viagens -->viagens oferecidas e concluídas com sucesso
-              </div>
-            </div>
-          
-            <div class="info-item">
-              <div class="icon">
-                <img src="assets/car.png" alt="Veículo">
-              </div>
-              <div class="text">
-                   <!-- modelo do veiculo -->
-              </div>
-            </div>
-          
-            <div class="info-item">
-              <div class="icon">
-                <img src="assets/volante.png" alt="Avaliação">
-              </div>
-              <div class="text">
-                Condução: <!-- avaliação -->
-              </div>
-            </div>
-          
+            <div class="text">{{ carona.veiculo || "—" }} · {{ carona.placa || "—" }}</div>
           </div>
-  
-  
+          <div class="info-item">
+            <div class="icon">
+              <img src="assets/trip.png" alt="Vagas" />
+            </div>
+            <div class="text">{{ carona.vagas }} vaga(s) disponível(eis)</div>
+          </div>
+        </div>
       </div>
     </div>
-  
-    <div class="passageiros-section">
-      <h2>Passageiros</h2>
-  
-      <div class="passageiros-list">
-  
-        <div class="card passageiro-card">
-  
-         
-          <img src="" alt="Foto do passageiro" class="avatar-small">
-  
-          <div class="passageiro-info">
-            <div class="nome">Nome do Passageiro</div>
-            <div class="subtitle">
-              Idade, Curso - Universidade
-            </div>
-        </div>
-  
-        </div>
-  
-        <div class="card passageiro-card">
-  
-          <img src="" alt="Foto do passageiro" class="avatar-small">
-  
-          <div class="passageiro-info">
-            <div class="nome">Nome do Passageiro</div>
-            <div class="subtitle">
-              Idade, Curso - Universidade
-            </div>
-        </div>
-  
-        </div>
-  
-      </div>
-    </div>
-  </div>
 
-  <app-footer></app-footer>
+    <div class="passageiros-section" *ngIf="passageiros.length > 0">
+      <h2>Passageiros</h2>
+      <div class="passageiros-list">
+        <div class="card passageiro-card" *ngFor="let p of passageiros">
+          <img
+            *ngIf="p.foto"
+            [src]="p.foto"
+            alt="Foto do passageiro"
+            class="avatar-small"
+          />
+          <div *ngIf="!p.foto" class="avatar-small avatar-iniciais-small">{{ p.nome.charAt(0).toUpperCase() }}</div>
+          <div class="passageiro-info">
+            <div class="nome">{{ p.nome }}</div>
+            <div class="subtitle" *ngIf="p.curso">{{ p.curso }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="passageiros-section" *ngIf="!loading && carona && (!carona.passageiros || carona.passageiros.length === 0)">
+      <h2>Passageiros</h2>
+      <p class="nenhum-passageiro">Nenhum passageiro nesta carona.</p>
+    </div>
+  </ng-container>
+</div>
+
+<app-footer></app-footer>

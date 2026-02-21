@@ -7,28 +7,36 @@
     </div>
 
     <div class="tabs-nav">
-      <button class="tab-item" [class.active]="abaAtiva === 'proximas'" (click)="abaAtiva = 'proximas'">
-        Próximas Caronas
+      <button class="tab-item" [class.active]="abaAtiva === 'motorista'" (click)="abaAtiva = 'motorista'">
+        Como motorista
       </button>
-      <button class="tab-item" [class.active]="abaAtiva === 'historico'" (click)="abaAtiva = 'historico'">
-        Histórico
+      <button class="tab-item" [class.active]="abaAtiva === 'passageiro'" (click)="abaAtiva = 'passageiro'">
+        Como passageiro
       </button>
     </div>
 
-    <div class="responsive-grid">
-      <div class="card" *ngFor="let item of caronasFiltradas">
-        
-        <span class="status-badge" [ngClass]="item.status" *ngIf="item.status !== 'disponivel'">
-          {{ item.status === 'solicitada' ? 'SOLICITADA' : (item.status === 'confirmada' ? 'CONFIRMADA' : 'FINALIZADA') }}
+    <div class="loading-state" *ngIf="loading">
+      <p>Carregando minhas caronas...</p>
+    </div>
+
+    <div class="erro-state" *ngIf="!loading && erro">
+      <p>{{ erro }}</p>
+      <button class="btn-primary" (click)="carregarMinhasCaronas()">Tentar novamente</button>
+    </div>
+
+    <div class="responsive-grid" *ngIf="!loading && !erro">
+      <div class="card" *ngFor="let item of listaAtiva">
+        <span class="status-badge" [ngClass]="(item.status || '').toLowerCase()" *ngIf="item.status">
+          {{ item.status }}
         </span>
 
         <div class="card-header">
           <div class="avatar">
-            <img [src]="item.fotoMotorista" alt="Foto">
+            <img [src]="fotoMotorista(item)" alt="Foto" onerror="this.src='https://i.pravatar.cc/150?u=driver'" />
           </div>
           <div class="info-motorista">
-            <h3>{{ item.motorista }}</h3>
-            <p>{{ item.veiculo }}</p>
+            <h3>{{ abaAtiva === 'passageiro' ? nomeMotorista(item) : 'Minha carona' }}</h3>
+            <p>{{ veiculoTexto(item) }}</p>
           </div>
         </div>
 
@@ -38,40 +46,28 @@
             <div class="line"></div>
             <div class="dot-end"></div>
             <div class="text-route">
-              <p><strong>De:</strong> {{ item.origem }}</p>
-              <p><strong>Para:</strong> {{ item.destino }}</p>
+              <p><strong>De:</strong> {{ origemTexto(item) }}</p>
+              <p><strong>Para:</strong> {{ destinoTexto(item) }}</p>
             </div>
           </div>
           <div class="time-info">
-            <span>🕒 {{ item.horario }} (Hoje)</span>
+            <span>🕒 {{ horarioPartida(item) }}</span>
+          </div>
+          <div class="valor-info" *ngIf="item.valor != null">
+            <span>{{ valorTexto(item) }}</span>
           </div>
         </div>
-        
+
         <div class="card-footer">
-           <button class="btn-primary" *ngIf="item.status === 'disponivel'" (click)="solicitarCarona(item)">
-             Solicitar Carona
-           </button>
-           <button class="btn-outline" *ngIf="item.status === 'solicitada'" disabled>
-             Aguardando resposta...
-           </button>
-           <button class="btn-success" *ngIf="item.status === 'confirmada'">
-             Ver Detalhes
-           </button>
-           <a [routerLink]="['/editar-carona', item.id]" class="btn-editar">Editar</a>
+          <a [routerLink]="['/detalhes-carona', item.id]" class="btn-success">Ver Detalhes</a>
+          <a *ngIf="abaAtiva === 'motorista'" [routerLink]="['/editar-carona', item.id]" class="btn-editar">Editar</a>
         </div>
       </div>
     </div>
 
-    <div class="empty-state" *ngIf="caronasFiltradas.length === 0">
-      <p>Nenhuma carona encontrada nesta categoria.</p>
+    <div class="empty-state" *ngIf="!loading && !erro && listaAtiva.length === 0">
+      <p>{{ abaAtiva === 'motorista' ? 'Você ainda não tem caronas como motorista.' : 'Você ainda não tem caronas como passageiro.' }}</p>
     </div>
-  </div>
-</div>
-
-<div class="toast-container" [class.show]="showToast">
-  <div class="toast-content">
-    <span class="icon">✅</span>
-    <p>{{ toastMsg }}</p>
   </div>
 </div>
 

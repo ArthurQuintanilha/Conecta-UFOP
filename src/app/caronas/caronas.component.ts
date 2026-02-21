@@ -1,4 +1,5 @@
 import { Component, OnInit } from "@angular/core";
+import { Router } from "@angular/router";
 import { CaronasService } from "../services/caronas.service";
 import type {
   ListCaronaItem,
@@ -15,7 +16,10 @@ import type {
 export class CaronasComponent implements OnInit {
   caronas: ListCaronaItem[] = [];
 
-  constructor(private caronasService: CaronasService) {}
+  constructor(
+    private caronasService: CaronasService,
+    private router: Router,
+  ) {}
 
   async ngOnInit() {
     try {
@@ -73,6 +77,6 @@ export class CaronasComponent implements OnInit {
   }
 
   verDetalhes(carona: ListCaronaItem) {
-    console.log(carona);
+    this.router.navigate(["/detalhes-carona", carona.id]);
   }
 }

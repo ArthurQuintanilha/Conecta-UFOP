@@ -32,6 +32,7 @@ export interface UploadProfileResponse {
 export interface CreateUserRequest {
   nome: string;
   email: string;
+  senha: string;
   curso_ocupacao: string;
   dtAniversario: string;
 }
@@ -102,6 +103,37 @@ export interface ListCaronaItem {
   destino?: Record<string, unknown>;
   dtPartida?: DateTimeLike;
   dtChegada?: DateTimeLike;
+}
+
+/** GET /caronas/minhasCaronas - Item de carona (como motorista ou passageiro) */
+export interface MinhasCaronasItem {
+  id: string;
+  papel: "motorista" | "passageiro";
+  status?: string;
+  motorista?: {
+    nome?: string;
+    fotoUrl?: string | null;
+    [key: string]: unknown;
+  };
+  veiculo?: {
+    modelo?: string;
+    placa?: string;
+    formatado?: string;
+    [key: string]: unknown;
+  };
+  origem?: OrigemCarona | Record<string, unknown>;
+  destino?: OrigemCarona | Record<string, unknown>;
+  rota?: string;
+  dtPartida?: string;
+  dtChegada?: string;
+  valor?: string | number;
+  vagasDisponiveis?: number;
+}
+
+/** GET /caronas/minhasCaronas - Resposta completa */
+export interface MinhasCaronasResponse {
+  comoMotorista: MinhasCaronasItem[];
+  comoPassageiro: MinhasCaronasItem[];
 }
 
 /** GET /carona/{id} */

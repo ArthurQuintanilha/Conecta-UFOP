@@ -83,7 +83,7 @@ $status-yellow: #ffc107;
     padding: 4px 8px;
     border-radius: 4px;
 
-    &.confirmada { background: #e8f5e9; color: $status-green; }
+    &.confirmada, &.confirmado { background: #e8f5e9; color: $status-green; }
     &.solicitada { background: #fffde7; color: #fbc02d; }
   }
 
@@ -105,15 +105,24 @@ $status-yellow: #ffc107;
   }
 
   .card-body {
-    .route-info, .time-info {
+    .route-info, .time-info, .valor-info {
       display: flex;
       align-items: center;
       gap: 10px;
       margin-bottom: 5px;
       p { margin: 0; font-size: 0.9rem; color: #444; }
     }
+    .valor-info { font-weight: 600; color: #1a1a2e; }
   }
 }
+.loading-state, .erro-state {
+  text-align: center;
+  padding: 2rem;
+  color: $text-muted;
+  .btn-primary { margin-top: 1rem; }
+}
+.erro-state p { color: #c62828; }
+
 .card-footer {
   margin-top: 15px;
   display: flex;
@@ -121,6 +130,18 @@ $status-yellow: #ffc107;
   gap: 10px;
   justify-content: center;
   align-items: center;
+
+  a.btn-success {
+    display: inline-block;
+    padding: 10px 1rem;
+    border-radius: 8px;
+    background-color: #4caf50;
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+    transition: 0.3s;
+    &:hover { filter: brightness(1.05); }
+  }
 
   .btn-editar {
     display: inline-block;

@@ -1,8 +1,8 @@
 <app-header></app-header>
 
 <main>
-  <!-- Etapa 1: Nome, email, gênero, senha -->
-  <div class="card form-padrao" *ngIf="step === 1">
+  <!-- Etapa 1: Nome, email, curso, data nascimento, senha -->
+  <div class="card form-padrao" *ngIf="step === 1" [formGroup]="formStep1">
     <h1>Cadastro</h1>
     <div class="sub">
       Já possui uma conta? <a routerLink="/login">Entre</a>
@@ -10,27 +10,50 @@
 
     <div class="group">
       <label>Nome Completo *</label>
-      <input type="text" />
+      <input type="text" formControlName="nome" />
+      <span class="error-text" *ngIf="getErrorMessage(formStep1, 'nome')">{{
+        getErrorMessage(formStep1, "nome")
+      }}</span>
     </div>
 
     <div class="group">
       <label>Email (institucional) *</label>
-      <input type="email" placeholder="Digite seu email" />
+      <input type="email" formControlName="email" placeholder="Digite seu email" />
+      <span class="error-text" *ngIf="getErrorMessage(formStep1, 'email')">{{
+        getErrorMessage(formStep1, "email")
+      }}</span>
     </div>
 
     <div class="group">
-      <label>Gênero *</label>
-      <select>
-        <option value="">Selecione seu gênero</option>
-        <option>Masculino</option>
-        <option>Feminino</option>
-        <option>Prefiro não informar</option>
+      <label>Curso / Ocupação *</label>
+      <select formControlName="curso_ocupacao">
+        <option value="">Selecione seu curso ou ocupação</option>
+        <option *ngFor="let curso of cursosOcupacao" [value]="curso">{{ curso }}</option>
       </select>
+      <span class="error-text" *ngIf="getErrorMessage(formStep1, 'curso_ocupacao')">{{
+        getErrorMessage(formStep1, "curso_ocupacao")
+      }}</span>
+    </div>
+
+    <div class="group">
+      <label>Data de nascimento *</label>
+      <input
+        type="text"
+        formControlName="dtAniversario"
+        mask="00/00/0000"
+        placeholder="dd/mm/aaaa"
+      />
+      <span class="error-text" *ngIf="getErrorMessage(formStep1, 'dtAniversario')">{{
+        getErrorMessage(formStep1, "dtAniversario")
+      }}</span>
     </div>
 
     <div class="group">
       <label>Senha *</label>
-      <input type="password" placeholder="Digite sua senha" />
+      <input type="password" formControlName="senha" placeholder="Digite sua senha" />
+      <span class="error-text" *ngIf="getErrorMessage(formStep1, 'senha')">{{
+        getErrorMessage(formStep1, "senha")
+      }}</span>
     </div>
 
     <div class="rules">
@@ -40,25 +63,58 @@
       <span>* Pelo menos 8 dígitos</span>
     </div>
 
-    <button type="button" (click)="nextStep()">Continuar</button>
+    <button
+      type="button"
+      (click)="onSubmitStep1()"
+      [disabled]="!formStep1.valid || submittingStep1"
+    >
+      {{ submittingStep1 ? "Cadastrando..." : "Cadastrar" }}
+    </button>
   </div>
 
   <!-- Etapa 2: Foto e fale sobre você -->
-  <section class="perfil card form-padrao" *ngIf="step === 2">
+  <section class="perfil card form-padrao" *ngIf="step === 2" [formGroup]="formStep2">
     <header class="perfil-header">
       <span class="back" (click)="prevStep()" role="button" tabindex="0" (keydown.enter)="prevStep()">
-      <i class="fas fa-arrow-left"></i>
+        <i class="fas fa-arrow-left"></i>
       </span>
       <h1>Perfil</h1>
     </header>
 
     <div class="photo-section">
       <div class="photo-wrapper">
-        <div class="photo-circle">
+        <div class="photo-circle" *ngIf="!photoPreviewUrl">
           <i class="fas fa-camera photo-icon"></i>
         </div>
-        <button class="add-photo" type="button" aria-label="Adicionar foto">
+        <img
+          *ngIf="photoPreviewUrl"
+          [src]="photoPreviewUrl"
+          alt="Preview"
+          class="photo-preview"
+        />
+        <input
+          #photoInput
+          type="file"
+          accept="image/*"
+          (change)="onPhotoSelected($event)"
+          class="photo-input-hidden"
+        />
+        <button
+          class="add-photo"
+          type="button"
+          aria-label="Adicionar foto"
+          (click)="photoInput.click()"
+        >
           <i class="fas fa-plus"></i>
+        </button>
+        <button
+          *ngIf="photoPreviewUrl"
+          class="remove-photo"
+          type="button"
+          aria-label="Remover foto"
+          (click)="clearPhoto(); photoInput.value = ''"
+        >
+          <i class="fas fa-times"></i>
         </button>
       </div>
       <p class="photo-text">Escolha uma foto de perfil</p>
@@ -66,10 +122,24 @@
 
     <div class="bio-section">
       <label>Fale sobre você <span class="asterisk">*</span></label>
-      <textarea placeholder="Que tal nos contar um pouco mais sobre você." rows="4"></textarea>
+      <textarea
+        formControlName="descricao"
+        placeholder="Que tal nos contar um pouco mais sobre você."
+        rows="4"
+      ></textarea>
+      <span class="error-text" *ngIf="getErrorMessage(formStep2, 'descricao')">{{
+        getErrorMessage(formStep2, "descricao")
+      }}</span>
     </div>
 
-    <button class="primary" type="button">Finalizar cadastro</button>
+    <button
+      class="primary"
+      type="button"
+      (click)="onSubmitStep2()"
+      [disabled]="!formStep2.valid || submittingStep2"
+    >
+      {{ submittingStep2 ? "Salvando..." : "Atualizar Dados" }}
+    </button>
   </section>
 </main>
 
