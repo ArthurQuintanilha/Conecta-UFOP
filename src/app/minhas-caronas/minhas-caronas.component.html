@@ -57,6 +57,7 @@
            <button class="btn-success" *ngIf="item.status === 'confirmada'">
              Ver Detalhes
            </button>
+           <a [routerLink]="['/editar-carona', item.id]" class="btn-editar">Editar</a>
         </div>
       </div>
     </div>

@@ -4,7 +4,9 @@
 
 /* Formulários padrão: login, cadastro, perfil, etc. */
 .form-padrao {
-  input:not([type="file"]):not([type="submit"]):not([type="button"]):not([type="checkbox"]):not([type="radio"]),
+  input:not([type="file"]):not([type="submit"]):not([type="button"]):not(
+      [type="checkbox"]
+    ):not([type="radio"]),
   textarea,
   select {
     background: #f5f5f5;
@@ -15,7 +17,10 @@
     font-size: 14px;
     width: 100%;
     font-family: inherit;
-    transition: border-color 0.2s, background 0.2s;
+    transition:
+      border-color 0.2s,
+      background 0.2s,
+      box-shadow 0.2s;
     box-sizing: border-box;
   }
 
@@ -24,6 +29,7 @@
   select:focus {
     border-color: #a31d32;
     background: #fff;
+    box-shadow: 0 0 0 3px rgba(163, 29, 50);
   }
 
   textarea {

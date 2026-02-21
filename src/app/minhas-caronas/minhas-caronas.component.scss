@@ -117,7 +117,26 @@ $status-yellow: #ffc107;
 .card-footer {
   margin-top: 15px;
   display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
   justify-content: center;
+  align-items: center;
+
+  .btn-editar {
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid #a31d32;
+    color: #a31d32;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: 0.2s;
+    &:hover {
+      background: #a31d32;
+      color: white;
+    }
+  }
 
   button {
     width: 100%;

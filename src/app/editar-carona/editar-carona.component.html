@@ -1,0 +1,194 @@
+<app-header></app-header>
+
+<main class="container">
+  <h1>Editar Carona</h1>
+
+  <p *ngIf="notFound" class="error-msg">Carona não encontrada.</p>
+
+  <form
+    *ngIf="!notFound"
+    [formGroup]="form"
+    class="form form-padrao"
+    (ngSubmit)="onSubmit()"
+  >
+    <ng-container *ngIf="!loading">
+      <h2>Informações da Carona</h2>
+
+      <div class="grid-2">
+        <div class="field">
+          <label>Data da partida *</label>
+          <div class="date-time-row">
+            <input type="date" formControlName="dataPartidaData" />
+            <input
+              type="text"
+              formControlName="dataPartidaHora"
+              mask="00:00"
+              placeholder="00:00"
+              maxlength="5"
+              (blur)="clampTimeField('dataPartidaHora')"
+            />
+          </div>
+          <span class="error-text" *ngIf="getErrorMessage('dataPartidaData')">{{ getErrorMessage('dataPartidaData') }}</span>
+          <span class="error-text" *ngIf="getErrorMessage('dataPartidaHora')">{{ getErrorMessage('dataPartidaHora') }}</span>
+        </div>
+        <div class="field">
+          <label>Previsão de chegada *</label>
+          <div class="date-time-row">
+            <input type="date" formControlName="previsaoChegadaData" />
+            <input
+              type="text"
+              formControlName="previsaoChegadaHora"
+              mask="00:00"
+              placeholder="00:00"
+              maxlength="5"
+              (blur)="clampTimeField('previsaoChegadaHora')"
+            />
+          </div>
+          <span class="error-text" *ngIf="getErrorMessage('previsaoChegadaData')">{{ getErrorMessage('previsaoChegadaData') }}</span>
+          <span class="error-text" *ngIf="getErrorMessage('previsaoChegadaHora')">{{ getErrorMessage('previsaoChegadaHora') }}</span>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label>Vagas disponíveis *</label>
+          <input type="number" formControlName="vagasDisponiveis" min="1" />
+          <span class="error-text" *ngIf="getErrorMessage('vagasDisponiveis')">{{ getErrorMessage('vagasDisponiveis') }}</span>
+        </div>
+        <div class="field">
+          <label>Valor da passagem (R$) *</label>
+          <input
+            type="text"
+            formControlName="valorPassagem"
+            mask="separator.2"
+            [decimalMarker]="','"
+            [thousandSeparator]="'.'"
+            placeholder="0,00"
+          />
+          <span class="error-text" *ngIf="getErrorMessage('valorPassagem')">{{ getErrorMessage('valorPassagem') }}</span>
+        </div>
+      </div>
+
+      <h2>De onde você vai sair?</h2>
+
+      <div formGroupName="origem" class="grid-2">
+        <div class="field">
+          <label>Nome *</label>
+          <input
+            type="text"
+            formControlName="nome"
+            placeholder="EX: Hiper Comercial"
+          />
+          <span class="error-text" *ngIf="getErrorMessage('origem.nome')">{{ getErrorMessage('origem.nome') }}</span>
+        </div>
+        <div class="field">
+          <label>CEP *</label>
+          <input type="text" formControlName="cep" mask="00000-000" />
+          <span class="error-text" *ngIf="getErrorMessage('origem.cep')">{{ getErrorMessage('origem.cep') }}</span>
+        </div>
+        <div class="field">
+          <label>Logradouro *</label>
+          <input type="text" formControlName="logradouro" />
+          <span class="error-text" *ngIf="getErrorMessage('origem.logradouro')">{{ getErrorMessage('origem.logradouro') }}</span>
+        </div>
+        <div class="field">
+          <label>N° *</label>
+          <input type="text" formControlName="numero" />
+          <span class="error-text" *ngIf="getErrorMessage('origem.numero')">{{ getErrorMessage('origem.numero') }}</span>
+        </div>
+        <div class="field">
+          <label>Bairro *</label>
+          <input type="text" formControlName="bairro" />
+          <span class="error-text" *ngIf="getErrorMessage('origem.bairro')">{{ getErrorMessage('origem.bairro') }}</span>
+        </div>
+        <div class="field">
+          <label>Cidade *</label>
+          <input type="text" formControlName="cidade" />
+          <span class="error-text" *ngIf="getErrorMessage('origem.cidade')">{{ getErrorMessage('origem.cidade') }}</span>
+        </div>
+        <div class="field">
+          <label>UF *</label>
+          <select formControlName="uf">
+            <option value="">Selecione</option>
+            <option *ngFor="let uf of ufs" [value]="uf.value">
+              {{ uf.label }}
+            </option>
+          </select>
+          <span class="error-text" *ngIf="getErrorMessage('origem.uf')">{{ getErrorMessage('origem.uf') }}</span>
+        </div>
+      </div>
+
+      <h2>Pra onde você vai?</h2>
+
+      <div formGroupName="destino" class="grid-2">
+        <div class="field">
+          <label>Nome *</label>
+          <input
+            type="text"
+            formControlName="nome"
+            placeholder="EX: Hiper Comercial"
+          />
+          <span class="error-text" *ngIf="getErrorMessage('destino.nome')">{{ getErrorMessage('destino.nome') }}</span>
+        </div>
+        <div class="field">
+          <label>CEP *</label>
+          <input type="text" formControlName="cep" mask="00000-000" />
+          <span class="error-text" *ngIf="getErrorMessage('destino.cep')">{{ getErrorMessage('destino.cep') }}</span>
+        </div>
+        <div class="field">
+          <label>Logradouro *</label>
+          <input type="text" formControlName="logradouro" />
+          <span class="error-text" *ngIf="getErrorMessage('destino.logradouro')">{{ getErrorMessage('destino.logradouro') }}</span>
+        </div>
+        <div class="field">
+          <label>N° *</label>
+          <input type="text" formControlName="numero" />
+          <span class="error-text" *ngIf="getErrorMessage('destino.numero')">{{ getErrorMessage('destino.numero') }}</span>
+        </div>
+        <div class="field">
+          <label>Bairro *</label>
+          <input type="text" formControlName="bairro" />
+          <span class="error-text" *ngIf="getErrorMessage('destino.bairro')">{{ getErrorMessage('destino.bairro') }}</span>
+        </div>
+        <div class="field">
+          <label>Cidade *</label>
+          <input type="text" formControlName="cidade" />
+          <span class="error-text" *ngIf="getErrorMessage('destino.cidade')">{{ getErrorMessage('destino.cidade') }}</span>
+        </div>
+        <div class="field">
+          <label>UF *</label>
+          <select formControlName="uf">
+            <option value="">Selecione</option>
+            <option *ngFor="let uf of ufs" [value]="uf.value">
+              {{ uf.label }}
+            </option>
+          </select>
+          <span class="error-text" *ngIf="getErrorMessage('destino.uf')">{{ getErrorMessage('destino.uf') }}</span>
+        </div>
+      </div>
+
+      <h2>Veículo</h2>
+
+      <div class="grid-2">
+        <div class="field">
+          <label>Modelo/ano *</label>
+          <input type="text" formControlName="modeloAno" />
+          <span class="error-text" *ngIf="getErrorMessage('modeloAno')">{{ getErrorMessage('modeloAno') }}</span>
+        </div>
+        <div class="field">
+          <label>Placa *</label>
+          <input type="text" formControlName="placa" />
+          <span class="error-text" *ngIf="getErrorMessage('placa')">{{ getErrorMessage('placa') }}</span>
+        </div>
+      </div>
+
+      <button type="submit" class="submit" [disabled]="form.invalid || saving">
+        {{ saving ? "Salvando..." : "Salvar" }}
+      </button>
+    </ng-container>
+
+    <p *ngIf="loading" class="loading-msg">Carregando...</p>
+  </form>
+</main>
+
+<app-footer></app-footer>

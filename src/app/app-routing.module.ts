@@ -11,6 +11,7 @@ import { ChatComponent } from "./chat/chat.component";
 import { AuthGuard } from "./guards/auth.guard";
 import { NonAuthGuard } from "./guards/non-auth.guard";
 import { AvaliarCaronaComponent } from "./avaliar-carona/avaliar-carona.component";
+import { EditarCaronaComponent } from "./editar-carona/editar-carona.component";
 
 const routes: Routes = [
   { path: "", redirectTo: "/login", pathMatch: "full" },
@@ -26,7 +27,7 @@ const routes: Routes = [
     component: RecuperarSenhaComponent,
     canActivate: [NonAuthGuard],
   },
-  { path: "caronas", component: CaronasComponent},
+  { path: "caronas", component: CaronasComponent },
 
   {
     path: "minhas-caronas",
@@ -38,9 +39,14 @@ const routes: Routes = [
     component: CadastrarCaronaComponent,
     canActivate: [AuthGuard],
   },
+  {
+    path: "editar-carona/:id",
+    component: EditarCaronaComponent,
+    canActivate: [AuthGuard],
+  },
   { path: "perfil", component: PerfilComponent, canActivate: [AuthGuard] },
   { path: "chat", component: ChatComponent, canActivate: [AuthGuard] },
-  { path: "avaliar-carona", component: AvaliarCaronaComponent},
+  { path: "avaliar-carona", component: AvaliarCaronaComponent },
 ];
 
 @NgModule({

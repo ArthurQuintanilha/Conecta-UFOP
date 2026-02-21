@@ -38,7 +38,7 @@
           </div>
           <div class="flex-shrink-0 ml-2">
             <p class="text-base md:text-lg font-bold text-gray-900">
-              R$ {{ carona.valor ?? 0 | number: "1.2-2" }}
+              R$ {{ (carona.valor ?? 0) | number: "1.2-2" }}
             </p>
           </div>
         </div>

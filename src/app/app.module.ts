@@ -22,7 +22,9 @@ import { MinhasCaronasComponent } from "./minhas-caronas/minhas-caronas.componen
 
 import { CadastrarCaronaComponent } from "./cadastrar-carona/cadastrar-carona.component";
 import { ChatComponent } from "./chat/chat.component";
-import { AvaliarCaronaComponent } from './avaliar-carona/avaliar-carona.component';
+import { AvaliarCaronaComponent } from "./avaliar-carona/avaliar-carona.component";
+import { EditarCaronaComponent } from "./editar-carona/editar-carona.component";
+import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from "ngx-mask";
 
 @NgModule({
   declarations: [
@@ -38,6 +40,7 @@ import { AvaliarCaronaComponent } from './avaliar-carona/avaliar-carona.componen
     CadastrarCaronaComponent,
     ChatComponent,
     AvaliarCaronaComponent,
+    EditarCaronaComponent,
   ],
   imports: [
     BrowserModule,
@@ -54,8 +57,10 @@ import { AvaliarCaronaComponent } from './avaliar-carona/avaliar-carona.componen
       positionClass: "toast-top-right",
       preventDuplicates: true,
     }),
+    NgxMaskDirective,
+    NgxMaskPipe,
   ],
-  providers: [],
+  providers: [provideNgxMask()],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
