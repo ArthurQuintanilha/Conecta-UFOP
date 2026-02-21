@@ -23,6 +23,7 @@ import { MinhasCaronasComponent } from "./minhas-caronas/minhas-caronas.componen
 import { CadastrarCaronaComponent } from "./cadastrar-carona/cadastrar-carona.component";
 import { ChatComponent } from "./chat/chat.component";
 import { AvaliarCaronaComponent } from './avaliar-carona/avaliar-carona.component';
+import { DetalhesCaronaComponent } from './detalhes-carona/detalhes-carona.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { AvaliarCaronaComponent } from './avaliar-carona/avaliar-carona.componen
     CadastrarCaronaComponent,
     ChatComponent,
     AvaliarCaronaComponent,
+    DetalhesCaronaComponent,
   ],
   imports: [
     BrowserModule,
