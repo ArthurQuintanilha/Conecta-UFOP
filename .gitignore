@@ -92,6 +92,7 @@ temp/
 
 # Firebase (extensão/emuladores – logs e cache)
 .firebase/
+.firebase/hosting.ZGlzdFxjb25lY3RhLXVmb3A.cache
 .firebase/logs/vsce-debug.log
 
 
