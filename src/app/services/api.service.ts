@@ -112,6 +112,32 @@ export class ApiService {
     });
   }
 
+  async patch<T = any>(
+    url: string,
+    data: any,
+    responseType: "json" | "text" | "blob" = "json",
+    useApiUrl = true
+  ): Promise<T> {
+    const headers = await this.getHeaders();
+    const fullUrl = useApiUrl ? this.apiUrl + url : url;
+    const options: any = { headers };
+    if (responseType !== "json") options.responseType = responseType;
+
+    return new Promise((resolve, reject) => {
+      this.http
+        .patch<T>(fullUrl, data, options)
+        .subscribe({
+          next: (body) => resolve(body as T),
+          error: (error) => {
+            if (error.status === 401) {
+              this.onUnauthorized();
+            }
+            reject(error);
+          },
+        });
+    });
+  }
+
   async delete<T = any>(
     url: string,
     responseType: "json" | "text" | "blob" = "json",

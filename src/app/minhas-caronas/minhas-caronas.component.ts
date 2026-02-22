@@ -8,9 +8,9 @@ import type { MinhasCaronasItem } from '../models/api.models';
   styleUrls: ['./minhas-caronas.component.scss']
 })
 export class MinhasCaronasComponent implements OnInit {
-  abaAtiva: 'motorista' | 'passageiro' = 'motorista';
-  comoMotorista: MinhasCaronasItem[] = [];
-  comoPassageiro: MinhasCaronasItem[] = [];
+  abaAtiva: 'proximas' | 'historico' = 'proximas';
+  proximasCorridas: MinhasCaronasItem[] = [];
+  historicoCorridas: MinhasCaronasItem[] = [];
   loading = false;
   erro: string | null = null;
 
@@ -25,9 +25,9 @@ export class MinhasCaronasComponent implements OnInit {
     this.erro = null;
     this.caronasService.getMinhasCaronas()
       .then(res => {
-        this.comoMotorista = res.comoMotorista ?? [];
-        this.comoPassageiro = res.comoPassageiro ?? [];
-        console.log(this.comoMotorista);
+        const todas = [...(res.comoMotorista ?? []), ...(res.comoPassageiro ?? [])];
+        this.proximasCorridas = todas.filter(item => this.isProxima(item));
+        this.historicoCorridas = todas.filter(item => !this.isProxima(item));
       })
       .catch(err => {
         this.erro = err?.error?.message ?? 'Erro ao carregar minhas caronas. Tente de novo.';
@@ -35,8 +35,18 @@ export class MinhasCaronasComponent implements OnInit {
       .finally(() => { this.loading = false; });
   }
 
+  /** Carona é "próxima" se não está finalizada e a data de partida é hoje ou futura. */
+  private isProxima(item: MinhasCaronasItem): boolean {
+    if (item.status === 'FINALIZADA') return false;
+    const dt = item.dtPartida ? new Date(item.dtPartida) : null;
+    if (!dt || isNaN(dt.getTime())) return item.status !== 'FINALIZADA';
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+    return dt >= hoje;
+  }
+
   get listaAtiva(): MinhasCaronasItem[] {
-    return this.abaAtiva === 'motorista' ? this.comoMotorista : this.comoPassageiro;
+    return this.abaAtiva === 'proximas' ? this.proximasCorridas : this.historicoCorridas;
   }
 
   /** Texto de origem para exibição (nomeLocal, cidade ou rota) */
@@ -86,5 +96,28 @@ export class MinhasCaronasComponent implements OnInit {
   veiculoTexto(item: MinhasCaronasItem): string {
     const v = item.veiculo as { formatado?: string; modelo?: string; placa?: string } | undefined;
     return v?.formatado ?? v?.modelo ?? v?.placa ?? '—';
+  }
+
+  /** Label do badge conforme status (CONFIRMADA = verde, SOLICITADA/ABERTA = amarelo) */
+  statusLabel(item: MinhasCaronasItem): string {
+    if (item.status === 'FINALIZADA') return 'CONFIRMADA';
+    if (item.status === 'ABERTA') return 'AGENDADA';
+    return (item.status ?? 'AGENDADA').toUpperCase();
+  }
+
+  /** Se a partida é hoje (para exibir "hoje" ao lado do horário) */
+  isHoje(item: MinhasCaronasItem): boolean {
+    const dt = item.dtPartida ? new Date(item.dtPartida) : null;
+    if (!dt || isNaN(dt.getTime())) return false;
+    const hoje = new Date();
+    return dt.getDate() === hoje.getDate() &&
+           dt.getMonth() === hoje.getMonth() &&
+           dt.getFullYear() === hoje.getFullYear();
+  }
+
+  /** Vagas disponíveis (para exibição no card) */
+  vagasDisponiveis(item: MinhasCaronasItem): number {
+    const v = item.vagasDisponiveis;
+    return v != null && typeof v === 'number' ? v : 0;
   }
 }

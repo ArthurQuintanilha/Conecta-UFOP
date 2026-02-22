@@ -27,6 +27,18 @@ export class CaronasService {
     );
   }
 
+  /** PATCH /carona/:caronaID/solicitacao/:passageiroID - Aceitar ou recusar solicitação (motorista) */
+  async responderSolicitacao(
+    caronaID: string,
+    passageiroID: string,
+    aceite: boolean
+  ): Promise<{ message: string }> {
+    return this.api.patch<{ message: string }>(
+      `/carona/${caronaID}/solicitacao/${passageiroID}`,
+      { aceite },
+    );
+  }
+
   /** GET /caronas - Listar caronas disponíveis */
   async getCaronas(): Promise<ListCaronaItem[]> {
     const list = await this.api.get<ListCaronaItem[]>("/caronas");

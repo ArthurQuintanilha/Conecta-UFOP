@@ -6,6 +6,9 @@ import { map, distinctUntilChanged, debounceTime, tap } from "rxjs/operators";
 import firebase from "firebase/compat/app";
 import { UsuariosService } from "./usuarios.service";
 
+/** ID do remetente para mensagens automáticas do sistema (aceite/recusa de solicitação). */
+export const REMETENTE_SISTEMA = "SISTEMA";
+
 /** Documento da collection Firestore "mensagens" — criadoEm é Timestamp, visualizado obrigatório. */
 export interface MensagemDoc {
   id?: string;
@@ -17,9 +20,9 @@ export interface MensagemDoc {
   visualizado: boolean;
 }
 
-/** Item da listagem de conversas (sidebar). criadoEm em Date para exibição/ordenação. */
+/** Item da listagem de conversas (sidebar). criadoEm em Date para exibição/ordenação. Sistema usa caronaId null. */
 export interface ConversaListItem {
-  caronaId: string;
+  caronaId: string | null;
   outroUsuarioId: string;
   outroUsuarioNome?: string;
   outroUsuarioAvatar?: string;
@@ -34,6 +37,8 @@ export interface ConversaListItem {
 /** Documento da collection Firestore "caronas" (campos usados no chat). dtPartida é Timestamp ou null. */
 export interface CaronaDoc {
   status?: string;
+  motoristaId?: string;
+  recusados?: string[];
   origem?: { nome?: string; nomeLocal?: string; cidade?: string; [key: string]: unknown };
   destino?: { nome?: string; nomeLocal?: string; cidade?: string; [key: string]: unknown };
   dtPartida?: firebase.firestore.Timestamp | null;
@@ -69,42 +74,63 @@ export class MensagensService {
       allDocs.push({ id: d.id, data: d.data() as MensagemDoc })
     );
 
-    const byCarona = new Map<
+    /** Chave: para SISTEMA usamos só "SISTEMA" (caronaId null na lista); demais: caronaId + outroUsuarioId. */
+    const byCaronaEOutro = new Map<
       string,
       { id: string; data: MensagemDoc; criadoEm: Date }
     >();
     for (const { id, data } of allDocs) {
-      const caronaId = data.caronaId;
+      const outroUsuarioId =
+        data.remetenteId === uid ? data.destinatarioId : data.remetenteId;
+      const key =
+        outroUsuarioId === REMETENTE_SISTEMA
+          ? REMETENTE_SISTEMA
+          : `${data.caronaId}\0${outroUsuarioId}`;
       const criadoEm = this.timestampToDate(data.criadoEm);
-      const existing = byCarona.get(caronaId);
+      const existing = byCaronaEOutro.get(key);
       if (!existing || criadoEm > existing.criadoEm) {
-        byCarona.set(caronaId, { id, data, criadoEm });
+        byCaronaEOutro.set(key, { id, data, criadoEm });
       }
     }
 
     const result: ConversaListItem[] = [];
-    for (const [, value] of byCarona) {
+    for (const [, value] of byCaronaEOutro) {
       const { data, criadoEm } = value;
-      const caronaSnap = await this.ngFirestore.collection("caronas").doc(data.caronaId).ref.get();
-      const caronaData = caronaSnap.data() as CaronaDoc | undefined;
-      if (caronaData?.status === "FINALIZADA") continue;
-
       const outroUsuarioId =
         data.remetenteId === uid ? data.destinatarioId : data.remetenteId;
-      let outroUsuarioNome: string | undefined;
-      let outroUsuarioAvatar: string | undefined;
-      try {
-        const user = await this.usuariosService.getUser(outroUsuarioId) as { nome?: string; fotoUrl?: string };
-        outroUsuarioNome = user.nome ?? "Usuário";
-        outroUsuarioAvatar = user.fotoUrl;
-      } catch {
-        outroUsuarioNome = "Usuário";
+      const isSistema = outroUsuarioId === REMETENTE_SISTEMA;
+
+      let caronaData: CaronaDoc | undefined;
+      if (!isSistema) {
+        const caronaSnap = await this.ngFirestore.collection("caronas").doc(data.caronaId).ref.get();
+        caronaData = caronaSnap.data() as CaronaDoc | undefined;
+        if (caronaData?.status === "FINALIZADA") continue;
+        const recusados = caronaData?.recusados ?? [];
+        if (recusados.includes(uid)) continue;
+        if (caronaData?.motoristaId === uid && recusados.includes(outroUsuarioId)) continue;
       }
 
-      const caronaSubtitle = this.formatCaronaSubtitle(caronaData);
+      let outroUsuarioNome: string | undefined;
+      let outroUsuarioAvatar: string | undefined;
+      if (isSistema) {
+        outroUsuarioNome = "Sistema";
+        outroUsuarioAvatar = undefined;
+      } else {
+        try {
+          const user = await this.usuariosService.getUser(outroUsuarioId) as { nome?: string; fotoUrl?: string };
+          outroUsuarioNome = user.nome ?? "Usuário";
+          outroUsuarioAvatar = user.fotoUrl;
+        } catch {
+          outroUsuarioNome = "Usuário";
+        }
+      }
+
+      const caronaSubtitle = isSistema
+        ? "Notificações de aceite/recusa"
+        : this.formatCaronaSubtitle(caronaData);
 
       result.push({
-        caronaId: data.caronaId,
+        caronaId: isSistema ? null : data.caronaId,
         outroUsuarioId,
         outroUsuarioNome,
         outroUsuarioAvatar,
@@ -121,32 +147,78 @@ export class MensagensService {
   }
 
   /**
-   * Stream de mensagens de uma carona em tempo real.
-   * Usa duas queries (remetente e destinatário) para que as regras do Firestore permitam a leitura.
+   * Stream de mensagens: por carona e interlocutor, ou só conversa com SISTEMA (caronaId null).
+   * Para conversa Sistema (caronaId null, outroUsuarioId SISTEMA) não filtra por carona.
    */
-  getMensagensPorCarona(caronaId: string, uid: string): Observable<(MensagemDoc & { id: string })[]> {
+  getMensagensPorCarona(
+    caronaId: string | null,
+    uid: string,
+    outroUsuarioId?: string
+  ): Observable<(MensagemDoc & { id: string })[]> {
     const asMensagem = (c: { payload: { doc: { id: string; data: () => MensagemDoc } } }) => {
       const data = c.payload.doc.data();
       return { id: c.payload.doc.id, ...data } as MensagemDoc & { id: string };
     };
 
+    const isConversaSistema = caronaId === null && outroUsuarioId === REMETENTE_SISTEMA;
+
+    if (isConversaSistema) {
+      const sistema$ = this.ngFirestore
+        .collection<MensagemDoc>("mensagens", (ref) =>
+          ref
+            .where("remetenteId", "==", REMETENTE_SISTEMA)
+            .where("destinatarioId", "==", uid)
+            .orderBy("criadoEm", "asc")
+        )
+        .snapshotChanges()
+        .pipe(
+          map((changes) => changes.map(asMensagem)),
+          map((docs) =>
+            docs.sort((x, y) => {
+              const tx = this.timestampToDate(x.criadoEm).getTime();
+              const ty = this.timestampToDate(y.criadoEm).getTime();
+              const txs = tx <= 0 ? Number.MAX_SAFE_INTEGER : tx;
+              const tys = ty <= 0 ? Number.MAX_SAFE_INTEGER : ty;
+              return txs - tys;
+            })
+          ),
+          debounceTime(50),
+          distinctUntilChanged((prev, curr) => {
+            if (prev.length !== curr.length) return false;
+            return prev.every((p, i) => p.id === curr[i]?.id);
+          })
+        );
+      return sistema$;
+    }
+
+    const remetenteRef = (ref: firebase.firestore.CollectionReference | firebase.firestore.Query) => {
+      let q = ref
+        .where("caronaId", "==", caronaId)
+        .where("remetenteId", "==", uid)
+        .orderBy("criadoEm", "asc");
+      if (outroUsuarioId) {
+        q = q.where("destinatarioId", "==", outroUsuarioId) as firebase.firestore.Query;
+      }
+      return q;
+    };
+    const destinatarioRef = (ref: firebase.firestore.CollectionReference | firebase.firestore.Query) => {
+      let q = ref
+        .where("caronaId", "==", caronaId)
+        .where("destinatarioId", "==", uid)
+        .orderBy("criadoEm", "asc");
+      if (outroUsuarioId) {
+        q = q.where("remetenteId", "==", outroUsuarioId) as firebase.firestore.Query;
+      }
+      return q;
+    };
+
     const remetente$ = this.ngFirestore
-      .collection<MensagemDoc>("mensagens", (ref) =>
-        ref
-          .where("caronaId", "==", caronaId)
-          .where("remetenteId", "==", uid)
-          .orderBy("criadoEm", "asc")
-      )
+      .collection<MensagemDoc>("mensagens", (ref) => remetenteRef(ref))
       .snapshotChanges()
       .pipe(map((changes) => changes.map(asMensagem)));
 
     const destinatario$ = this.ngFirestore
-      .collection<MensagemDoc>("mensagens", (ref) =>
-        ref
-          .where("caronaId", "==", caronaId)
-          .where("destinatarioId", "==", uid)
-          .orderBy("criadoEm", "asc")
-      )
+      .collection<MensagemDoc>("mensagens", (ref) => destinatarioRef(ref))
       .snapshotChanges()
       .pipe(map((changes) => changes.map(asMensagem)));
 
@@ -193,18 +265,43 @@ export class MensagensService {
   }
 
   /**
-   * Marca como vistas todas as mensagens da carona que foram enviadas para o destinatário e ainda estão com visualizado = false.
-   * Chamar ao abrir a conversa (o destinatário é o usuário logado).
+   * Envia mensagem como SISTEMA (ex.: notificação de aceite/recusa). Só pode ser chamada pelo motorista da carona;
+   * as regras do Firestore validam remetenteId == "SISTEMA" e motoristaId da carona == auth.uid.
+   */
+  async enviarMensagemSistema(
+    caronaId: string,
+    destinatarioId: string,
+    texto: string
+  ): Promise<void> {
+    await this.ngFirestore.collection("mensagens").add({
+      caronaId,
+      remetenteId: REMETENTE_SISTEMA,
+      destinatarioId,
+      mensagem: texto.trim(),
+      criadoEm: firebase.firestore.FieldValue.serverTimestamp(),
+      visualizado: false,
+    });
+  }
+
+  /**
+   * Marca como vistas as mensagens enviadas para o destinatário (usuário logado) que ainda estão com visualizado = false.
+   * Para conversa Sistema (caronaId null), não filtra por carona. Se remetenteId for informado, marca apenas daquela conversa.
    */
   async marcarMensagensComoVistas(
-    caronaId: string,
-    destinatarioId: string
+    caronaId: string | null,
+    destinatarioId: string,
+    remetenteId?: string
   ): Promise<void> {
-    const snap = await this.ngFirestore.collection("mensagens").ref
-      .where("caronaId", "==", caronaId)
+    let query = this.ngFirestore.collection("mensagens").ref
       .where("destinatarioId", "==", destinatarioId)
-      .where("visualizado", "==", false)
-      .get();
+      .where("visualizado", "==", false) as firebase.firestore.Query;
+    if (caronaId != null) {
+      query = query.where("caronaId", "==", caronaId);
+    }
+    if (remetenteId) {
+      query = query.where("remetenteId", "==", remetenteId);
+    }
+    const snap = await query.get();
 
     const batch = this.ngFirestore.firestore.batch();
     snap.docs.forEach((doc) => {
@@ -246,6 +343,20 @@ export class MensagensService {
     const snap = await this.ngFirestore.collection("caronas").doc(caronaId).ref.get();
     const data = snap.data() as CaronaDoc | undefined;
     return data?.status === "FINALIZADA";
+  }
+
+  /**
+   * Verifica se o usuário pode acessar o chat da carona: carona não finalizada e usuário não está em recusados.
+   * Usar antes de exibir ou selecionar conversa com essa carona.
+   */
+  async canAcessarChatCarona(caronaId: string, uid: string): Promise<boolean> {
+    const snap = await this.ngFirestore.collection("caronas").doc(caronaId).ref.get();
+    const data = snap.data() as CaronaDoc | undefined;
+    if (!data) return false;
+    if (data.status === "FINALIZADA") return false;
+    const recusados = data.recusados ?? [];
+    if (recusados.includes(uid)) return false;
+    return true;
   }
 
   /**

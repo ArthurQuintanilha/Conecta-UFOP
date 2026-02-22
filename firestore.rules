@@ -19,7 +19,9 @@ service cloud.firestore {
         && (resource.data.remetenteId == request.auth.uid
             || resource.data.destinatarioId == request.auth.uid);
       allow create: if request.auth != null
-        && request.resource.data.remetenteId == request.auth.uid;
+        && (request.resource.data.remetenteId == request.auth.uid
+            || (request.resource.data.remetenteId == "SISTEMA"
+                && get(/databases/$(database)/documents/caronas/$(request.resource.data.caronaId)).data.motoristaId == request.auth.uid));
       allow update: if request.auth != null
         && resource.data.destinatarioId == request.auth.uid;
       allow delete: if false;

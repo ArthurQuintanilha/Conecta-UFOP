@@ -3,7 +3,9 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { ToastrService } from "ngx-toastr";
 import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { CaronasService } from "../services/caronas.service";
+import { MensagensService } from "../services/mensagens.service";
 import { UserService } from "../services/user.service";
+import { UsuariosService } from "../services/usuarios.service";
 import type { GetCaronaByIdResponse } from "../models/api.models";
 
 export interface UsuarioExibicao {
@@ -12,6 +14,11 @@ export interface UsuarioExibicao {
   foto?: string;
   curso?: string;
   avaliacoes?: number;
+}
+
+/** Solicitação de carona para exibição (com dados do usuário). */
+export interface SolicitacaoExibicao extends UsuarioExibicao {
+  id: string;
 }
 
 /** Objeto de endereço para formatação (API usa nomeLocal, componente usa nome) */
@@ -69,12 +76,18 @@ export class DetalhesCaronaComponent implements OnInit {
   passageiros: UsuarioExibicao[] = [];
   solicitandoReserva = false;
   solicitacaoEnviada = false;
+  /** Solicitações da carona (apenas para motorista); carregadas do Firestore. */
+  solicitacoes: SolicitacaoExibicao[] = [];
+  /** userId em processamento (aceitar/recusar) para desabilitar botões. */
+  solicitacaoProcessando: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private caronasService: CaronasService,
+    private mensagensService: MensagensService,
     private userService: UserService,
+    private usuariosService: UsuariosService,
     private toastr: ToastrService,
     private firestore: AngularFirestore,
   ) {}
@@ -92,7 +105,7 @@ export class DetalhesCaronaComponent implements OnInit {
   private async loadCarona(): Promise<void> {
     try {
       const res = await this.caronasService.getCaronaById(this.caronaId);
-
+      console.log(res)
       const veiculoObj =
         res.veiculo && typeof res.veiculo === "object"
           ? (res.veiculo as { modelo?: string; placa?: string })
@@ -152,10 +165,158 @@ export class DetalhesCaronaComponent implements OnInit {
         }));
       }
       if (this.carona) this.carona.passageiros = this.passageiros;
+
+      if (this.isMotorista) {
+        await this.loadSolicitacoes();
+      } else {
+        await this.checkUsuarioJaSolicitou();
+      }
+
+      await this.preloadImagens();
     } catch {
       this.notFound = true;
     } finally {
       this.loading = false;
+    }
+  }
+
+  /** Coleta todas as URLs de foto (motorista, passageiros, solicitações) e aguarda carregarem ou timeout. */
+  private async preloadImagens(): Promise<void> {
+    const urls: string[] = [];
+    if (this.motorista?.foto?.trim()) urls.push(this.motorista.foto.trim());
+    this.passageiros.forEach((p) => {
+      if (p.foto?.trim()) urls.push(p.foto.trim());
+    });
+    this.solicitacoes.forEach((s) => {
+      if (s.foto?.trim()) urls.push(s.foto.trim());
+    });
+    if (urls.length === 0) return;
+    const timeoutMs = 8000;
+    await Promise.all(
+      urls.map((url) =>
+        new Promise<void>((resolve) => {
+          const img = new Image();
+          const done = () => resolve();
+          img.onload = done;
+          img.onerror = done;
+          img.src = url;
+          setTimeout(done, timeoutMs);
+        })
+      )
+    );
+  }
+
+  /** True se o usuário logado é o motorista desta carona (compara por uid). */
+  get isMotorista(): boolean {
+    const user = this.userService.getCurrentUser();
+    const uid = (user as { uid?: string })?.uid;
+    return !!(uid && this.carona?.motoristaId && uid === this.carona.motoristaId);
+  }
+
+  /**
+   * Para usuário que não é motorista: verifica se o uid está em solicitacoes ou recusados
+   * no documento da carona e, se estiver, marca solicitacaoEnviada = true (exibe "Solicitado").
+   */
+  private async checkUsuarioJaSolicitou(): Promise<void> {
+    if (!this.caronaId) return;
+    const user = this.userService.getCurrentUser();
+    const uid = (user as { uid?: string })?.uid;
+    if (!uid) return;
+    try {
+      const doc = await this.firestore.collection("caronas").doc(this.caronaId).ref.get();
+      const data = doc.data() as { solicitacoes?: string[]; recusados?: string[] } | undefined;
+      const solicitacoes = data?.solicitacoes ?? [];
+      const recusados = data?.recusados ?? [];
+      if (solicitacoes.includes(uid) || recusados.includes(uid)) {
+        this.solicitacaoEnviada = true;
+      }
+    } catch {
+      // Ignora erro; solicitacaoEnviada permanece false
+    }
+  }
+
+  /** Carrega lista de solicitações do Firestore e resolve dados dos usuários. */
+  private async loadSolicitacoes(): Promise<void> {
+    if (!this.caronaId) return;
+    try {
+      const doc = await this.firestore.collection("caronas").doc(this.caronaId).ref.get();
+      const data = doc.data() as { solicitacoes?: string[] } | undefined;
+      const ids = data?.solicitacoes ?? [];
+      if (ids.length === 0) {
+        this.solicitacoes = [];
+        return;
+      }
+      const list: SolicitacaoExibicao[] = [];
+      for (const id of ids) {
+        try {
+          const u = (await this.usuariosService.getUser(id)) as { nome?: string; fotoUrl?: string; curso_ocupacao?: string };
+          list.push({
+            id,
+            nome: u.nome ?? "Usuário",
+            foto: u.fotoUrl,
+            curso: u.curso_ocupacao,
+          });
+        } catch {
+          list.push({ id, nome: "Usuário" });
+        }
+      }
+      this.solicitacoes = list;
+    } catch {
+      this.solicitacoes = [];
+    }
+  }
+
+  /** Aceita a solicitação via API (endpoint cuida de remover de solicitações e adicionar aos passageiros). */
+  async aceitarSolicitacao(userId: string): Promise<void> {
+    if (!this.caronaId || this.solicitacaoProcessando) return;
+    const solicitante = this.solicitacoes.find((s) => s.id === userId);
+    this.solicitacaoProcessando = userId;
+    try {
+      await this.caronasService.responderSolicitacao(this.caronaId, userId, true);
+      this.solicitacoes = this.solicitacoes.filter((s) => s.id !== userId);
+      const novoPassageiro: UsuarioExibicao = solicitante
+        ? { nome: solicitante.nome, foto: solicitante.foto, curso: solicitante.curso }
+        : { nome: "Usuário" };
+      this.passageiros = [...this.passageiros, novoPassageiro];
+      if (this.carona) this.carona.passageiros = this.passageiros;
+      this.toastr.success("Solicitação aceita. Passageiro confirmado na carona.");
+      const detalhes = this.getDetalhesCaronaParaMensagem();
+      this.mensagensService
+        .enviarMensagemSistema(
+          this.caronaId,
+          userId,
+          "Sua solicitação para esta carona foi aceita." + detalhes,
+        )
+        .catch(() => {});
+    } catch (err: unknown) {
+      const msg = (err as { error?: { message?: string } })?.error?.message ?? "Erro ao aceitar solicitação. Tente novamente.";
+      this.toastr.error(msg);
+    } finally {
+      this.solicitacaoProcessando = null;
+    }
+  }
+
+  /** Recusa a solicitação via API (endpoint remove das solicitações e adiciona aos recusados). */
+  async recusarSolicitacao(userId: string): Promise<void> {
+    if (!this.caronaId || this.solicitacaoProcessando) return;
+    this.solicitacaoProcessando = userId;
+    try {
+      await this.caronasService.responderSolicitacao(this.caronaId, userId, false);
+      this.solicitacoes = this.solicitacoes.filter((s) => s.id !== userId);
+      this.toastr.info("Solicitação recusada.");
+      const detalhes = this.getDetalhesCaronaParaMensagem();
+      this.mensagensService
+        .enviarMensagemSistema(
+          this.caronaId,
+          userId,
+          "Sua solicitação para esta carona foi recusada." + detalhes,
+        )
+        .catch(() => {});
+    } catch (err: unknown) {
+      const msg = (err as { error?: { message?: string } })?.error?.message ?? "Erro ao recusar solicitação. Tente novamente.";
+      this.toastr.error(msg);
+    } finally {
+      this.solicitacaoProcessando = null;
     }
   }
 
@@ -184,6 +345,15 @@ export class DetalhesCaronaComponent implements OnInit {
         : end.cidade || end.estado,
     ].filter(Boolean);
     return partes.length ? partes.join(", ") : "—";
+  }
+
+  /** Retorna texto com rota (origem → destino) e data da carona para incluir nas mensagens do SISTEMA (aceite/recusa). */
+  private getDetalhesCaronaParaMensagem(): string {
+    if (!this.carona) return "";
+    const origem = this.formatarEndereco(this.carona.origem);
+    const destino = this.formatarEndereco(this.carona.destino);
+    const data = this.formatarDataCompleta(this.carona.dtPartida);
+    return ` Rota: ${origem} → ${destino}. Data: ${data}.`;
   }
 
   private toDate(

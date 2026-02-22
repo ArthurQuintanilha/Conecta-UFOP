@@ -57,64 +57,180 @@ $status-yellow: #ffc107;
   }
 }
 
-// Grid e Cards
+// Grid e Cards (estilo alinhado à referência)
 .responsive-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 25px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
 }
 
 .card {
   background: white;
   border-radius: 12px;
-  padding: 20px;
+  padding: 20px 24px;
   position: relative;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-  transition: transform 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: box-shadow 0.2s;
 
-  &:hover { transform: translateY(-5px); }
+  &:hover {
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  }
 
   .status-badge {
     position: absolute;
-    top: 15px;
-    right: 15px;
+    top: 16px;
+    right: 16px;
     font-size: 0.7rem;
-    font-weight: bold;
-    padding: 4px 8px;
-    border-radius: 4px;
+    font-weight: 700;
+    padding: 5px 10px;
+    border-radius: 6px;
+    letter-spacing: 0.02em;
 
-    &.confirmada, &.confirmado { background: #e8f5e9; color: $status-green; }
-    &.solicitada { background: #fffde7; color: #fbc02d; }
+    &.confirmada {
+      background: #2e7d32;
+      color: white;
+    }
+    &.agendada {
+      background: #ffc107;
+      color: #1a1a1a;
+    }
   }
 
   .card-header {
     display: flex;
-    gap: 15px;
+    gap: 14px;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 18px;
+  }
 
-    .avatar img {
-      width: 50px;
-      height: 50px;
-      border-radius: 8px;
+  .avatar-circle {
+    flex-shrink: 0;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #e5e7eb;
+
+    img {
+      width: 100%;
+      height: 100%;
       object-fit: cover;
     }
+  }
 
-    h3 { margin: 0; font-size: 1.1rem; }
-    p { margin: 0; font-size: 0.85rem; color: $text-muted; }
+  .info-motorista {
+    min-width: 0;
+    flex: 1;
+
+    h3 {
+      margin: 0 0 4px 0;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #1a1a2e;
+    }
+    .subtitle {
+      margin: 0;
+      font-size: 0.875rem;
+      color: $text-muted;
+    }
   }
 
   .card-body {
-    .route-info, .time-info, .valor-info {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 5px;
-      p { margin: 0; font-size: 0.9rem; color: #444; }
+    margin-bottom: 16px;
+  }
+
+  .route-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+
+    .icon-pin {
+      color: $primary-red;
+      font-size: 0.85rem;
+      flex-shrink: 0;
     }
-    .valor-info { font-weight: 600; color: #1a1a2e; }
+    .route-text {
+      font-size: 0.9rem;
+      color: #374151;
+      line-height: 1.4;
+    }
+  }
+
+  .time-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    margin-bottom: 8px;
+
+    .icon-clock {
+      color: #6b7280;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+    .time-text {
+      font-size: 0.9rem;
+      color: #374151;
+    }
+    .vagas-verde {
+      font-size: 0.875rem;
+      color: #16a34a;
+      font-weight: 500;
+    }
+  }
+
+  .valor-row {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #1a1a2e;
   }
 }
+
+.card-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid #f3f4f6;
+
+  .link-detalhes {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: $primary-red;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: opacity 0.2s;
+
+    &:hover {
+      opacity: 0.85;
+    }
+    .chevron {
+      font-size: 0.8rem;
+    }
+  }
+
+  .btn-editar {
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid $primary-red;
+    color: $primary-red;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: 0.2s;
+    &:hover {
+      background: $primary-red;
+      color: white;
+    }
+  }
+}
+
 .loading-state, .erro-state {
   text-align: center;
   padding: 2rem;
@@ -123,82 +239,18 @@ $status-yellow: #ffc107;
 }
 .erro-state p { color: #c62828; }
 
-.card-footer {
-  margin-top: 15px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-  align-items: center;
-
-  a.btn-success {
-    display: inline-block;
-    padding: 10px 1rem;
-    border-radius: 8px;
-    background-color: #4caf50;
+.loading-state button, .erro-state button {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+  &.btn-primary {
+    background-color: $primary-red;
     color: white;
-    font-weight: bold;
-    text-decoration: none;
-    transition: 0.3s;
-    &:hover { filter: brightness(1.05); }
+    &:hover { background-color: #7a1525; }
   }
-
-  .btn-editar {
-    display: inline-block;
-    padding: 8px 16px;
-    border-radius: 8px;
-    border: 1px solid #a31d32;
-    color: #a31d32;
-    font-size: 0.9rem;
-    font-weight: 600;
-    text-decoration: none;
-    transition: 0.2s;
-    &:hover {
-      background: #a31d32;
-      color: white;
-    }
-  }
-
-  button {
-    width: 100%;
-    padding: 10px;
-    border-radius: 8px;
-    border: none;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.3s;
-
-    &.btn-primary {
-      background-color: #a31d32;
-      color: white;
-      &:hover { background-color: #7a1525; }
-    }
-
-    &.btn-outline {
-      background-color: #f0f0f0;
-      color: #666;
-      cursor: not-allowed;
-    }
-
-    &.btn-success {
-      background-color: #4caf50;
-      color: white;
-    }
-  }
-}
-
-// Estilo para o Badge de solicitado (Amarelo igual da imagem)
-.status-badge.solicitada {
-  background-color: #fff9c4;
-  color: #fbc02d;
-}
-
-// Linha de rota estilizada (Opcional para ficar mais bonito)
-.route-line {
-  display: flex;
-  gap: 10px;
-  margin: 15px 0;
-  .text-route p { margin: 2px 0; font-size: 0.85rem; }
 }
 
 /* Estilização do Toast */

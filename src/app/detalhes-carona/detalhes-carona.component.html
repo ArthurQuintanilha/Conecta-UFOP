@@ -2,7 +2,11 @@
 
 <div class="page">
   <ng-container *ngIf="loading">
-    <div class="loading">Carregando detalhes da carona...</div>
+    <div class="loading">
+      <div class="loading-spinner" aria-hidden="true"></div>
+      <p class="loading-text">Carregando detalhes da carona...</p>
+      <p class="loading-subtext">Aguarde enquanto buscamos as informações e imagens.</p>
+    </div>
   </ng-container>
 
   <ng-container *ngIf="!loading && notFound">
@@ -80,8 +84,8 @@
             solicitandoReserva
               ? "Enviando..."
               : solicitacaoEnviada
-                ? "Solicitação enviada"
-                : "Solicitar reserva"
+                ? "Solicitado"
+                : "Solicitar Reserva"
           }}
         </button>
       </div>
@@ -136,6 +140,49 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- Solicitações (somente motorista) -->
+    <div class="solicitacoes-section" *ngIf="isMotorista">
+      <h2>Solicitações</h2>
+      <div class="passageiros-list" *ngIf="solicitacoes.length > 0">
+        <div class="card passageiro-card" *ngFor="let s of solicitacoes">
+          <img
+            *ngIf="s.foto"
+            [src]="s.foto"
+            alt="Foto do usuário"
+            class="avatar-small"
+          />
+          <div *ngIf="!s.foto" class="avatar-small avatar-iniciais-small">
+            {{ s.nome.charAt(0).toUpperCase() }}
+          </div>
+          <div class="passageiro-info">
+            <div class="nome">{{ s.nome }}</div>
+            <div class="subtitle" *ngIf="s.curso">{{ s.curso }}</div>
+          </div>
+          <div class="card-actions">
+            <button
+              type="button"
+              class="btn-aceitar"
+              (click)="aceitarSolicitacao(s.id)"
+              [disabled]="solicitacaoProcessando === s.id"
+              title="Aceitar"
+            >
+              {{ solicitacaoProcessando === s.id ? "..." : "Aceitar" }}
+            </button>
+            <button
+              type="button"
+              class="btn-recusar"
+              (click)="recusarSolicitacao(s.id)"
+              [disabled]="solicitacaoProcessando === s.id"
+              title="Recusar"
+            >
+              Recusar
+            </button>
+          </div>
+        </div>
+      </div>
+      <p class="nenhum-passageiro" *ngIf="solicitacoes.length === 0">Nenhuma solicitação no momento.</p>
     </div>
 
     <div class="passageiros-section" *ngIf="passageiros.length > 0">

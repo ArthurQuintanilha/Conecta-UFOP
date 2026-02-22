@@ -10,6 +10,7 @@ import { ActivatedRoute } from "@angular/router";
 import { Subscription } from "rxjs";
 import {
   MensagensService,
+  REMETENTE_SISTEMA,
   ConversaListItem,
   MensagemDoc,
 } from "../services/mensagens.service";
@@ -19,6 +20,7 @@ import { AngularFireAuth } from "@angular/fire/compat/auth";
 import { AngularFirestore } from "@angular/fire/compat/firestore";
 import firebase from "firebase/compat/app";
 import { Location } from "@angular/common";
+import { ToastrService } from "ngx-toastr";
 
 export interface ChatMessageDisplay {
   id: string;
@@ -44,10 +46,20 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   searchTerm = "";
   newMessage = "";
   conversas: ConversaListItem[] = [];
+  /** Id da carona da conversa ativa; null para conversa com Sistema (não associada a carona). */
   activeCaronaId: string | null = null;
+  /** Conversa selecionada (carona + interlocutor). Sistema usa caronaId null. */
+  selectedConversa: ConversaListItem | null = null;
   messages: ChatMessageDisplay[] = [];
   caronaFinalizada = false;
   loading = true;
+
+  readonly remetenteSistema = REMETENTE_SISTEMA;
+
+  /** Chat em somente leitura: carona finalizada ou conversa com SISTEMA (não é possível enviar). */
+  get chatSomenteLeitura(): boolean {
+    return this.caronaFinalizada || this.activeConversa?.outroUsuarioId === REMETENTE_SISTEMA;
+  }
   private shouldScroll = false;
   private mensagensSub: Subscription | null = null;
   private caronaStatusSub: Subscription | null = null;
@@ -61,6 +73,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     private route: ActivatedRoute,
     private location: Location,
     private firestore: AngularFirestore,
+    private toastr: ToastrService,
   ) {}
 
   get filteredConversas(): ConversaListItem[] {
@@ -74,10 +87,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   get activeConversa(): ConversaListItem | null {
-    if (!this.activeCaronaId) return null;
-    return (
-      this.conversas.find((c) => c.caronaId === this.activeCaronaId) ?? null
-    );
+    return this.selectedConversa ?? null;
   }
 
   get activeContactName(): string {
@@ -132,28 +142,33 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
       const caronaSubtitleFromUrl = (q["caronaSubtitle"] as string)?.trim();
 
       if (caronaIdFromUrl) {
-        const existing = this.conversas.find(
-          (c) => c.caronaId === caronaIdFromUrl,
-        );
-        if (existing) {
-          this.selectConversa(existing);
-        } else if (
-          outroUsuarioIdFromUrl &&
-          outroUsuarioNomeFromUrl &&
-          outroUsuarioIdFromUrl !== uid
-        ) {
-          const synthetic: ConversaListItem = {
-            caronaId: caronaIdFromUrl,
-            outroUsuarioId: outroUsuarioIdFromUrl,
-            outroUsuarioNome: outroUsuarioNomeFromUrl,
-            ultimaMensagem: "",
-            criadoEm: new Date(),
-            caronaSubtitle: caronaSubtitleFromUrl || undefined,
-          };
-          this.conversas = [synthetic, ...this.conversas];
-          this.selectConversa(synthetic);
+        const podeAcessar = await this.mensagensService.canAcessarChatCarona(caronaIdFromUrl, uid);
+        if (!podeAcessar) {
+          this.toastr.warning("Esta conversa não está disponível (carona finalizada ou solicitação recusada).");
         } else {
-          await this.selectOrCreateConversaByCaronaId(caronaIdFromUrl, uid);
+          const existing = this.conversas.find(
+            (c) => c.caronaId === caronaIdFromUrl,
+          );
+          if (existing) {
+            this.selectConversa(existing);
+          } else if (
+            outroUsuarioIdFromUrl &&
+            outroUsuarioNomeFromUrl &&
+            outroUsuarioIdFromUrl !== uid
+          ) {
+            const synthetic: ConversaListItem = {
+              caronaId: caronaIdFromUrl,
+              outroUsuarioId: outroUsuarioIdFromUrl,
+              outroUsuarioNome: outroUsuarioNomeFromUrl,
+              ultimaMensagem: "",
+              criadoEm: new Date(),
+              caronaSubtitle: caronaSubtitleFromUrl || undefined,
+            };
+            this.conversas = [synthetic, ...this.conversas];
+            this.selectConversa(synthetic);
+          } else {
+            await this.selectOrCreateConversaByCaronaId(caronaIdFromUrl, uid);
+          }
         }
       } else if (this.conversas.length > 0 && !this.activeCaronaId) {
         this.selectConversa(this.conversas[0]);
@@ -174,6 +189,8 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     caronaId: string,
     uid: string,
   ): Promise<void> {
+    const podeAcessar = await this.mensagensService.canAcessarChatCarona(caronaId, uid);
+    if (!podeAcessar) return;
     try {
       const carona = await this.caronasService.getCaronaById(caronaId);
       let motoristaId = carona.motoristaId ?? carona.motorista?.id;
@@ -221,25 +238,44 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
   }
 
-  selectConversa(conversa: ConversaListItem): void {
+  async selectConversa(conversa: ConversaListItem): Promise<void> {
+    if (conversa.caronaId != null && this.currentUid) {
+      const podeAcessar = await this.mensagensService.canAcessarChatCarona(conversa.caronaId, this.currentUid);
+      if (!podeAcessar) {
+        this.toastr.warning("Esta conversa não está disponível (carona finalizada ou solicitação recusada).");
+        this.selectedConversa = null;
+        this.activeCaronaId = null;
+        this.messages = [];
+        this.mensagensSub?.unsubscribe();
+        this.mensagensSub = null;
+        this.caronaStatusSub?.unsubscribe();
+        this.caronaStatusSub = null;
+        return;
+      }
+    }
     this.mensagensSub?.unsubscribe();
     this.mensagensSub = null;
     this.caronaStatusSub?.unsubscribe();
     this.caronaStatusSub = null;
     this.activeCaronaId = conversa.caronaId;
-    this.caronaStatusSub = this.mensagensService
-      .watchCaronaStatus(conversa.caronaId)
-      .subscribe((finalizada) => {
-        this.caronaFinalizada = finalizada;
-      });
+    if (conversa.caronaId != null) {
+      this.caronaStatusSub = this.mensagensService
+        .watchCaronaStatus(conversa.caronaId)
+        .subscribe((finalizada) => {
+          this.caronaFinalizada = finalizada;
+        });
+    } else {
+      this.caronaFinalizada = false;
+    }
     if (!this.currentUid) return;
-    console.log("[Chat] Marcando mensagens como vistas:", { caronaId: conversa.caronaId, destinatarioId: this.currentUid });
+    this.selectedConversa = conversa;
+    console.log("[Chat] Marcando mensagens como vistas:", { caronaId: conversa.caronaId, destinatarioId: this.currentUid, remetenteId: conversa.outroUsuarioId });
     this.mensagensService
-      .marcarMensagensComoVistas(conversa.caronaId, this.currentUid)
+      .marcarMensagensComoVistas(conversa.caronaId, this.currentUid, conversa.outroUsuarioId)
       .then(() => console.log("[Chat] Mensagens marcadas como vistas com sucesso."))
       .catch((err) => console.error("[Chat] Erro ao marcar mensagens como vistas:", err));
     this.mensagensSub = this.mensagensService
-      .getMensagensPorCarona(conversa.caronaId, this.currentUid)
+      .getMensagensPorCarona(conversa.caronaId, this.currentUid, conversa.outroUsuarioId)
       .subscribe((docs) => {
         const fromServer = docs.map((d) => this.toDisplayMessage(d));
         this.messages = this.mergeReplacingPending(fromServer);
@@ -317,14 +353,9 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   sendMessage(): void {
+    if (this.chatSomenteLeitura) return;
     const text = this.newMessage.trim();
-    if (
-      !text ||
-      !this.activeCaronaId ||
-      !this.activeConversa ||
-      this.caronaFinalizada
-    )
-      return;
+    if (!text || !this.activeCaronaId || !this.activeConversa) return;
 
     const now = new Date();
     const timeStr = now.toLocaleTimeString("pt-BR", {
@@ -393,7 +424,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   trackByCaronaId(_index: number, conversa: ConversaListItem): string {
-    return conversa.caronaId;
+    return `${conversa.caronaId ?? ""}-${conversa.outroUsuarioId}`;
   }
 
   trackByMessageId(_index: number, msg: ChatMessageDisplay): string {

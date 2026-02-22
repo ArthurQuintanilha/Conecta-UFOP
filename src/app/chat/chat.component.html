@@ -77,7 +77,10 @@
 
     <ng-container *ngIf="activeConversa; else noConversation">
       <div class="chat-header">
-        <div class="avatar">{{ activeContactAvatar }}</div>
+        <div class="avatar">
+          <img *ngIf="activeContactPhotoUrl" [src]="activeContactPhotoUrl" alt="" class="avatar-img" />
+          <span *ngIf="!activeContactPhotoUrl">{{ activeContactAvatar }}</span>
+        </div>
         <div class="chat-header-info">
           <span class="chat-contact-name">{{ activeContactName }}</span>
           <span class="chat-contact-subtitle">{{ activeContactSubtitle }}</span>
@@ -127,6 +130,9 @@
         <p class="carona-finalizada-aviso" *ngIf="caronaFinalizada">
           Esta carona foi finalizada. O chat é somente leitura.
         </p>
+        <p class="carona-finalizada-aviso" *ngIf="!caronaFinalizada && activeConversa && activeConversa.outroUsuarioId === remetenteSistema">
+          Não é possível enviar mensagens para o Sistema.
+        </p>
         <div class="chat-input-row">
           <input
             type="text"
@@ -134,12 +140,12 @@
             placeholder="Escreva uma mensagem"
             [(ngModel)]="newMessage"
             (keydown)="onKeyDown($event)"
-            [disabled]="caronaFinalizada"
+            [disabled]="chatSomenteLeitura"
           />
           <button
             class="send-btn"
             (click)="sendMessage()"
-            [disabled]="!newMessage.trim() || caronaFinalizada"
+            [disabled]="!newMessage.trim() || chatSomenteLeitura"
           >
             <svg class="send-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
               <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
