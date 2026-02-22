@@ -1,28 +1,52 @@
 <app-header></app-header>
 
-<div class="recuperar-senha-container form-padrao">
-  <h2>Recuperar Senha</h2>
-  <p>Digite seu e-mail para receber instruções de recuperação de senha:</p>
-
-  <form (ngSubmit)="enviarEmail()" #recuperarForm="ngForm">
-    <div class="form-group">
-      <label for="email">E-mail:</label>
-      <input
-        type="email"
-        id="email"
-        name="email"
-        [(ngModel)]="email"
-        placeholder="usuario@exemplo.com"
-        required
-      />
+<div class="recuperar-container">
+  <div class="content">
+    <div class="info-card">
+      <div class="top-content">
+        <h1>Conecta UFOP</h1>
+        <p>Recupere seu acesso</p>
+      </div>
+      <div class="bottom-content">
+        <h2>Esqueceu a senha?</h2>
+        <p>
+          Informe o e-mail cadastrado e enviaremos um link para você criar uma nova senha de forma segura.
+        </p>
+        <div class="dots">
+          <span></span><span class="active"></span><span></span>
+        </div>
+      </div>
     </div>
 
-    <button type="submit" [disabled]="!recuperarForm.form.valid">
-      Enviar
-    </button>
-  </form>
+    <div class="form-container form-padrao">
+      <div class="tab-group">
+        <h1>Recuperar senha</h1>
+        <p class="signup-text">
+          Lembrou a senha? <a routerLink="/login" class="link-cadastre-se">Voltar ao login</a>
+        </p>
+      </div>
 
-  <p class="mensagem" *ngIf="mensagem">{{ mensagem }}</p>
+      <form [formGroup]="form" (ngSubmit)="enviarEmail()">
+        <div class="input-field">
+          <label for="email">E-mail</label>
+          <input
+            type="email"
+            id="email"
+            placeholder="usuário@ufop.br"
+            formControlName="email"
+          />
+          <span class="input-error" *ngIf="form.get('email')?.invalid && form.get('email')?.touched">
+            <span *ngIf="form.get('email')?.errors?.['required']">E-mail é obrigatório.</span>
+            <span *ngIf="form.get('email')?.errors?.['email'] && !form.get('email')?.errors?.['required']">Digite um e-mail válido.</span>
+          </span>
+        </div>
+
+        <button type="submit" class="btn-main" [disabled]="isLoading || form.invalid">
+          {{ isLoading ? "Enviando..." : "Enviar link de recuperação" }}
+        </button>
+      </form>
+    </div>
+  </div>
 </div>
 
 <app-footer></app-footer>
