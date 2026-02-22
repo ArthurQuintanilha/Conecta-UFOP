@@ -21,9 +21,18 @@
         <i class="fas fa-car text-lg"></i>
         <span class="font-medium">Minhas caronas</span>
       </a>
-      <a routerLink="/chat" class="flex items-center gap-2 text-gray-700 hover:text-primary transition-colors">
+      <a routerLink="/chat" class="flex items-center gap-2 text-gray-700 hover:text-primary transition-colors relative">
         <i class="fas fa-comments text-lg"></i>
         <span class="font-medium">Chat</span>
+        <ng-container *ngIf="(unreadCount$ | async) as count">
+          <span *ngIf="count > 0" class="header-unread-badge" [attr.aria-label]="count + ' mensagens não lidas'" [title]="count + ' mensagens não lidas'">
+            <svg class="header-unread-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+            <span class="header-unread-count">{{ count > 99 ? '99+' : count }}</span>
+          </span>
+        </ng-container>
       </a>
       <div class="relative" (click)="$event.stopPropagation()">
         <button
@@ -102,10 +111,19 @@
       <a
         routerLink="/chat"
         (click)="closeMobileMenu()"
-        class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-primary font-medium"
+        class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-primary font-medium relative"
       >
         <i class="fas fa-comments text-lg w-6 text-center"></i>
         <span>Chat</span>
+        <ng-container *ngIf="(unreadCount$ | async) as count">
+          <span *ngIf="count > 0" class="header-unread-badge header-unread-badge--mobile" [attr.aria-label]="count + ' mensagens não lidas'" [title]="count + ' mensagens não lidas'">
+            <svg class="header-unread-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+            <span class="header-unread-count">{{ count > 99 ? '99+' : count }}</span>
+          </span>
+        </ng-container>
       </a>
       <div class="border-t border-gray-200 my-2"></div>
       <button

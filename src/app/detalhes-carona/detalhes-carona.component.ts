@@ -1,16 +1,58 @@
 import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
+import { ToastrService } from "ngx-toastr";
 import { AngularFirestore } from "@angular/fire/compat/firestore";
-import firebase from "firebase/compat/app";
-import { Carona, EnderecoCaronaDoc } from "../../types/Caronas";
-import { UsuariosService } from "../services/usuarios.service";
+import { CaronasService } from "../services/caronas.service";
+import { UserService } from "../services/user.service";
+import type { GetCaronaByIdResponse } from "../models/api.models";
 
 export interface UsuarioExibicao {
-  id: string;
+  id?: string;
   nome: string;
   foto?: string;
   curso?: string;
   avaliacoes?: number;
+}
+
+/** Objeto de endereço para formatação (API usa nomeLocal, componente usa nome) */
+interface EnderecoParaFormatar {
+  nome?: string;
+  nomeLocal?: string;
+  rua?: string;
+  numero?: number;
+  bairro?: string;
+  cidade?: string;
+  estado?: string;
+}
+
+/** Timestamp no formato Firestore serializado (API) */
+interface FirestoreTimestampLike {
+  _seconds?: number;
+  _nanoseconds?: number;
+}
+
+/** Carona para exibição (normalizada a partir da API) */
+interface CaronaExibicao {
+  motoristaId?: string;
+  valor?: number;
+  dtPartida?: Date | string | FirestoreTimestampLike;
+  dtChegada?: Date | string | FirestoreTimestampLike | null;
+  origem?: EnderecoCaronaDoc;
+  destino?: EnderecoCaronaDoc;
+  veiculo?: string;
+  placa?: string;
+  vagas?: number;
+  status?: string;
+  passageiros?: UsuarioExibicao[];
+}
+
+interface EnderecoCaronaDoc {
+  nome?: string;
+  rua?: string;
+  numero?: number;
+  bairro?: string;
+  cidade?: string;
+  estado?: string;
 }
 
 @Component({
@@ -22,15 +64,19 @@ export class DetalhesCaronaComponent implements OnInit {
   caronaId = "";
   loading = true;
   notFound = false;
-  carona: Carona | null = null;
+  carona: CaronaExibicao | null = null;
   motorista: UsuarioExibicao | null = null;
   passageiros: UsuarioExibicao[] = [];
+  solicitandoReserva = false;
+  solicitacaoEnviada = false;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private caronasService: CaronasService,
+    private userService: UserService,
+    private toastr: ToastrService,
     private firestore: AngularFirestore,
-    private usuariosService: UsuariosService,
   ) {}
 
   ngOnInit(): void {
@@ -45,58 +91,85 @@ export class DetalhesCaronaComponent implements OnInit {
 
   private async loadCarona(): Promise<void> {
     try {
-      const snap = await this.firestore
-        .collection("caronas")
-        .doc(this.caronaId)
-        .ref.get();
+      const res = await this.caronasService.getCaronaById(this.caronaId);
 
-      if (!snap.exists) {
-        this.notFound = true;
-        this.loading = false;
-        return;
+      const veiculoObj =
+        res.veiculo && typeof res.veiculo === "object"
+          ? (res.veiculo as { modelo?: string; placa?: string })
+          : null;
+      const veiculoStr = veiculoObj
+        ? (veiculoObj.modelo ?? "") +
+          (veiculoObj.placa ? ` - ${veiculoObj.placa}` : "")
+        : ((res.veiculo as string) ?? "—");
+      const placaStr = veiculoObj?.placa ?? "—";
+
+      let motoristaId =
+        res.motoristaId ??
+        res.motorista?.id ??
+        ((res as Record<string, unknown>)["motorista_id"] as
+          | string
+          | undefined);
+
+      if (!motoristaId) {
+        const caronaSnap = await this.firestore
+          .collection("caronas")
+          .doc(this.caronaId)
+          .ref.get();
+        const data = caronaSnap.data() as { motoristaId?: string } | undefined;
+        motoristaId = data?.motoristaId;
       }
 
-      this.carona = snap.data() as Carona;
+      this.carona = {
+        motoristaId,
+        valor: res.valor,
+        dtPartida: res.dtPartida,
+        dtChegada: res.dtChegada ?? null,
+        origem: this.normalizarEndereco(res.origem),
+        destino: this.normalizarEndereco(
+          res.destino as EnderecoParaFormatar | undefined,
+        ),
+        veiculo: veiculoStr,
+        placa: placaStr,
+        vagas: res.vagasDisponiveis ?? 0,
+        status: "ABERTA",
+        passageiros: [],
+      };
 
-      if (this.carona.motoristaId) {
-        try {
-          const user = await this.usuariosService.getUser(this.carona.motoristaId);
-          this.motorista = this.toUsuarioExibicao(this.carona.motoristaId, user);
-        } catch {
-          this.motorista = this.toUsuarioExibicao(this.carona.motoristaId, {});
-        }
+      if (res.motorista) {
+        this.motorista = {
+          nome: res.motorista.nome ?? "Motorista",
+          foto: res.motorista.fotoUrl ?? undefined,
+          avaliacoes: res.motorista.notaMedia,
+          curso: res.motorista.perfil,
+        };
       }
 
-      if (this.carona.passageiros?.length) {
-        this.passageiros = await Promise.all(
-          this.carona.passageiros.map(async (id) => {
-            try {
-              const user = await this.usuariosService.getUser(id);
-              return this.toUsuarioExibicao(id, user);
-            } catch {
-              return this.toUsuarioExibicao(id, {});
-            }
-          }),
-        );
+      if (res.passageiros?.length) {
+        this.passageiros = res.passageiros.map((p) => ({
+          nome: p.nome ?? "Passageiro",
+          foto: p.fotoUrl,
+          curso: p.perfil,
+        }));
       }
-    } catch (err) {
-      console.error("Erro ao carregar detalhes da carona:", err);
+      if (this.carona) this.carona.passageiros = this.passageiros;
+    } catch {
       this.notFound = true;
     } finally {
       this.loading = false;
     }
   }
 
-  private toUsuarioExibicao(
-    id: string,
-    data: Record<string, unknown> & { avaliacoes?: number },
-  ): UsuarioExibicao {
+  private normalizarEndereco(
+    e: EnderecoParaFormatar | undefined,
+  ): EnderecoCaronaDoc | undefined {
+    if (!e) return undefined;
     return {
-      id,
-      nome: (data?.["nome"] as string) ?? (data?.["displayName"] as string) ?? "Usuário",
-      foto: (data?.["foto"] as string) ?? (data?.["photoURL"] as string) ?? undefined,
-      curso: (data?.["curso"] as string) ?? (data?.["curso_ocupacao"] as string) ?? undefined,
-      avaliacoes: data?.["avaliacoes"],
+      nome: e.nomeLocal ?? e.nome,
+      rua: e.rua,
+      numero: e.numero,
+      bairro: e.bairro,
+      cidade: e.cidade,
+      estado: e.estado,
     };
   }
 
@@ -106,23 +179,45 @@ export class DetalhesCaronaComponent implements OnInit {
       end.nome,
       end.rua && end.numero != null ? `${end.rua}, ${end.numero}` : end.rua,
       end.bairro,
-      end.cidade && end.estado ? `${end.cidade} - ${end.estado}` : end.cidade || end.estado,
+      end.cidade && end.estado
+        ? `${end.cidade} - ${end.estado}`
+        : end.cidade || end.estado,
     ].filter(Boolean);
     return partes.length ? partes.join(", ") : "—";
   }
 
-  formatarData(ts: firebase.firestore.Timestamp | null | undefined): string {
-    if (!ts || !(ts instanceof firebase.firestore.Timestamp)) return "—";
-    return ts.toDate().toLocaleDateString("pt-BR", {
+  private toDate(
+    val: Date | string | FirestoreTimestampLike | undefined | null,
+  ): Date | null {
+    if (val == null) return null;
+    if (val instanceof Date) return isNaN(val.getTime()) ? null : val;
+    const asObj = val as FirestoreTimestampLike;
+    if (typeof asObj._seconds === "number") {
+      const ms = asObj._seconds * 1000 + (asObj._nanoseconds ?? 0) / 1e6;
+      const d = new Date(ms);
+      return isNaN(d.getTime()) ? null : d;
+    }
+    const d = new Date(val as string);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  formatarData(
+    ts: Date | string | FirestoreTimestampLike | null | undefined,
+  ): string {
+    const d = this.toDate(ts);
+    if (!d) return "—";
+    return d.toLocaleDateString("pt-BR", {
       day: "2-digit",
       month: "short",
       year: "numeric",
     });
   }
 
-  formatarDataCompleta(ts: firebase.firestore.Timestamp | null | undefined): string {
-    if (!ts || !(ts instanceof firebase.firestore.Timestamp)) return "—";
-    const d = ts.toDate();
+  formatarDataCompleta(
+    ts: Date | string | FirestoreTimestampLike | null | undefined,
+  ): string {
+    const d = this.toDate(ts);
+    if (!d) return "—";
     const data = d.toLocaleDateString("pt-BR", {
       weekday: "long",
       day: "2-digit",
@@ -136,9 +231,12 @@ export class DetalhesCaronaComponent implements OnInit {
     return `${data}, ${hora}`;
   }
 
-  formatarHora(ts: firebase.firestore.Timestamp | null | undefined): string {
-    if (!ts || !(ts instanceof firebase.firestore.Timestamp)) return "—";
-    return ts.toDate().toLocaleTimeString("pt-BR", {
+  formatarHora(
+    ts: Date | string | FirestoreTimestampLike | null | undefined,
+  ): string {
+    const d = this.toDate(ts);
+    if (!d) return "—";
+    return d.toLocaleTimeString("pt-BR", {
       hour: "2-digit",
       minute: "2-digit",
     });
@@ -156,11 +254,83 @@ export class DetalhesCaronaComponent implements OnInit {
 
   get statusBadgeClass(): string {
     if (!this.carona) return "";
-    return this.carona.status === "FINALIZADA" ? "badge-finalizada" : "badge-aberta";
+    return this.carona.status === "FINALIZADA"
+      ? "badge-finalizada"
+      : "badge-aberta";
+  }
+
+  /** Exibe o botão de chat apenas quando o usuário logado não é o motorista. Compara nome + foto + curso para evitar colisão de nomes iguais. */
+  get showChatButton(): boolean {
+    if (!this.carona || !this.motorista) return false;
+    const user = this.userService.getCurrentUser();
+    if (!user) return true;
+
+    const nomeLogado = user.nome?.trim().toLowerCase();
+    const nomeMotorista = this.motorista.nome?.trim().toLowerCase();
+    if (!nomeLogado || !nomeMotorista || nomeLogado !== nomeMotorista) return true;
+
+    const fotoLogado = (user.fotoUrl ?? "").trim();
+    const fotoMotorista = (this.motorista.foto ?? "").trim();
+    if (fotoLogado && fotoMotorista && fotoLogado !== fotoMotorista) return true;
+
+    const cursoLogado = (user as { curso_ocupacao?: string }).curso_ocupacao?.trim().toLowerCase();
+    const cursoMotorista = this.motorista.curso?.trim().toLowerCase();
+    if (cursoLogado && cursoMotorista && cursoLogado !== cursoMotorista) return true;
+
+    return false;
+  }
+
+  /** Exibe o card de solicitar reserva quando o usuário não é o motorista */
+  get showSolicitarReservaCard(): boolean {
+    return this.showChatButton;
+  }
+
+  async solicitarReserva(): Promise<void> {
+    if (!this.caronaId || this.solicitandoReserva || this.solicitacaoEnviada)
+      return;
+    this.solicitandoReserva = true;
+    try {
+      const res = await this.caronasService.solicitarCarona(this.caronaId);
+      this.toastr.success(res?.message ?? "Solicitação enviada com sucesso!");
+      this.solicitacaoEnviada = true;
+    } catch (err: unknown) {
+      const status = (err as { status?: number })?.status;
+      const msg =
+        (err as { error?: { message?: string } })?.error?.message ??
+        "Erro ao solicitar carona.";
+      if (status === 400) this.toastr.error(msg);
+      else if (status === 401)
+        this.toastr.error(msg || "Faça login para solicitar.");
+      else if (status === 404)
+        this.toastr.error(msg || "Carona não encontrada.");
+      else if (status === 409) {
+        this.toastr.warning(
+          msg || "Você já enviou uma solicitação para esta carona.",
+        );
+        this.solicitacaoEnviada = true;
+      } else this.toastr.error(msg);
+    } finally {
+      this.solicitandoReserva = false;
+    }
   }
 
   irParaChat(): void {
-    this.router.navigate(["/chat"], { queryParams: { caronaId: this.caronaId } });
+    const subtitle =
+      this.carona?.origem && this.carona?.destino
+        ? `${this.formatarEndereco(this.carona.origem)} → ${this.formatarEndereco(this.carona.destino)}`
+        : undefined;
+    this.router.navigate(["/chat"], {
+      queryParams: {
+        caronaId: this.caronaId,
+        ...(this.carona?.motoristaId && {
+          outroUsuarioId: this.carona.motoristaId,
+        }),
+        ...(this.motorista?.nome && {
+          outroUsuarioNome: this.motorista.nome,
+        }),
+        ...(subtitle && { caronaSubtitle: subtitle }),
+      },
+    });
   }
 
   voltar(): void {

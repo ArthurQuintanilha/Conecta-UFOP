@@ -1,7 +1,8 @@
 <app-header></app-header>
 
 <div class="perfil-container">
-  <div class="profile-header">
+  <p class="loading-msg" *ngIf="carregando">Carregando perfil...</p>
+  <div class="profile-header" *ngIf="!carregando">
     <div class="title-group">
       <button class="btn-back" (click)="voltar()">
         <i class="fas fa-arrow-left"></i>
@@ -20,7 +21,7 @@
     </div>
   </div>
 
-  <div class="form-container form-padrao">
+  <div class="form-container form-padrao" *ngIf="!carregando">
     <form (submit)="alterarUser()">
       <div class="input-field">
         <label>Nome Completo <span class="asterisk">*</span></label>

@@ -11,6 +11,11 @@ $border-color: #e0e0e0;
   background-color: white;
   min-height: 80vh;
 
+  .loading-msg {
+    color: #666;
+    margin: 2rem 0;
+  }
+
   .profile-header {
     width: 100%;
     max-width: 500px;

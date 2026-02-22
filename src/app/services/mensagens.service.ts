@@ -1,12 +1,12 @@
 import { Injectable } from "@angular/core";
 import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
-import { Observable, firstValueFrom } from "rxjs";
-import { map } from "rxjs/operators";
+import { Observable, firstValueFrom, combineLatest } from "rxjs";
+import { map, distinctUntilChanged, debounceTime, tap } from "rxjs/operators";
 import firebase from "firebase/compat/app";
 import { UsuariosService } from "./usuarios.service";
 
-/** Documento da collection Firestore "mensagens" — criadoEm é Timestamp. */
+/** Documento da collection Firestore "mensagens" — criadoEm é Timestamp, visualizado obrigatório. */
 export interface MensagemDoc {
   id?: string;
   caronaId: string;
@@ -14,6 +14,7 @@ export interface MensagemDoc {
   destinatarioId: string;
   mensagem: string;
   criadoEm?: firebase.firestore.Timestamp | firebase.firestore.FieldValue;
+  visualizado: boolean;
 }
 
 /** Item da listagem de conversas (sidebar). criadoEm em Date para exibição/ordenação. */
@@ -26,6 +27,8 @@ export interface ConversaListItem {
   criadoEm: Date;
   caronaSubtitle?: string;
   lastMessageSentByMe?: boolean;
+  /** Se a última mensagem foi enviada por mim e já foi vista pelo destinatário. */
+  lastMessageVisualizado?: boolean;
 }
 
 /** Documento da collection Firestore "caronas" (campos usados no chat). dtPartida é Timestamp ou null. */
@@ -109,6 +112,7 @@ export class MensagensService {
         criadoEm,
         caronaSubtitle,
         lastMessageSentByMe: data.remetenteId === uid,
+        lastMessageVisualizado: data.remetenteId === uid ? data.visualizado === true : undefined,
       });
     }
 
@@ -118,21 +122,53 @@ export class MensagensService {
 
   /**
    * Stream de mensagens de uma carona em tempo real.
+   * Usa duas queries (remetente e destinatário) para que as regras do Firestore permitam a leitura.
    */
-  getMensagensPorCarona(caronaId: string): Observable<MensagemDoc[]> {
-    return this.ngFirestore
+  getMensagensPorCarona(caronaId: string, uid: string): Observable<(MensagemDoc & { id: string })[]> {
+    const asMensagem = (c: { payload: { doc: { id: string; data: () => MensagemDoc } } }) => {
+      const data = c.payload.doc.data();
+      return { id: c.payload.doc.id, ...data } as MensagemDoc & { id: string };
+    };
+
+    const remetente$ = this.ngFirestore
       .collection<MensagemDoc>("mensagens", (ref) =>
-        ref.where("caronaId", "==", caronaId).orderBy("criadoEm", "asc")
+        ref
+          .where("caronaId", "==", caronaId)
+          .where("remetenteId", "==", uid)
+          .orderBy("criadoEm", "asc")
       )
       .snapshotChanges()
-      .pipe(
-        map((changes) =>
-          changes.map((c) => {
-            const data = c.payload.doc.data();
-            return { id: c.payload.doc.id, ...data } as MensagemDoc & { id: string };
-          })
-        )
-      );
+      .pipe(map((changes) => changes.map(asMensagem)));
+
+    const destinatario$ = this.ngFirestore
+      .collection<MensagemDoc>("mensagens", (ref) =>
+        ref
+          .where("caronaId", "==", caronaId)
+          .where("destinatarioId", "==", uid)
+          .orderBy("criadoEm", "asc")
+      )
+      .snapshotChanges()
+      .pipe(map((changes) => changes.map(asMensagem)));
+
+    return combineLatest([remetente$, destinatario$]).pipe(
+      map(([a, b]) => {
+        const byId = new Map<string, MensagemDoc & { id: string }>();
+        [...a, ...b].forEach((doc) => byId.set(doc.id, doc));
+        return Array.from(byId.values()).sort((x, y) => {
+          const tx = this.timestampToDate(x.criadoEm).getTime();
+          const ty = this.timestampToDate(y.criadoEm).getTime();
+          // Mensagens sem timestamp (serverTimestamp não resolvido) vão para o fim, evitando ordem errada ao enviar
+          const txs = tx <= 0 ? Number.MAX_SAFE_INTEGER : tx;
+          const tys = ty <= 0 ? Number.MAX_SAFE_INTEGER : ty;
+          return txs - tys;
+        });
+      }),
+      debounceTime(50),
+      distinctUntilChanged((prev, curr) => {
+        if (prev.length !== curr.length) return false;
+        return prev.every((p, i) => p.id === curr[i]?.id);
+      })
+    );
   }
 
   /**
@@ -152,7 +188,55 @@ export class MensagensService {
       destinatarioId,
       mensagem: texto.trim(),
       criadoEm: firebase.firestore.FieldValue.serverTimestamp(),
+      visualizado: false,
     });
+  }
+
+  /**
+   * Marca como vistas todas as mensagens da carona que foram enviadas para o destinatário e ainda estão com visualizado = false.
+   * Chamar ao abrir a conversa (o destinatário é o usuário logado).
+   */
+  async marcarMensagensComoVistas(
+    caronaId: string,
+    destinatarioId: string
+  ): Promise<void> {
+    const snap = await this.ngFirestore.collection("mensagens").ref
+      .where("caronaId", "==", caronaId)
+      .where("destinatarioId", "==", destinatarioId)
+      .where("visualizado", "==", false)
+      .get();
+
+    const batch = this.ngFirestore.firestore.batch();
+    snap.docs.forEach((doc) => {
+      batch.update(doc.ref, { visualizado: true });
+    });
+    if (!snap.empty) {
+      await batch.commit();
+      console.log("[MensagensService] marcarMensagensComoVistas: atualizadas", snap.size, "mensagem(ns)");
+    }
+  }
+
+  /**
+   * Observable com a quantidade de mensagens não lidas para o usuário (destinatário, visualizado === false).
+   * Atualizado em tempo real pelo Firestore.
+   */
+  getUnreadCount(uid: string): Observable<number> {
+    return this.ngFirestore
+      .collection<MensagemDoc>("mensagens", (ref) =>
+        ref
+          .where("destinatarioId", "==", uid)
+          .where("visualizado", "==", false)
+      )
+      .snapshotChanges()
+      .pipe(
+        tap((changes) => {
+          console.log("[MensagensService] getUnreadCount: snapshot recebido", {
+            uid,
+            quantidade: changes.length,
+          });
+        }),
+        map((changes) => changes.length)
+      );
   }
 
   /**

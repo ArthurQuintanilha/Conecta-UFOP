@@ -39,7 +39,10 @@
         [class.active]="conversa.caronaId === activeCaronaId"
         (click)="selectConversa(conversa)"
       >
-        <div class="avatar">{{ conversaAvatar(conversa) }}</div>
+        <div class="avatar">
+          <img *ngIf="conversa.outroUsuarioAvatar" [src]="conversa.outroUsuarioAvatar" alt="" class="avatar-img-list" />
+          <span *ngIf="!conversa.outroUsuarioAvatar">{{ conversaAvatar(conversa) }}</span>
+        </div>
         <div class="contact-info">
           <div class="contact-top">
             <span class="contact-name">{{ conversa.outroUsuarioNome }}</span>
@@ -48,7 +51,14 @@
           <span class="contact-subtitle">{{ conversa.caronaSubtitle }}</span>
           <div class="contact-bottom">
             <span class="contact-last-msg">
-              <span class="last-msg-check" *ngIf="isLastMessageSent(conversa)">✓</span>
+              <span *ngIf="isLastMessageSent(conversa)" class="last-msg-check" [class.visualizado]="conversa.lastMessageVisualizado" [title]="conversa.lastMessageVisualizado ? 'Visto' : 'Enviado'">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                <svg *ngIf="conversa.lastMessageVisualizado" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="check-second">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </span>
               {{ conversa.ultimaMensagem }}
             </span>
           </div>
@@ -75,35 +85,41 @@
       </div>
 
       <div class="messages-area" #messagesContainer>
-        <div class="day-divider">
-          <span class="day-badge">HOJE</span>
-        </div>
-        <div
-          *ngFor="let msg of messages; trackBy: trackByMessageId"
-          class="message-row"
-          [class.sent]="msg.sent"
-          [class.received]="!msg.sent"
-        >
-          <div class="message-avatar received-only" *ngIf="!msg.sent">{{ activeContactAvatar }}</div>
-          <div class="message-wrapper">
-            <div class="message-bubble">
-              <p class="message-text">{{ msg.text }}</p>
-              <div class="message-meta">
-                <span class="message-time">{{ msg.time }}</span>
-                <span class="message-double-check" *ngIf="msg.sent">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="20 6 9 17 4 12"></polyline>
-                  </svg>
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
-                    class="check-second">
-                    <polyline points="20 6 9 17 4 12"></polyline>
-                  </svg>
-                </span>
+        <div class="messages-area-content">
+          <ng-container *ngFor="let msg of messages; let i = index; trackBy: trackByMessageId">
+            <div class="day-divider" *ngIf="shouldShowDateDivider(i, msg)">
+              <span class="day-badge">{{ msg.dateLabel }}</span>
+            </div>
+            <div
+              class="message-row"
+              [class.sent]="msg.sent"
+              [class.received]="!msg.sent"
+            >
+            <div class="message-avatar received-only" *ngIf="!msg.sent">
+              <img *ngIf="activeContactPhotoUrl" [src]="activeContactPhotoUrl" alt="" class="avatar-img" />
+              <span *ngIf="!activeContactPhotoUrl">{{ activeContactAvatar }}</span>
+            </div>
+            <div class="message-wrapper">
+              <div class="message-bubble">
+                <p class="message-text">{{ msg.text }}</p>
+                <div class="message-meta">
+                  <span class="message-time">{{ msg.time }}</span>
+                  <span *ngIf="msg.sent" class="message-double-check" [class.visualizado]="msg.visualizado" [title]="msg.visualizado ? 'Visto' : 'Enviado'">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    <svg *ngIf="msg.visualizado" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                      class="check-second">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
+            </div>
+          </ng-container>
         </div>
       </div>
 

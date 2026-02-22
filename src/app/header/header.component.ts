@@ -1,6 +1,9 @@
 import { Component, HostListener } from "@angular/core";
+import { Observable, of } from "rxjs";
+import { switchMap } from "rxjs/operators";
 import { UserService } from "../services/user.service";
 import { AppService } from "../services/app.service";
+import { MensagensService } from "../services/mensagens.service";
 import { Router } from "@angular/router";
 
 @Component({
@@ -13,9 +16,17 @@ export class HeaderComponent {
   isDropdownOpen = false;
   isMobileMenuOpen = false;
 
+  /** Quantidade de mensagens não lidas. Atualizado em tempo real quando o usuário está logado. */
+  unreadCount$: Observable<number> = this.currentUser$.pipe(
+    switchMap((user) =>
+      user?.uid ? this.mensagensService.getUnreadCount(user.uid) : of(0)
+    )
+  );
+
   constructor(
     private userService: UserService,
     private appService: AppService,
+    private mensagensService: MensagensService,
     public router: Router
   ) {}
 

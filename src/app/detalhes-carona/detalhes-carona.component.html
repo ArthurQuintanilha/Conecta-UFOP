@@ -9,43 +9,81 @@
     <div class="not-found">
       <h1>Carona não encontrada</h1>
       <p>O link pode estar incorreto ou a carona não existe mais.</p>
-      <button type="button" class="btn-voltar" (click)="voltar()">Voltar para caronas</button>
+      <button type="button" class="btn-voltar" (click)="voltar()">
+        Voltar para caronas
+      </button>
     </div>
   </ng-container>
 
-  <ng-container *ngIf="!loading && !notFound && carona">
+  <ng-container
+    *ngIf="!loading && !notFound && carona; else caronaNaoDisponivel"
+  >
     <div class="top-section">
       <div>
         <h1>Detalhes da viagem</h1>
         <div class="status-row">
-          <span class="badge" [ngClass]="statusBadgeClass">{{ statusLabel }}</span>
-          <span class="price">Valor da passagem: R$ {{ formatarValor(carona.valor) }}</span>
+          <span class="badge" [ngClass]="statusBadgeClass">{{
+            statusLabel
+          }}</span>
+          <span class="price"
+            >Valor da passagem: R$ {{ formatarValor(carona.valor) }}</span
+          >
         </div>
       </div>
-      <button type="button" class="btn-voltar" (click)="voltar()">Voltar</button>
     </div>
 
-    <div class="card rota-card">
-      <div class="timeline">
-        <div class="timeline-item">
-          <div class="time">{{ formatarDataCompleta(carona.dtPartida) }}</div>
-          <div class="dot"></div>
-          <div class="content">
-            <div class="title">Local de saída</div>
-            <div class="address">{{ formatarEndereco(carona.origem) }}</div>
+    <div class="cards-row">
+      <div class="card rota-card">
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="time">{{ formatarDataCompleta(carona.dtPartida) }}</div>
+            <div class="dot"></div>
+            <div class="content">
+              <div class="title">Local de saída</div>
+              <div class="address">{{ formatarEndereco(carona.origem) }}</div>
+            </div>
+          </div>
+
+          <div class="line"></div>
+
+          <div class="timeline-item">
+            <div class="time">
+              {{
+                carona.dtChegada ? formatarDataCompleta(carona.dtChegada) : "—"
+              }}
+            </div>
+            <div class="dot"></div>
+            <div class="content">
+              <div class="title">Destino</div>
+              <div class="address">{{ formatarEndereco(carona.destino) }}</div>
+            </div>
           </div>
         </div>
+      </div>
 
-        <div class="line"></div>
-
-        <div class="timeline-item">
-          <div class="time">{{ carona.dtChegada ? formatarDataCompleta(carona.dtChegada) : "—" }}</div>
-          <div class="dot"></div>
-          <div class="content">
-            <div class="title">Destino</div>
-            <div class="address">{{ formatarEndereco(carona.destino) }}</div>
-          </div>
+      <div class="card reserva-card" *ngIf="showSolicitarReservaCard && carona">
+        <h2 class="reserva-title">Detalhes da reserva</h2>
+        <p class="reserva-passageiro">
+          {{ carona.passageiros?.length }} passageiro(s)
+        </p>
+        <div class="reserva-total">
+          <span>Total:</span>
+          <strong>R$ {{ formatarValor(carona.valor) }}</strong>
         </div>
+        <button
+          type="button"
+          class="btn-solicitar-reserva"
+          (click)="solicitarReserva()"
+          [disabled]="solicitandoReserva || solicitacaoEnviada"
+        >
+          {{
+            solicitandoReserva
+              ? "Enviando..."
+              : solicitacaoEnviada
+                ? "Solicitação enviada"
+                : "Solicitar reserva"
+          }}
+        </button>
       </div>
     </div>
 
@@ -56,25 +94,39 @@
         alt="Foto do motorista"
         class="avatar"
       />
-      <div *ngIf="!motorista.foto" class="avatar avatar-iniciais">{{ motorista.nome.charAt(0).toUpperCase() }}</div>
+      <div *ngIf="!motorista.foto" class="avatar avatar-iniciais">
+        {{ motorista.nome.charAt(0).toUpperCase() }}
+      </div>
       <div class="motorista-info">
         <div class="motorista-header">
           <div class="nome">
             {{ motorista.nome }}
-            <span class="rating" *ngIf="motorista.avaliacoes != null">★ {{ motorista.avaliacoes | number:'1.1-1' }}</span>
+            <span class="rating" *ngIf="motorista.avaliacoes != null"
+              >★ {{ motorista.avaliacoes | number: "1.1-1" }}</span
+            >
           </div>
-          <button type="button" class="icon-button" (click)="irParaChat()" title="Enviar mensagem">
+          <button
+            type="button"
+            class="icon-button"
+            (click)="irParaChat()"
+            title="Enviar mensagem"
+            *ngIf="showChatButton"
+          >
             <img src="assets/chat.png" alt="Chat" />
           </button>
         </div>
-        <div class="subtitle" *ngIf="motorista.curso">{{ motorista.curso }}</div>
+        <div class="subtitle" *ngIf="motorista.curso">
+          {{ motorista.curso }}
+        </div>
         <div class="divider"></div>
         <div class="infos">
           <div class="info-item">
             <div class="icon">
               <img src="assets/car.png" alt="Veículo" />
             </div>
-            <div class="text">{{ carona.veiculo || "—" }} · {{ carona.placa || "—" }}</div>
+            <div class="text">
+              {{ carona.veiculo || "—" }} · {{ carona.placa || "—" }}
+            </div>
           </div>
           <div class="info-item">
             <div class="icon">
@@ -96,7 +148,9 @@
             alt="Foto do passageiro"
             class="avatar-small"
           />
-          <div *ngIf="!p.foto" class="avatar-small avatar-iniciais-small">{{ p.nome.charAt(0).toUpperCase() }}</div>
+          <div *ngIf="!p.foto" class="avatar-small avatar-iniciais-small">
+            {{ p.nome.charAt(0).toUpperCase() }}
+          </div>
           <div class="passageiro-info">
             <div class="nome">{{ p.nome }}</div>
             <div class="subtitle" *ngIf="p.curso">{{ p.curso }}</div>
@@ -105,11 +159,27 @@
       </div>
     </div>
 
-    <div class="passageiros-section" *ngIf="!loading && carona && (!carona.passageiros || carona.passageiros.length === 0)">
+    <div
+      class="passageiros-section"
+      *ngIf="
+        !loading &&
+        carona &&
+        (!carona.passageiros || carona.passageiros.length === 0)
+      "
+    >
       <h2>Passageiros</h2>
       <p class="nenhum-passageiro">Nenhum passageiro nesta carona.</p>
     </div>
   </ng-container>
+
+  <ng-template #caronaNaoDisponivel>
+    <div class="not-found" *ngIf="!loading && !notFound">
+      <p>Carona não disponível no momento.</p>
+      <button type="button" class="btn-voltar" (click)="voltar()">
+        Voltar para caronas
+      </button>
+    </div>
+  </ng-template>
 </div>
 
 <app-footer></app-footer>

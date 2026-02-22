@@ -3,11 +3,38 @@ header {
     display: flex;
     align-items: center;
   }
-  
+
   header .logo {
     font-size: 22px;
     font-weight: 700;
     color: #2b1b4f;
+  }
+
+  .header-unread-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: 4px;
+    padding: 2px 6px;
+    border-radius: 9999px;
+    background: #e11d48;
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+
+    .header-unread-icon {
+      width: 14px;
+      height: 14px;
+    }
+
+    .header-unread-count {
+      min-width: 1.2em;
+      text-align: center;
+    }
+
+    &--mobile {
+      margin-left: auto;
+    }
   }
 
   .copy {

@@ -29,12 +29,13 @@ export class PerfilComponent implements OnInit, OnDestroy {
 
   exibirAviso = false;
   mensagemAviso = "";
+  carregando = false;
 
   ngOnInit(): void {
+    this.atualizarUsuario();
     this.subscription = this.userService.currentUser$.subscribe(
       (loggedUser) => {
         if (loggedUser) {
-          console.log(loggedUser.fotoUrl);
           this.user = {
             nome: loggedUser.nome ?? "",
             email: loggedUser.email ?? "",
@@ -45,7 +46,16 @@ export class PerfilComponent implements OnInit, OnDestroy {
         }
       },
     );
-    console.log(this.user.fotoUrl);
+  }
+
+  private atualizarUsuario(): void {
+    this.carregando = true;
+    this.userService.getMe().then((me) => {
+      this.carregando = false;
+      if (me) this.userService.setCurrentUser(me);
+    }).catch(() => {
+      this.carregando = false;
+    });
   }
 
   ngOnDestroy(): void {

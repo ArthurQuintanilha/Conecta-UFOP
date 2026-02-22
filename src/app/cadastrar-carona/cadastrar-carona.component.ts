@@ -237,6 +237,7 @@ export class CadastrarCaronaComponent {
     }
 
     const origem = this.toOrigemCarona(v.origem);
+    const destino = this.toOrigemCarona(v.destino);
 
     this.saving = true;
     try {
@@ -247,6 +248,7 @@ export class CadastrarCaronaComponent {
         dtPartida: dtPartidaISO,
         dtChegada: dtChegadaISO,
         origem,
+        destino,
       });
       this.toastr.success("Carona criada com sucesso.");
       this.router.navigate(["/detalhes-carona", res.id]);

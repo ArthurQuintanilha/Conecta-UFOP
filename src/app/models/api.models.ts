@@ -80,6 +80,7 @@ export interface CreateCaronaRequest {
   dtPartida: string;
   dtChegada: string;
   origem: OrigemCarona;
+  destino: OrigemCarona;
 }
 
 export interface CreateCaronaResponse {
@@ -139,7 +140,9 @@ export interface MinhasCaronasResponse {
 /** GET /carona/{id} */
 export interface GetCaronaByIdResponse {
   criadoEm?: DateTimeLike;
+  motoristaId?: string;
   motorista?: {
+    id?: string;
     createdAt?: string | null;
     nome?: string;
     notaMedia?: number;

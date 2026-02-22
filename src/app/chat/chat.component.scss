@@ -7,7 +7,7 @@ $primary-light: #f9e6e9;
 $white:         #ffffff;
 $sidebar-bg:    #f8f8f8;
 $search-bg:     #f0f0f0;
-$messages-bg:   #e5e5e5;
+$messages-bg:   #c0c0c0;
 $gray-100:      #f7f7f9;
 $gray-200:      #efefef;
 $gray-300:      #e0e0e0;
@@ -30,8 +30,7 @@ $transition:    all 0.2s ease;
 :host {
   display: flex;
   flex-direction: column;
-  flex: 1;
-  min-height: 100vh;
+  height: 100vh;
   overflow: hidden;
 }
 
@@ -203,6 +202,13 @@ $transition:    all 0.2s ease;
   user-select: none;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  overflow: hidden;
+
+  .avatar-img-list {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 }
 
 .contact-info {
@@ -262,10 +268,28 @@ $transition:    all 0.2s ease;
   gap: 4px;
 }
 
+// Ícone de enviado/visualizado na lista: um check cinza, dois checks azuis quando visto
 .last-msg-check {
-  color: $gray-500;
-  font-size: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
   flex-shrink: 0;
+  color: $gray-500;
+  width: 14px;
+  height: 14px;
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  &.visualizado {
+    color: $check-blue;
+  }
+
+  .check-second {
+    margin-left: -4px;
+  }
 }
 
 .badge {
@@ -290,6 +314,7 @@ $transition:    all 0.2s ease;
   display: flex;
   flex-direction: column;
   flex: 1;
+  min-height: 0;
   overflow: hidden;
   background: $white;
 }
@@ -341,19 +366,57 @@ $transition:    all 0.2s ease;
   font-size: 0.95rem;
 }
 
-// Área de mensagens (fundo cinza muito claro como na print)
+// Área de mensagens (fundo: foto do contato ou padrão) — único scroll
 .messages-area {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
-  padding: 16px 20px;
-  background: $messages-bg;
+  padding: 0;
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 4px;
 
   &::-webkit-scrollbar { width: 5px; }
   &::-webkit-scrollbar-track { background: transparent; }
   &::-webkit-scrollbar-thumb { background: $gray-400; border-radius: 4px; }
+}
+
+.messages-area-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background: $messages-bg;
+
+  &.has-photo {
+    background: #b0b0b0;
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.08);
+      z-index: 1;
+    }
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.25;
+      filter: blur(10px);
+    }
+  }
+}
+
+.messages-area-content {
+  position: relative;
+  z-index: 1;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+
+  gap: 4px;
 }
 
 // Badge HOJE (retangular vermelho escuro, cantos arredondados)
@@ -403,6 +466,18 @@ $transition:    all 0.2s ease;
   flex-shrink: 0;
   align-self: flex-end;
   margin-bottom: 2px;
+  border-radius: 50%;
+  background: $gray-300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+
+  .avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 }
 
 .message-wrapper {
@@ -424,7 +499,7 @@ $transition:    all 0.2s ease;
   }
 
   .received & {
-    background: $white;
+    background: $gray-200;
     color: $gray-800;
     border-bottom-left-radius: $radius-sm;
   }
@@ -448,11 +523,15 @@ $transition:    all 0.2s ease;
   opacity: 0.9;
 }
 
-// Double check (✓✓) em azul claro como na print
+// Check(s): um cinza quando enviado, dois azuis quando visualizado
 .message-double-check {
   display: flex;
   align-items: center;
-  color: $check-blue;
+  color: rgba(255, 255, 255, 0.85);
+
+  &.visualizado {
+    color: $check-blue;
+  }
 
   svg {
     width: 14px;

@@ -27,6 +27,7 @@ export class MinhasCaronasComponent implements OnInit {
       .then(res => {
         this.comoMotorista = res.comoMotorista ?? [];
         this.comoPassageiro = res.comoPassageiro ?? [];
+        console.log(this.comoMotorista);
       })
       .catch(err => {
         this.erro = err?.error?.message ?? 'Erro ao carregar minhas caronas. Tente de novo.';
