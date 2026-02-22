@@ -80,6 +80,15 @@ export class DetalhesCaronaComponent implements OnInit {
   solicitacoes: SolicitacaoExibicao[] = [];
   /** userId em processamento (aceitar/recusar) para desabilitar botões. */
   solicitacaoProcessando: string | null = null;
+  /** True enquanto altera status da carona (iniciar/finalizar). */
+  alterandoStatus = false;
+  /** IDs dos passageiros confirmados (para mensagens SISTEMA). */
+  passageirosIds: string[] = [];
+  /** True se o usuário logado está no array passageiros da carona. */
+  usuarioEhPassageiro = false;
+  cancelandoCorrida = false;
+  cancelandoReserva = false;
+  cancelandoSolicitacao = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -123,13 +132,22 @@ export class DetalhesCaronaComponent implements OnInit {
           | string
           | undefined);
 
-      if (!motoristaId) {
-        const caronaSnap = await this.firestore
-          .collection("caronas")
-          .doc(this.caronaId)
-          .ref.get();
-        const data = caronaSnap.data() as { motoristaId?: string } | undefined;
-        motoristaId = data?.motoristaId;
+      let statusCarona = "ABERTA";
+      const caronaSnap = await this.firestore
+        .collection("caronas")
+        .doc(this.caronaId)
+        .ref.get();
+      const caronaDoc = caronaSnap.data() as {
+        motoristaId?: string;
+        status?: string;
+        passageiros?: string[];
+      } | undefined;
+      if (caronaDoc) {
+        if (caronaDoc.motoristaId) motoristaId = caronaDoc.motoristaId;
+        if (caronaDoc.status) statusCarona = caronaDoc.status;
+        this.passageirosIds = caronaDoc.passageiros ?? [];
+        const uid = (this.userService.getCurrentUser() as { uid?: string })?.uid;
+        this.usuarioEhPassageiro = !!(uid && this.passageirosIds.includes(uid));
       }
 
       this.carona = {
@@ -144,7 +162,7 @@ export class DetalhesCaronaComponent implements OnInit {
         veiculo: veiculoStr,
         placa: placaStr,
         vagas: res.vagasDisponiveis ?? 0,
-        status: "ABERTA",
+        status: statusCarona,
         passageiros: [],
       };
 
@@ -320,6 +338,134 @@ export class DetalhesCaronaComponent implements OnInit {
     }
   }
 
+  /** Altera status da carona para INICIADA (somente quando ABERTA). */
+  async iniciarCorrida(): Promise<void> {
+    if (!this.caronaId || this.alterandoStatus || this.carona?.status !== "ABERTA") return;
+    this.alterandoStatus = true;
+    try {
+      const res = await this.caronasService.alterarStatusCarona(this.caronaId, "INICIADA");
+      if (this.carona) this.carona.status = res.status ?? "INICIADA";
+      this.toastr.success(res?.message ?? "Carona iniciada com sucesso.");
+      const detalhes = this.getDetalhesCaronaParaMensagem();
+      for (const passageiroId of this.passageirosIds) {
+        this.mensagensService
+          .enviarMensagemSistema(
+            this.caronaId,
+            passageiroId,
+            "A carona foi iniciada." + detalhes,
+          )
+          .catch(() => {});
+      }
+    } catch (err: unknown) {
+      const msg = (err as { error?: { message?: string } })?.error?.message ?? "Erro ao iniciar corrida.";
+      this.toastr.error(msg);
+    } finally {
+      this.alterandoStatus = false;
+    }
+  }
+
+  /** Altera status da carona para FINALIZADA (somente quando INICIADA). */
+  async finalizarCorrida(): Promise<void> {
+    if (!this.caronaId || this.alterandoStatus || this.carona?.status !== "INICIADA") return;
+    this.alterandoStatus = true;
+    try {
+      const res = await this.caronasService.alterarStatusCarona(this.caronaId, "FINALIZADA");
+      if (this.carona) this.carona.status = res.status ?? "FINALIZADA";
+      this.toastr.success(res?.message ?? "Carona finalizada com sucesso.");
+      const detalhes = this.getDetalhesCaronaParaMensagem();
+      for (const passageiroId of this.passageirosIds) {
+        this.mensagensService
+          .enviarMensagemSistema(
+            this.caronaId,
+            passageiroId,
+            "A carona foi finalizada." + detalhes,
+          )
+          .catch(() => {});
+      }
+    } catch (err: unknown) {
+      const msg = (err as { error?: { message?: string } })?.error?.message ?? "Erro ao finalizar corrida.";
+      this.toastr.error(msg);
+    } finally {
+      this.alterandoStatus = false;
+    }
+  }
+
+  /** Motorista cancela a corrida (status ABERTA → CANCELADA). */
+  async cancelarCorrida(): Promise<void> {
+    if (!this.caronaId || this.cancelandoCorrida || this.carona?.status !== "ABERTA") return;
+    this.cancelandoCorrida = true;
+    try {
+      await this.caronasService.cancelarCorrida(this.caronaId);
+      if (this.carona) this.carona.status = "CANCELADA";
+      this.toastr.success("Corrida cancelada.");
+      const detalhes = this.getDetalhesCaronaParaMensagem();
+      for (const passageiroId of this.passageirosIds) {
+        this.mensagensService
+          .enviarMensagemSistema(
+            this.caronaId,
+            passageiroId,
+            "A carona foi cancelada pelo motorista." + detalhes,
+          )
+          .catch(() => {});
+      }
+    } catch (err: unknown) {
+      const msg = (err as { error?: { message?: string } })?.error?.message ?? "Erro ao cancelar corrida.";
+      this.toastr.error(msg);
+    } finally {
+      this.cancelandoCorrida = false;
+    }
+  }
+
+  /** Passageiro cancela a própria reserva (sai da lista de passageiros). */
+  async cancelarReserva(): Promise<void> {
+    if (!this.caronaId || this.cancelandoReserva || !this.usuarioEhPassageiro) return;
+    this.cancelandoReserva = true;
+    try {
+      await this.caronasService.cancelarReserva(this.caronaId);
+      const uid = (this.userService.getCurrentUser() as { uid?: string })?.uid;
+      this.usuarioEhPassageiro = false;
+      const idx = uid ? this.passageirosIds.indexOf(uid) : -1;
+      if (idx !== -1) {
+        this.passageirosIds = this.passageirosIds.filter((id) => id !== uid);
+        this.passageiros = this.passageiros.filter((_, i) => i !== idx);
+      }
+      if (this.carona) this.carona.passageiros = this.passageiros;
+      this.toastr.success("Reserva cancelada.");
+      const motoristaId = this.carona?.motoristaId;
+      if (motoristaId) {
+        const detalhes = this.getDetalhesCaronaParaMensagem();
+        this.mensagensService
+          .enviarMensagemSistema(
+            this.caronaId,
+            motoristaId,
+            "Um passageiro cancelou a reserva nesta carona." + detalhes,
+          )
+          .catch(() => {});
+      }
+    } catch (err: unknown) {
+      const msg = (err as { error?: { message?: string } })?.error?.message ?? "Erro ao cancelar reserva.";
+      this.toastr.error(msg);
+    } finally {
+      this.cancelandoReserva = false;
+    }
+  }
+
+  /** Passageiro cancela a própria solicitação (sai da lista de solicitações). Sem mensagem SISTEMA. */
+  async cancelarSolicitacao(): Promise<void> {
+    if (!this.caronaId || this.cancelandoSolicitacao || !this.solicitacaoEnviada) return;
+    this.cancelandoSolicitacao = true;
+    try {
+      await this.caronasService.cancelarSolicitacao(this.caronaId);
+      this.solicitacaoEnviada = false;
+      this.toastr.success("Solicitação cancelada.");
+    } catch (err: unknown) {
+      const msg = (err as { error?: { message?: string } })?.error?.message ?? "Erro ao cancelar solicitação.";
+      this.toastr.error(msg);
+    } finally {
+      this.cancelandoSolicitacao = false;
+    }
+  }
+
   private normalizarEndereco(
     e: EnderecoParaFormatar | undefined,
   ): EnderecoCaronaDoc | undefined {
@@ -419,14 +565,41 @@ export class DetalhesCaronaComponent implements OnInit {
 
   get statusLabel(): string {
     if (!this.carona) return "";
-    return this.carona.status === "FINALIZADA" ? "FINALIZADA" : "ABERTA";
+    const s = this.carona.status;
+    if (s === "FINALIZADA") return "FINALIZADA";
+    if (s === "INICIADA") return "EM ANDAMENTO";
+    if (s === "CANCELADA") return "CANCELADA";
+    return "ABERTA";
   }
 
   get statusBadgeClass(): string {
     if (!this.carona) return "";
-    return this.carona.status === "FINALIZADA"
-      ? "badge-finalizada"
-      : "badge-aberta";
+    const s = this.carona.status;
+    if (s === "FINALIZADA") return "badge-finalizada";
+    if (s === "INICIADA") return "badge-iniciada";
+    if (s === "CANCELADA") return "badge-finalizada"; // mesmo estilo de finalizada
+    return "badge-aberta";
+  }
+
+  /** Exibe botão "Iniciar corrida" para o motorista quando status é ABERTA. */
+  get showIniciarCorrida(): boolean {
+    return !!(
+      this.isMotorista &&
+      this.carona?.status === "ABERTA"
+    );
+  }
+
+  /** Exibe botão "Finalizar corrida" para o motorista quando status é INICIADA. */
+  get showFinalizarCorrida(): boolean {
+    return !!(
+      this.isMotorista &&
+      this.carona?.status === "INICIADA"
+    );
+  }
+
+  /** Exibe botão "Cancelar corrida" para o motorista quando status é ABERTA. */
+  get showCancelarCorrida(): boolean {
+    return !!(this.isMotorista && this.carona?.status === "ABERTA");
   }
 
   /** Exibe o botão de chat apenas quando o usuário logado não é o motorista. Compara nome + foto + curso para evitar colisão de nomes iguais. */

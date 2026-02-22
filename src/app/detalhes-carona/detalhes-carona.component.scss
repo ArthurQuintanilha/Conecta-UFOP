@@ -1,9 +1,12 @@
+$primary: #a31d32;
+$primary-dark: #7a1525;
+
 .page {
   background: #f3f4f6;
   min-height: 100vh;
   padding: 60px 120px;
   font-family: sans-serif;
-  color: #2b1b4f;
+  color: $primary;
 }
 
 .loading,
@@ -121,6 +124,54 @@
   background: #6b7280;
 }
 
+.badge-iniciada {
+  background: #d97706;
+}
+
+.btn-status {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s;
+  border: none;
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+}
+
+.btn-iniciar {
+  background: $primary;
+  color: white;
+
+  &:hover:not(:disabled) {
+    background: $primary-dark;
+  }
+}
+
+.btn-finalizar {
+  background: $primary;
+  color: white;
+
+  &:hover:not(:disabled) {
+    background: $primary-dark;
+  }
+}
+
+.btn-cancelar-corrida {
+  background: transparent;
+  color: $primary;
+  border: 1px solid $primary;
+
+  &:hover:not(:disabled) {
+    background: $primary;
+    color: white;
+  }
+}
+
 .price {
   font-size: 14px;
   color: #2e7d32;
@@ -200,25 +251,42 @@
   }
 }
 
-.btn-solicitar-reserva {
+.btn-solicitar-reserva,
+.btn-cancelar-solicitacao,
+.btn-cancelar-reserva {
   width: 100%;
   padding: 14px 20px;
-  background: #a31d32;
-  color: white;
-  border: none;
   border-radius: 10px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
   transition: 0.2s;
 
-  &:hover:not(:disabled) {
-    background: #7a1525;
-  }
-
   &:disabled {
     opacity: 0.8;
     cursor: not-allowed;
+  }
+}
+
+.btn-solicitar-reserva {
+  background: #a31d32;
+  color: white;
+  border: none;
+
+  &:hover:not(:disabled) {
+    background: #7a1525;
+  }
+}
+
+.btn-cancelar-solicitacao,
+.btn-cancelar-reserva {
+  background: transparent;
+  color: $primary;
+  border: 1px solid $primary;
+
+  &:hover:not(:disabled) {
+    background: $primary;
+    color: white;
   }
 }
 

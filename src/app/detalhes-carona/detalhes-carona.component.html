@@ -32,6 +32,33 @@
           <span class="price"
             >Valor da passagem: R$ {{ formatarValor(carona.valor) }}</span
           >
+          <button
+            type="button"
+            class="btn-status btn-iniciar"
+            *ngIf="showIniciarCorrida"
+            (click)="iniciarCorrida()"
+            [disabled]="alterandoStatus"
+          >
+            {{ alterandoStatus ? "Aguarde..." : "Iniciar corrida" }}
+          </button>
+          <button
+            type="button"
+            class="btn-status btn-finalizar"
+            *ngIf="showFinalizarCorrida"
+            (click)="finalizarCorrida()"
+            [disabled]="alterandoStatus"
+          >
+            {{ alterandoStatus ? "Aguarde..." : "Finalizar corrida" }}
+          </button>
+          <button
+            type="button"
+            class="btn-status btn-cancelar-corrida"
+            *ngIf="showCancelarCorrida"
+            (click)="cancelarCorrida()"
+            [disabled]="alterandoStatus || cancelandoCorrida"
+          >
+            {{ cancelandoCorrida ? "Aguarde..." : "Cancelar corrida" }}
+          </button>
         </div>
       </div>
     </div>
@@ -77,16 +104,29 @@
         <button
           type="button"
           class="btn-solicitar-reserva"
+          *ngIf="carona.status === 'ABERTA' && !usuarioEhPassageiro && !solicitacaoEnviada"
           (click)="solicitarReserva()"
-          [disabled]="solicitandoReserva || solicitacaoEnviada"
+          [disabled]="solicitandoReserva"
         >
-          {{
-            solicitandoReserva
-              ? "Enviando..."
-              : solicitacaoEnviada
-                ? "Solicitado"
-                : "Solicitar Reserva"
-          }}
+          {{ solicitandoReserva ? "Enviando..." : "Solicitar Reserva" }}
+        </button>
+        <button
+          type="button"
+          class="btn-cancelar-solicitacao"
+          *ngIf="carona.status === 'ABERTA' && solicitacaoEnviada && !usuarioEhPassageiro"
+          (click)="cancelarSolicitacao()"
+          [disabled]="cancelandoSolicitacao"
+        >
+          {{ cancelandoSolicitacao ? "Aguarde..." : "Cancelar Solicitação" }}
+        </button>
+        <button
+          type="button"
+          class="btn-cancelar-reserva"
+          *ngIf="carona.status === 'ABERTA' && usuarioEhPassageiro"
+          (click)="cancelarReserva()"
+          [disabled]="cancelandoReserva"
+        >
+          {{ cancelandoReserva ? "Aguarde..." : "Cancelar reserva" }}
         </button>
       </div>
     </div>

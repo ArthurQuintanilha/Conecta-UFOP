@@ -50,6 +50,32 @@ export class CaronasService {
     return this.api.post<CreateCaronaResponse>("/carona", body);
   }
 
+  /** PATCH /carona/:caronaID - Alterar status da carona (INICIADA, FINALIZADA ou CANCELADA). Apenas motorista. */
+  async alterarStatusCarona(
+    caronaID: string,
+    status: "INICIADA" | "FINALIZADA" | "CANCELADA"
+  ): Promise<{ message: string; status: string }> {
+    return this.api.patch<{ message: string; status: string }>(
+      `/carona/${caronaID}/status`,
+      { status },
+    );
+  }
+
+  /** Cancelar corrida (motorista). Status atual deve ser ABERTA. */
+  async cancelarCorrida(caronaID: string): Promise<{ message: string; status?: string }> {
+    return this.alterarStatusCarona(caronaID, "CANCELADA");
+  }
+
+  /** Passageiro cancela sua própria solicitação (remove-se do array solicitacoes). */
+  async cancelarSolicitacao(caronaID: string): Promise<{ message: string }> {
+    return this.api.delete<{ message: string }>(`/carona/${caronaID}/solicitacao`);
+  }
+
+  /** Passageiro cancela sua reserva (remove-se do array passageiros). */
+  async cancelarReserva(caronaID: string): Promise<{ message: string }> {
+    return this.api.delete<{ message: string }>(`/carona/${caronaID}/reserva`);
+  }
+
   /** GET /caronas/minhasCaronas - Listar minhas caronas (como motorista e como passageiro) */
   async getMinhasCaronas(): Promise<MinhasCaronasResponse> {
     const res = await this.api.get<MinhasCaronasResponse>(

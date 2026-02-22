@@ -98,11 +98,12 @@ export class MinhasCaronasComponent implements OnInit {
     return v?.formatado ?? v?.modelo ?? v?.placa ?? '—';
   }
 
-  /** Label do badge conforme status (CONFIRMADA = verde, SOLICITADA/ABERTA = amarelo) */
+  /** Label do badge conforme status (exibe o status real: FINALIZADA, INICIADA, ABERTA, etc.) */
   statusLabel(item: MinhasCaronasItem): string {
-    if (item.status === 'FINALIZADA') return 'CONFIRMADA';
-    if (item.status === 'ABERTA') return 'AGENDADA';
-    return (item.status ?? 'AGENDADA').toUpperCase();
+    const s = item.status;
+    if (!s) return 'AGENDADA';
+    if (s === 'ABERTA') return 'AGENDADA';
+    return s.toUpperCase();
   }
 
   /** Se a partida é hoje (para exibir "hoje" ao lado do horário) */
