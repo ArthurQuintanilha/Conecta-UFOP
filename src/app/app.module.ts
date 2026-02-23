@@ -26,6 +26,7 @@ import { AvaliarCaronaComponent } from "./avaliar-carona/avaliar-carona.componen
 import { EditarCaronaComponent } from "./editar-carona/editar-carona.component";
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from "ngx-mask";
 import { DetalhesCaronaComponent } from './detalhes-carona/detalhes-carona.component';
+import { AvaliacoesUsuarioComponent } from './avaliacoes-usuario/avaliacoes-usuario.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { DetalhesCaronaComponent } from './detalhes-carona/detalhes-carona.compo
     AvaliarCaronaComponent,
     EditarCaronaComponent,
     DetalhesCaronaComponent,
+    AvaliacoesUsuarioComponent,
   ],
   imports: [
     BrowserModule,

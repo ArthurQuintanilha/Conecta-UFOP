@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { Location } from "@angular/common";
 import { ActivatedRoute, Router } from "@angular/router";
 import { AngularFirestore } from "@angular/fire/compat/firestore";
 import firebase from "firebase/compat/app";
@@ -53,6 +54,7 @@ export class EditarCaronaComponent implements OnInit {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
+    private location: Location,
     private firestore: AngularFirestore,
     private toastr: ToastrService,
   ) {
@@ -364,6 +366,14 @@ export class EditarCaronaComponent implements OnInit {
       this.toastr.error("Não foi possível salvar. Tente novamente.");
     } finally {
       this.saving = false;
+    }
+  }
+
+  voltar(): void {
+    if (window.history.length > 1) {
+      this.location.back();
+    } else {
+      this.router.navigate(this.caronaId ? ["/detalhes-carona", this.caronaId] : ["/minhas-caronas"]);
     }
   }
 }

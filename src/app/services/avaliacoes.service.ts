@@ -4,6 +4,7 @@ import { ApiService } from "./api.service";
 import type {
   CreateAvaliacaoRequest,
   CreateAvaliacaoResponse,
+  GetAvaliacoesResponse,
 } from "../models/api.models";
 
 @Injectable({
@@ -19,6 +20,11 @@ export class AvaliacoesService {
     body: CreateAvaliacaoRequest
   ): Promise<CreateAvaliacaoResponse> {
     return this.api.post<CreateAvaliacaoResponse>("/avaliacao", body);
+  }
+
+  /** GET /avaliacao/{userId} - Resumo do motorista e avaliações recebidas. */
+  getAvaliacoesByUserId(userId: string): Promise<GetAvaliacoesResponse> {
+    return this.api.get<GetAvaliacoesResponse>(`/avaliacao/${userId}`);
   }
 
   /**

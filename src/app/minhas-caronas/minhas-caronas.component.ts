@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Location } from '@angular/common';
+import { Router } from '@angular/router';
 import { CaronasService } from '../services/caronas.service';
 import { UserService } from '../services/user.service';
 import { AvaliacoesService } from '../services/avaliacoes.service';
@@ -23,7 +25,9 @@ export class MinhasCaronasComponent implements OnInit {
   constructor(
     private caronasService: CaronasService,
     private userService: UserService,
-    private avaliacoesService: AvaliacoesService
+    private avaliacoesService: AvaliacoesService,
+    private location: Location,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -184,5 +188,13 @@ export class MinhasCaronasComponent implements OnInit {
   vagasDisponiveis(item: MinhasCaronasItem): number {
     const v = item.vagasDisponiveis;
     return v != null && typeof v === 'number' ? v : 0;
+  }
+
+  voltar(): void {
+    if (window.history.length > 1) {
+      this.location.back();
+    } else {
+      this.router.navigate(['/caronas']);
+    }
   }
 }

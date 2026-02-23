@@ -59,6 +59,7 @@ export class HeaderComponent {
   }
 
   navTo(path: string): void {
+    this.closeDropdown();
     this.closeMobileMenu();
     this.router.navigate([path]);
   }

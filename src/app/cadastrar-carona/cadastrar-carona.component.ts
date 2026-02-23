@@ -1,5 +1,6 @@
 import { Component } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { Location } from "@angular/common";
 import { Router } from "@angular/router";
 import { ToastrService } from "ngx-toastr";
 import { CaronasService } from "../services/caronas.service";
@@ -49,7 +50,8 @@ export class CadastrarCaronaComponent {
     private fb: FormBuilder,
     private caronasService: CaronasService,
     private toastr: ToastrService,
-    private router: Router
+    private router: Router,
+    private location: Location
   ) {
     this.form = this.buildForm();
   }
@@ -257,6 +259,14 @@ export class CadastrarCaronaComponent {
       this.toastr.error(msg);
     } finally {
       this.saving = false;
+    }
+  }
+
+  voltar(): void {
+    if (window.history.length > 1) {
+      this.location.back();
+    } else {
+      this.router.navigate(["/caronas"]);
     }
   }
 }

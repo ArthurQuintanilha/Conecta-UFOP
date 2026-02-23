@@ -10,18 +10,25 @@
   </ng-container>
 
   <ng-container *ngIf="!loading && notFound">
+    <div class="page-header">
+      <button type="button" class="btn-back" (click)="voltar()" aria-label="Voltar">
+        <i class="fas fa-arrow-left"></i>
+      </button>
+    </div>
     <div class="not-found">
       <h1>Carona não encontrada</h1>
       <p>O link pode estar incorreto ou a carona não existe mais.</p>
-      <button type="button" class="btn-voltar" (click)="voltar()">
-        Voltar para caronas
-      </button>
     </div>
   </ng-container>
 
   <ng-container
     *ngIf="!loading && !notFound && carona; else caronaNaoDisponivel"
   >
+    <div class="page-header">
+      <button type="button" class="btn-back" (click)="voltar()" aria-label="Voltar">
+        <i class="fas fa-arrow-left"></i>
+      </button>
+    </div>
     <div class="top-section">
       <div>
         <h1>Detalhes da viagem</h1>
@@ -145,9 +152,18 @@
         <div class="motorista-header">
           <div class="nome">
             {{ motorista.nome }}
-            <span class="rating" *ngIf="motorista.avaliacoes != null"
-              >★ {{ motorista.avaliacoes | number: "1.1-1" }}</span
-            >
+            <ng-container *ngIf="motorista.avaliacoes != null">
+              <a
+                *ngIf="carona.motoristaId"
+                [routerLink]="['/avaliacoes', carona.motoristaId]"
+                class="rating-link"
+              >
+                <span class="rating">★ {{ motorista.avaliacoes | number: "1.1-1" }}</span>
+              </a>
+              <span *ngIf="!carona.motoristaId" class="rating"
+                >★ {{ motorista.avaliacoes | number: "1.1-1" }}</span
+              >
+            </ng-container>
           </div>
           <button
             type="button"
@@ -260,11 +276,13 @@
   </ng-container>
 
   <ng-template #caronaNaoDisponivel>
+    <div class="page-header" *ngIf="!loading && !notFound">
+      <button type="button" class="btn-back" (click)="voltar()" aria-label="Voltar">
+        <i class="fas fa-arrow-left"></i>
+      </button>
+    </div>
     <div class="not-found" *ngIf="!loading && !notFound">
       <p>Carona não disponível no momento.</p>
-      <button type="button" class="btn-voltar" (click)="voltar()">
-        Voltar para caronas
-      </button>
     </div>
   </ng-template>
 </div>

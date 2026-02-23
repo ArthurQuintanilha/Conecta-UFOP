@@ -1,0 +1,119 @@
+<app-header></app-header>
+
+<div class="avaliacoes-page">
+  <p class="loading-msg" *ngIf="loading">Carregando...</p>
+
+  <div *ngIf="!loading && notFound" class="not-found">
+    <p>Usuário não encontrado.</p>
+    <button type="button" class="btn-back" (click)="voltar()">
+      <i class="fas fa-arrow-left"></i>
+    </button>
+  </div>
+
+  <ng-container *ngIf="!loading && !notFound && usuario">
+    <div class="content-wrap">
+      <div class="page-header">
+        <button type="button" class="btn-back" (click)="voltar()" aria-label="Voltar">
+          <i class="fas fa-arrow-left"></i>
+        </button>
+      </div>
+
+      <div class="profile-card">
+      <div class="profile-top">
+        <div class="profile-avatar">
+          <img
+            *ngIf="usuario.fotoUrl"
+            [src]="usuario.fotoUrl"
+            [alt]="usuario.nome || 'Usuário'"
+            class="avatar-img"
+          />
+          <div *ngIf="!usuario.fotoUrl" class="avatar-iniciais">
+            {{ iniciais(usuario.nome) }}
+          </div>
+        </div>
+        <div class="profile-info">
+          <div class="name-rating">
+            <h1 class="nome">{{ usuario.nome || "Usuário" }}</h1>
+            <span class="rating-block" *ngIf="usuario.notaMedia != null">
+              <span class="nota-num">{{ usuario.notaMedia | number: "1.1-1" }}</span>
+              <span class="stars">
+                <i
+                  *ngFor="let s of getStars(usuario.notaMedia)"
+                  class="fas star"
+                  [ngClass]="{
+                    'fa-star': s === 'full' || s === 'empty',
+                    'fa-star-half-alt': s === 'half',
+                    'star-full': s === 'full',
+                    'star-half': s === 'half',
+                    'star-empty': s === 'empty'
+                  }"
+                ></i>
+              </span>
+            </span>
+          </div>
+          <p class="perfil-line" *ngIf="usuario.perfil">{{ usuario.perfil }}</p>
+          <p class="descricao" *ngIf="usuario.descricao">{{ usuario.descricao }}</p>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="profile-meta">
+        <div class="meta-item" *ngIf="usuario.createdAt">
+          <i class="far fa-calendar-alt"></i>
+          <span>{{ formatarEntrouEm(usuario.createdAt) }}</span>
+        </div>
+        <div class="meta-item" *ngIf="usuario.contCaronas != null">
+          <i class="fas fa-check-circle"></i>
+          <span>{{ usuario.contCaronas }} viagens oferecidas e concluídas com sucesso</span>
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <h2 class="section-title">Avaliações</h2>
+
+    <div class="avaliacoes-list">
+      <article *ngFor="let av of avaliacoes" class="avaliacao-item">
+        <div class="avaliacao-head">
+          <div class="avaliador-avatar">
+            <img
+              *ngIf="av.fotoUrl"
+              [src]="av.fotoUrl"
+              [alt]="av.nome || 'Avaliador'"
+              class="avatar-img"
+            />
+            <div *ngIf="!av.fotoUrl" class="avatar-iniciais small">
+              {{ iniciais(av.nome) }}
+            </div>
+          </div>
+          <div class="avaliacao-info">
+            <span class="avaliador-nome">{{ av.nome || "Avaliador" }}</span>
+            <div class="avaliacao-rating-date">
+              <span class="nota-num">{{ av.nota != null ? (av.nota | number: '1.1-1') : '—' }}</span>
+              <span class="stars small">
+                <i
+                  *ngFor="let s of getStars(av.nota)"
+                  class="fas star"
+                  [ngClass]="{
+                    'fa-star': s === 'full' || s === 'empty',
+                    'fa-star-half-alt': s === 'half',
+                    'star-full': s === 'full',
+                    'star-half': s === 'half',
+                    'star-empty': s === 'empty'
+                  }"
+                ></i>
+              </span>
+              <span class="data-hora">{{ formatarDataHora(av.createdAt) }}</span>
+            </div>
+          </div>
+        </div>
+        <p class="comentario" *ngIf="av.comentario">{{ av.comentario }}</p>
+      </article>
+    </div>
+
+    <p class="empty-avaliacoes" *ngIf="avaliacoes.length === 0">
+      Nenhuma avaliação ainda.
+    </p>
+  </ng-container>
+</div>
+
+<app-footer></app-footer>
