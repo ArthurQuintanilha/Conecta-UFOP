@@ -22,6 +22,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   @HostBinding("class") class = "login-box";
   loginForm: UntypedFormGroup;
   isAuthLoading = false;
+  showPassword = false;
 
   constructor(
     private renderer: Renderer2,
@@ -36,6 +37,10 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.renderer.addClass(document.querySelector("app-root"), "login-page");
+  }
+
+  toggleShowPassword(): void {
+    this.showPassword = !this.showPassword;
   }
 
   async loginByAuth(): Promise<void> {

@@ -40,11 +40,22 @@
           <div class="label-row">
             <label>Senha</label>
           </div>
-          <input
-            type="password"
-            placeholder="Digite sua senha"
-            formControlName="password"
-          />
+          <div class="password-wrapper">
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              placeholder="Digite sua senha"
+              formControlName="password"
+            />
+            <button
+              type="button"
+              class="btn-toggle-password"
+              (click)="toggleShowPassword()"
+              [attr.aria-label]="showPassword ? 'Ocultar senha' : 'Mostrar senha'"
+              tabindex="-1"
+            >
+              <i class="fas" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+            </button>
+          </div>
         </div>
         <a routerLink="/recuperar-senha">Esqueceu a senha?</a>
         <button type="submit" class="btn-main" [disabled]="isAuthLoading || loginForm.invalid">

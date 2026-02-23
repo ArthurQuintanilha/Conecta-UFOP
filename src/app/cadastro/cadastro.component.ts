@@ -59,6 +59,11 @@ export class CadastroComponent {
     "Engenharia Elétrica",
     "Sistemas de Informação",
   ];
+  readonly generos: readonly { value: string; label: string }[] = [
+    { value: "Masculino", label: "Masculino" },
+    { value: "Feminino", label: "Feminino" },
+    { value: "Outro", label: "Outro" },
+  ];
   step = 1;
   formStep1: FormGroup;
   formStep2: FormGroup;
@@ -66,6 +71,7 @@ export class CadastroComponent {
   submittingStep2 = false;
   selectedPhotoFile: File | null = null;
   photoPreviewUrl: string | null = null;
+  showPassword = false;
 
   constructor(
     private fb: FormBuilder,
@@ -78,12 +84,17 @@ export class CadastroComponent {
       nome: ["", Validators.required],
       email: ["", [Validators.required, Validators.email]],
       curso_ocupacao: ["", Validators.required],
+      genero: ["", Validators.required],
       dtAniversario: ["", [Validators.required, dtAniversarioValidator]],
       senha: ["", [Validators.required, senhaForteValidator]],
     });
     this.formStep2 = this.fb.group({
       descricao: ["", Validators.required],
     });
+  }
+
+  toggleShowPassword(): void {
+    this.showPassword = !this.showPassword;
   }
 
   getErrorMessage(form: FormGroup, path: string): string {
@@ -121,6 +132,7 @@ export class CadastroComponent {
         senha: v.senha,
         curso_ocupacao: v.curso_ocupacao.trim(),
         dtAniversario,
+        genero: v.genero?.trim() || undefined,
       };
       await this.api.post<CreateUserResponse>("/users", body);
       const loggedIn = await this.appService.loginByAuthForCadastro({

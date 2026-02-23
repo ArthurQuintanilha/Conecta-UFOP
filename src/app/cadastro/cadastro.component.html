@@ -36,6 +36,17 @@
     </div>
 
     <div class="group">
+      <label>Gênero *</label>
+      <select formControlName="genero">
+        <option value="">Selecione</option>
+        <option *ngFor="let g of generos" [value]="g.value">{{ g.label }}</option>
+      </select>
+      <span class="error-text" *ngIf="getErrorMessage(formStep1, 'genero')">{{
+        getErrorMessage(formStep1, "genero")
+      }}</span>
+    </div>
+
+    <div class="group">
       <label>Data de nascimento *</label>
       <input
         type="text"
@@ -50,7 +61,22 @@
 
     <div class="group">
       <label>Senha *</label>
-      <input type="password" formControlName="senha" placeholder="Digite sua senha" />
+      <div class="password-wrapper">
+        <input
+          [type]="showPassword ? 'text' : 'password'"
+          formControlName="senha"
+          placeholder="Digite sua senha"
+        />
+        <button
+          type="button"
+          class="btn-toggle-password"
+          (click)="toggleShowPassword()"
+          [attr.aria-label]="showPassword ? 'Ocultar senha' : 'Mostrar senha'"
+          tabindex="-1"
+        >
+          <i class="fas" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+        </button>
+      </div>
       <span class="error-text" *ngIf="getErrorMessage(formStep1, 'senha')">{{
         getErrorMessage(formStep1, "senha")
       }}</span>

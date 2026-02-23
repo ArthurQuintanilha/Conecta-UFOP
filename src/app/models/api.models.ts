@@ -37,6 +37,8 @@ export interface CreateUserRequest {
   senha: string;
   curso_ocupacao: string;
   dtAniversario: string;
+  /** Gênero: Masculino, Feminino ou Outro */
+  genero?: string;
 }
 
 export interface CreateUserResponse {
