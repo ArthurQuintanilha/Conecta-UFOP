@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { ApiService } from "./api.service";
 import type {
   ListCaronaItem,
+  MinhasCaronasItem,
   MinhasCaronasResponse,
   CreateCaronaRequest,
   CreateCaronaResponse,
@@ -42,6 +43,7 @@ export class CaronasService {
   /** GET /caronas - Listar caronas disponíveis */
   async getCaronas(): Promise<ListCaronaItem[]> {
     const list = await this.api.get<ListCaronaItem[]>("/caronas");
+    console.log(list)
     return Array.isArray(list) ? list : [];
   }
 
@@ -76,15 +78,22 @@ export class CaronasService {
     return this.api.delete<{ message: string }>(`/carona/${caronaID}/reserva`);
   }
 
-  /** GET /caronas/minhasCaronas - Listar minhas caronas (como motorista e como passageiro) */
+  /** GET /caronas/minhasCaronas - Listar minhas caronas (como motorista e como passageiro).
+   * Normaliza eMotorista da API para usuarioEhPassageiro (usuarioEhPassageiro = !eMotorista). */
   async getMinhasCaronas(): Promise<MinhasCaronasResponse> {
     const res = await this.api.get<MinhasCaronasResponse>(
       "/caronas/minhasCaronas",
     );
+    const normalize = (item: MinhasCaronasItem): MinhasCaronasItem => ({
+      ...item,
+      usuarioEhPassageiro: item.eMotorista === false,
+    });
     return {
-      comoMotorista: Array.isArray(res?.comoMotorista) ? res.comoMotorista : [],
+      comoMotorista: Array.isArray(res?.comoMotorista)
+        ? res.comoMotorista.map(normalize)
+        : [],
       comoPassageiro: Array.isArray(res?.comoPassageiro)
-        ? res.comoPassageiro
+        ? res.comoPassageiro.map(normalize)
         : [],
     };
   }

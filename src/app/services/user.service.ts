@@ -1,7 +1,11 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
 import { ApiService } from "./api.service";
-import type { AuthenticatedUserResponse } from "../models/api.models";
+import type {
+  AuthenticatedUserResponse,
+  UpdateUserRequest,
+  MessageResponse,
+} from "../models/api.models";
 
 export type CurrentUser = AuthenticatedUserResponse & { uid?: string };
 
@@ -21,6 +25,10 @@ export class UserService {
     } catch {
       return null;
     }
+  }
+
+  async updateUser(body: UpdateUserRequest): Promise<MessageResponse> {
+    return this.api.put<MessageResponse>("/users", body);
   }
 
   setCurrentUser(user: CurrentUser | null): void {

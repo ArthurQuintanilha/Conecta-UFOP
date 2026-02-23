@@ -133,6 +133,15 @@ $status-yellow: #ffc107;
       font-size: 0.875rem;
       color: $text-muted;
     }
+    .avaliacao-motorista {
+      margin: 2px 0 0 0;
+      font-size: 0.875rem;
+      color: $text-muted;
+      .estrela {
+        color: $status-yellow;
+        margin-right: 2px;
+      }
+    }
   }
 
   .card-body {
@@ -227,6 +236,24 @@ $status-yellow: #ffc107;
     &:hover {
       background: $primary-red;
       color: white;
+    }
+  }
+
+  .btn-avaliar {
+    margin-left: auto;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid #d4a017;
+    background: #ffc107;
+    color: #1a1a2e;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+    &:hover {
+      background: #e6ac00;
+      border-color: #b8860b;
+      color: #1a1a2e;
     }
   }
 }

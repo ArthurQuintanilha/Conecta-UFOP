@@ -24,7 +24,6 @@ export class CaronasComponent implements OnInit {
   async ngOnInit() {
     try {
       this.caronas = await this.caronasService.getCaronas();
-      console.log(this.caronas);
     } catch (error) {
       console.error("Erro ao buscar caronas:", error);
     }
@@ -70,6 +69,12 @@ export class CaronasComponent implements OnInit {
     if (typeof veiculo === "string") return veiculo;
     const parts = [veiculo.modelo, veiculo.placa, veiculo.cor].filter(Boolean);
     return parts.length ? parts.join(" · ") : "Veículo";
+  }
+
+  /** Valor formatado em reais: vírgula como decimal (ex.: 15,50). */
+  formatarValor(valor: number | null | undefined): string {
+    const n = typeof valor === "number" && !isNaN(valor) ? valor : 0;
+    return n.toFixed(2).replace(".", ",");
   }
 
   vagasDisponiveis(carona: ListCaronaItem): number {

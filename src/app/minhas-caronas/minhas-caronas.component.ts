@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CaronasService } from '../services/caronas.service';
+import { UserService } from '../services/user.service';
+import { AvaliacoesService } from '../services/avaliacoes.service';
 import type { MinhasCaronasItem } from '../models/api.models';
 
 @Component({
@@ -13,8 +15,16 @@ export class MinhasCaronasComponent implements OnInit {
   historicoCorridas: MinhasCaronasItem[] = [];
   loading = false;
   erro: string | null = null;
+  avaliarCaronaItem: MinhasCaronasItem | null = null;
+  caronasJaAvaliadas = new Set<string>();
+  /** motoristaId -> nota média (preenchido após carregar caronas) */
+  notasPorMotorista = new Map<string, number>();
 
-  constructor(private caronasService: CaronasService) {}
+  constructor(
+    private caronasService: CaronasService,
+    private userService: UserService,
+    private avaliacoesService: AvaliacoesService
+  ) {}
 
   ngOnInit(): void {
     this.carregarMinhasCaronas();
@@ -24,15 +34,69 @@ export class MinhasCaronasComponent implements OnInit {
     this.loading = true;
     this.erro = null;
     this.caronasService.getMinhasCaronas()
-      .then(res => {
+      .then(async res => {
         const todas = [...(res.comoMotorista ?? []), ...(res.comoPassageiro ?? [])];
         this.proximasCorridas = todas.filter(item => this.isProxima(item));
         this.historicoCorridas = todas.filter(item => !this.isProxima(item));
+        console.log(todas)
+        this.carregarCaronasJaAvaliadas();
+        await this.carregarNotasMotoristas(todas);
       })
       .catch(err => {
         this.erro = err?.error?.message ?? 'Erro ao carregar minhas caronas. Tente de novo.';
       })
       .finally(() => { this.loading = false; });
+  }
+
+  private carregarCaronasJaAvaliadas(): void {
+    const uid = this.userService.getCurrentUser()?.uid;
+    if (!uid) return;
+    this.avaliacoesService.getCaronaIdsAvaliadosByUser(uid).then(set => {
+      this.caronasJaAvaliadas = set;
+    });
+  }
+
+  /** Coleta motoristaId de cada item e preenche notasPorMotorista com a média do Firestore. */
+  private async carregarNotasMotoristas(items: MinhasCaronasItem[]): Promise<void> {
+    const uid = this.userService.getCurrentUser()?.uid;
+    const ids = new Set<string>();
+    for (const item of items) {
+      const mid = item.usuarioEhPassageiro
+        ? (item.motoristaId ?? (item.motorista as { id?: string } | undefined)?.id)
+        : uid;
+      if (mid) ids.add(mid);
+    }
+    this.notasPorMotorista.clear();
+    await Promise.all(
+      Array.from(ids).map(async (motoristaId) => {
+        const media = await this.avaliacoesService.getNotaMediaMotorista(motoristaId);
+        this.notasPorMotorista.set(motoristaId, media);
+      })
+    );
+  }
+
+  /** Retorna a nota do motorista para exibição. Preferência: API (motorista.notaMedia) e depois Firestore. */
+  getNotaMotorista(item: MinhasCaronasItem): number | undefined {
+    const notaApi = item.motorista?.notaMedia;
+    if (typeof notaApi === 'number' && notaApi >= 0 && notaApi <= 5) return notaApi;
+    const uid = this.userService.getCurrentUser()?.uid;
+    const mid = item.usuarioEhPassageiro
+      ? (item.motoristaId ?? (item.motorista as { id?: string } | undefined)?.id)
+      : uid;
+    return mid ? this.notasPorMotorista.get(mid) : undefined;
+  }
+
+  podeAvaliar(item: MinhasCaronasItem): boolean {
+    return !!item.usuarioEhPassageiro && !this.caronasJaAvaliadas.has(item.id);
+  }
+
+  abrirAvaliar(item: MinhasCaronasItem): void {
+    this.avaliarCaronaItem = item;
+  }
+
+  fecharAvaliar(): void {
+    this.avaliarCaronaItem = null;
+    this.carregarMinhasCaronas();
   }
 
   /** Carona é "próxima" se não está finalizada e a data de partida é hoje ou futura. */

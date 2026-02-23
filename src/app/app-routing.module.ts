@@ -10,7 +10,6 @@ import { CadastrarCaronaComponent } from "./cadastrar-carona/cadastrar-carona.co
 import { ChatComponent } from "./chat/chat.component";
 import { AuthGuard } from "./guards/auth.guard";
 import { NonAuthGuard } from "./guards/non-auth.guard";
-import { AvaliarCaronaComponent } from "./avaliar-carona/avaliar-carona.component";
 import { EditarCaronaComponent } from "./editar-carona/editar-carona.component";
 import { DetalhesCaronaComponent } from "./detalhes-carona/detalhes-carona.component";
 
@@ -47,7 +46,6 @@ const routes: Routes = [
   },
   { path: "perfil", component: PerfilComponent, canActivate: [AuthGuard] },
   { path: "chat", component: ChatComponent, canActivate: [AuthGuard] },
-  { path: "avaliar-carona", component: AvaliarCaronaComponent },
   { path: "detalhes-carona/:id", component: DetalhesCaronaComponent },
 ];
 

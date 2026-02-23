@@ -165,7 +165,7 @@ export class EditarCaronaComponent implements OnInit {
         return;
       }
 
-      const data = snap.data() as Carona;
+      const data = snap.data() as Carona & { placa?: string };
       const origem = data.origem ?? ({} as EnderecoCaronaDoc);
       const destino = data.destino ?? ({} as EnderecoCaronaDoc);
 
@@ -194,8 +194,8 @@ export class EditarCaronaComponent implements OnInit {
           cidade: destino.cidade ?? "",
           uf: destino.estado ?? "",
         },
-        modeloAno: data.veiculo ?? "",
-        placa: data.placa ?? "",
+        modeloAno: this.veiculoModelo(data.veiculo),
+        placa: this.veiculoPlaca(data.veiculo, data.placa),
       });
     } catch (err) {
       console.error("Erro ao carregar carona:", err);
@@ -204,6 +204,20 @@ export class EditarCaronaComponent implements OnInit {
     } finally {
       this.loading = false;
     }
+  }
+
+  /** Lê o modelo do veículo (objeto ou string legada). */
+  private veiculoModelo(veiculo: Carona["veiculo"] | unknown): string {
+    if (veiculo && typeof veiculo === "object" && "modelo" in veiculo)
+      return String((veiculo as { modelo: string }).modelo ?? "").trim();
+    return typeof veiculo === "string" ? veiculo.trim() : "";
+  }
+
+  /** Lê a placa do veículo (objeto) ou do campo raiz legado. */
+  private veiculoPlaca(veiculo: Carona["veiculo"] | unknown, placaRaiz?: string): string {
+    if (veiculo && typeof veiculo === "object" && "placa" in veiculo)
+      return String((veiculo as { placa: string }).placa ?? "").trim().toUpperCase();
+    return (placaRaiz ?? "").toString().trim().toUpperCase();
   }
 
   private formatDdMmYyyy(d: Date): string {
@@ -334,13 +348,15 @@ export class EditarCaronaComponent implements OnInit {
         .doc(this.caronaId)
         .update({
           dtPartida,
-          dtChegada: dtChegada ?? null, // dtChegada definido acima
+          dtChegada: dtChegada ?? null,
           vagas: Number(v.vagasDisponiveis) || 0,
           valor: this.parseValorDecimal(v.valorPassagem) || 0,
           origem,
           destino,
-          placa: (v.placa ?? "").toString().trim().toUpperCase(),
-          veiculo: v.modeloAno,
+          veiculo: {
+            modelo: (v.modeloAno ?? "").toString().trim(),
+            placa: (v.placa ?? "").toString().trim().toUpperCase(),
+          },
         });
       this.toastr.success("Carona atualizada com sucesso.");
     } catch (err) {

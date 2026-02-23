@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { ToastrService } from "ngx-toastr";
 import { AngularFirestore } from "@angular/fire/compat/firestore";
+import { AvaliacoesService } from "../services/avaliacoes.service";
 import { CaronasService } from "../services/caronas.service";
 import { MensagensService } from "../services/mensagens.service";
 import { UserService } from "../services/user.service";
@@ -97,6 +98,7 @@ export class DetalhesCaronaComponent implements OnInit {
     private mensagensService: MensagensService,
     private userService: UserService,
     private usuariosService: UsuariosService,
+    private avaliacoesService: AvaliacoesService,
     private toastr: ToastrService,
     private firestore: AngularFirestore,
   ) {}
@@ -114,7 +116,6 @@ export class DetalhesCaronaComponent implements OnInit {
   private async loadCarona(): Promise<void> {
     try {
       const res = await this.caronasService.getCaronaById(this.caronaId);
-      console.log(res)
       const veiculoObj =
         res.veiculo && typeof res.veiculo === "object"
           ? (res.veiculo as { modelo?: string; placa?: string })
@@ -170,9 +171,13 @@ export class DetalhesCaronaComponent implements OnInit {
         this.motorista = {
           nome: res.motorista.nome ?? "Motorista",
           foto: res.motorista.fotoUrl ?? undefined,
-          avaliacoes: res.motorista.notaMedia,
+          avaliacoes: res.motorista.notaMedia ?? undefined,
           curso: res.motorista.perfil,
         };
+        if (motoristaId) {
+          const media = await this.avaliacoesService.getNotaMediaMotorista(motoristaId);
+          if (this.motorista) this.motorista.avaliacoes = media;
+        }
       }
 
       if (res.passageiros?.length) {
@@ -607,6 +612,8 @@ export class DetalhesCaronaComponent implements OnInit {
     if (!this.carona || !this.motorista) return false;
     const user = this.userService.getCurrentUser();
     if (!user) return true;
+
+    if(this.carona.status === "FINALIZADA") return false;
 
     const nomeLogado = user.nome?.trim().toLowerCase();
     const nomeMotorista = this.motorista.nome?.trim().toLowerCase();

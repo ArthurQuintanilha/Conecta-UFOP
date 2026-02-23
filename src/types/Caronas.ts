@@ -14,6 +14,12 @@ export interface EnderecoCaronaDoc {
 /** Status possível da carona */
 export type StatusCarona = "ABERTA" | "FINALIZADA";
 
+/** Veículo no documento Firestore (objeto com modelo e placa) */
+export interface VeiculoCaronaDoc {
+  modelo: string;
+  placa: string;
+}
+
 /** Documento da collection Firestore "caronas" — campos de data são Timestamp */
 export interface Carona {
   criadoEm: firebase.firestore.Timestamp;
@@ -23,9 +29,8 @@ export interface Carona {
   motoristaId: string;
   origem: EnderecoCaronaDoc;
   passageiros: string[];
-  placa: string;
   status: StatusCarona;
   vagas: number;
   valor: number;
-  veiculo: string;
+  veiculo: VeiculoCaronaDoc;
 }

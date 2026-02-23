@@ -35,8 +35,14 @@
             <img [src]="fotoMotorista(item)" alt="" onerror="this.src='assets/default-profile.png'" />
           </div>
           <div class="info-motorista">
-            <h3>{{ item.papel === 'passageiro' ? nomeMotorista(item) : 'Minha carona' }}</h3>
+            <h3>{{ item.usuarioEhPassageiro ? nomeMotorista(item) : 'Minha carona' }}</h3>
             <p class="subtitle">{{ veiculoTexto(item) }}</p>
+            <!-- Avaliação do motorista (comentado)
+            <p class="avaliacao-motorista">
+              <span class="estrela">★</span>
+              <span>{{ getNotaMotorista(item) != null ? (getNotaMotorista(item) | number:'1.1-1') : '—' }}</span>
+            </p>
+            -->
           </div>
         </div>
 
@@ -62,7 +68,10 @@
             Ver Detalhes
             <i class="fas fa-chevron-right chevron"></i>
           </a>
-          <a *ngIf="item.papel === 'motorista'" [routerLink]="['/editar-carona', item.id]" class="btn-editar">Editar</a>
+          <a *ngIf="!item.usuarioEhPassageiro" [routerLink]="['/editar-carona', item.id]" class="btn-editar">Editar</a>
+          <button *ngIf="abaAtiva === 'historico' && podeAvaliar(item)" type="button" class="btn-avaliar" (click)="abrirAvaliar(item)">
+            Avaliar motorista
+          </button>
         </div>
       </div>
     </div>
@@ -72,5 +81,11 @@
     </div>
   </div>
 </div>
+
+<app-avaliar-carona
+  *ngIf="avaliarCaronaItem"
+  [item]="avaliarCaronaItem"
+  (close)="fecharAvaliar()"
+></app-avaliar-carona>
 
 <app-footer></app-footer>

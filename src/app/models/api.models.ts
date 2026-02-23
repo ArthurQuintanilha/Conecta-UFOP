@@ -15,6 +15,8 @@ export interface AuthenticatedUserResponse {
   descricao?: string | null;
   email?: string | null;
   genero?: string | null;
+  curso_ocupacao?: string | null;
+  dtAniversario?: string | null;
 }
 
 /** POST /users/perfil */
@@ -91,6 +93,8 @@ export interface CreateCaronaResponse {
 /** Item da listagem GET /caronas */
 export interface ListCaronaItem {
   id: string;
+  /** ID do motorista (quando enviado pela API, usado para buscar média de avaliações no Firestore). */
+  motoristaId?: string;
   criadoEm?: DateTimeLike;
   motorista?: {
     nome?: string;
@@ -106,14 +110,22 @@ export interface ListCaronaItem {
   dtChegada?: DateTimeLike;
 }
 
-/** GET /caronas/minhasCaronas - Item de carona (como motorista ou passageiro) */
+/** GET /caronas/minhasCaronas - Item de carona (como motorista ou passageiro).
+ * Backend envia eMotorista (true = motorista, false = passageiro).
+ * usuarioEhPassageiro é derivado no front como !eMotorista. */
 export interface MinhasCaronasItem {
   id: string;
-  papel: "motorista" | "passageiro";
+  /** ID do motorista da carona (API ou Firestore); usado para exibir avaliação. */
+  motoristaId?: string;
+  /** Enviado pela API: true = usuário é motorista, false = passageiro */
+  eMotorista?: boolean;
+  /** Derivado no front: true quando eMotorista === false (usuário é passageiro) */
+  usuarioEhPassageiro?: boolean;
   status?: string;
   motorista?: {
     nome?: string;
     fotoUrl?: string | null;
+    notaMedia?: number;
     [key: string]: unknown;
   };
   veiculo?: {

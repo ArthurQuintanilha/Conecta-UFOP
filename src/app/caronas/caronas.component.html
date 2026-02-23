@@ -34,20 +34,17 @@
               >
                 {{ carona.motorista?.nome || "Motorista" }}
               </p>
-              <div
-                class="flex items-center gap-1"
-                *ngIf="carona.motorista?.notaMedia != null"
-              >
+              <div class="flex items-center gap-1">
                 <span class="text-yellow-400 text-xs md:text-sm">★</span>
                 <span class="text-xs md:text-sm text-gray-600">{{
-                  carona.motorista?.notaMedia
+                  carona.motorista?.notaMedia != null ? (carona.motorista?.notaMedia | number: '1.1-1') : '0.0'
                 }}</span>
               </div>
             </div>
           </div>
           <div class="flex-shrink-0 ml-2">
             <p class="text-base md:text-lg font-bold text-gray-900">
-              R$ {{ (carona.valor ?? 0) | number: "1.2-2" }}
+              R$ {{ formatarValor(carona.valor) }}
             </p>
           </div>
         </div>
