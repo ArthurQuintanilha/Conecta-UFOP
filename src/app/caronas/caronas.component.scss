@@ -1,0 +1,7 @@
+/* Avaliação usa .rating-pill em styles.scss (padrão do site) */
+.rating-pill {
+  font-size: 0.75rem;
+  @media (min-width: 768px) {
+    font-size: 0.875rem;
+  }
+}

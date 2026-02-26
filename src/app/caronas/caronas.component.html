@@ -1,7 +1,7 @@
 <app-header></app-header>
 
 <main class="min-h-screen bg-white py-8">
-  <div class="container mx-auto px-4">
+  <div class="page-max-width">
     <h1 class="text-3xl font-bold text-gray-900 mb-8">Caronas disponíveis</h1>
 
     <div
@@ -34,9 +34,9 @@
               >
                 {{ carona.motorista?.nome || "Motorista" }}
               </p>
-              <div class="flex items-center gap-1">
-                <span class="text-yellow-400 text-xs md:text-sm">★</span>
-                <span class="text-xs md:text-sm text-gray-600">{{
+              <div class="rating-pill flex items-center gap-1">
+                <span class="rating-star">★</span>
+                <span class="rating-num">{{
                   carona.motorista?.notaMedia != null ? (carona.motorista?.notaMedia | number: '1.1-1') : '0.0'
                 }}</span>
               </div>

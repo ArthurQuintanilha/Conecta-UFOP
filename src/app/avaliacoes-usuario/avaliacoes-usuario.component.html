@@ -1,6 +1,7 @@
 <app-header></app-header>
 
-<div class="avaliacoes-page">
+<div class="avaliacoes-page-wrap">
+  <div class="avaliacoes-page page-max-width">
   <p class="loading-msg" *ngIf="loading">Carregando...</p>
 
   <div *ngIf="!loading && notFound" class="not-found">
@@ -114,6 +115,7 @@
       Nenhuma avaliação ainda.
     </p>
   </ng-container>
+  </div>
 </div>
 
 <app-footer></app-footer>

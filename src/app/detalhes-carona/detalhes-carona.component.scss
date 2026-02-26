@@ -1,9 +1,13 @@
 $primary: #a31d32;
 $primary-dark: #7a1525;
 
-.page {
+.page-wrap {
   background: #f3f4f6;
   min-height: 100vh;
+  width: 100%;
+}
+
+.page {
   padding: 60px 120px;
   font-family: sans-serif;
   color: $primary;
@@ -112,7 +116,22 @@ $primary-dark: #7a1525;
 .status-row {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.status-info {
+  display: flex;
+  align-items: center;
   gap: 12px;
+}
+
+.status-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
 }
 
 .badge {
@@ -180,8 +199,10 @@ $primary-dark: #7a1525;
 }
 
 .price {
-  font-size: 14px;
-  color: #2e7d32;
+  font-size: 17px;
+  font-weight: 700;
+  color: #1b5e20;
+  letter-spacing: 0.02em;
 }
 
 .btn-cancelar {
@@ -391,15 +412,14 @@ $primary-dark: #7a1525;
 .rating-link {
   color: inherit;
   text-decoration: none;
-  &:hover .rating {
+  margin-left: 8px;
+  &:hover {
     text-decoration: underline;
   }
 }
 
-.rating {
-  color: #f4b400;
-  font-weight: 500;
-  margin-left: 6px;
+.motorista-header .rating-pill {
+  margin-left: 10px;
   font-size: 14px;
 }
 

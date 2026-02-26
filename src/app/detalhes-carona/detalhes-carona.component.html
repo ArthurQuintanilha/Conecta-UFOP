@@ -1,6 +1,7 @@
 <app-header></app-header>
 
-<div class="page">
+<div class="page-wrap">
+  <div class="page page-max-width">
   <ng-container *ngIf="loading">
     <div class="loading">
       <div class="loading-spinner" aria-hidden="true"></div>
@@ -33,39 +34,43 @@
       <div>
         <h1>Detalhes da viagem</h1>
         <div class="status-row">
-          <span class="badge" [ngClass]="statusBadgeClass">{{
-            statusLabel
-          }}</span>
-          <span class="price"
-            >Valor da passagem: R$ {{ formatarValor(carona.valor) }}</span
-          >
-          <button
-            type="button"
-            class="btn-status btn-iniciar"
-            *ngIf="showIniciarCorrida"
-            (click)="iniciarCorrida()"
-            [disabled]="alterandoStatus"
-          >
-            {{ alterandoStatus ? "Aguarde..." : "Iniciar corrida" }}
-          </button>
-          <button
-            type="button"
-            class="btn-status btn-finalizar"
-            *ngIf="showFinalizarCorrida"
-            (click)="finalizarCorrida()"
-            [disabled]="alterandoStatus"
-          >
-            {{ alterandoStatus ? "Aguarde..." : "Finalizar corrida" }}
-          </button>
-          <button
-            type="button"
-            class="btn-status btn-cancelar-corrida"
-            *ngIf="showCancelarCorrida"
-            (click)="cancelarCorrida()"
-            [disabled]="alterandoStatus || cancelandoCorrida"
-          >
-            {{ cancelandoCorrida ? "Aguarde..." : "Cancelar corrida" }}
-          </button>
+          <div class="status-info">
+            <span class="badge" [ngClass]="statusBadgeClass">{{
+              statusLabel
+            }}</span>
+            <span class="price"
+              >Valor da passagem: R$ {{ formatarValor(carona.valor) }}</span
+            >
+          </div>
+          <div class="status-actions">
+            <button
+              type="button"
+              class="btn-status btn-iniciar"
+              *ngIf="showIniciarCorrida"
+              (click)="iniciarCorrida()"
+              [disabled]="alterandoStatus"
+            >
+              {{ alterandoStatus ? "Aguarde..." : "Iniciar corrida" }}
+            </button>
+            <button
+              type="button"
+              class="btn-status btn-finalizar"
+              *ngIf="showFinalizarCorrida"
+              (click)="finalizarCorrida()"
+              [disabled]="alterandoStatus"
+            >
+              {{ alterandoStatus ? "Aguarde..." : "Finalizar corrida" }}
+            </button>
+            <button
+              type="button"
+              class="btn-status btn-cancelar-corrida"
+              *ngIf="showCancelarCorrida"
+              (click)="cancelarCorrida()"
+              [disabled]="alterandoStatus || cancelandoCorrida"
+            >
+              {{ cancelandoCorrida ? "Aguarde..." : "Cancelar corrida" }}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -156,13 +161,15 @@
               <a
                 *ngIf="carona.motoristaId"
                 [routerLink]="['/avaliacoes', carona.motoristaId]"
-                class="rating-link"
+                class="rating-link rating-pill"
               >
-                <span class="rating">★ {{ motorista.avaliacoes | number: "1.1-1" }}</span>
+                <span class="rating-star">★</span>
+                <span class="rating-num">{{ motorista.avaliacoes | number: "1.1-1" }}</span>
               </a>
-              <span *ngIf="!carona.motoristaId" class="rating"
-                >★ {{ motorista.avaliacoes | number: "1.1-1" }}</span
-              >
+              <span *ngIf="!carona.motoristaId" class="rating-pill">
+                <span class="rating-star">★</span>
+                <span class="rating-num">{{ motorista.avaliacoes | number: "1.1-1" }}</span>
+              </span>
             </ng-container>
           </div>
           <button
@@ -285,6 +292,7 @@
       <p>Carona não disponível no momento.</p>
     </div>
   </ng-template>
+  </div>
 </div>
 
 <app-footer></app-footer>

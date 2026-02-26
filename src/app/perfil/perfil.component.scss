@@ -3,12 +3,17 @@ $light-gray: #f5f5f5;
 $text-dark: #1a1a2e;
 $border-color: #e0e0e0;
 
+.perfil-wrap {
+  background-color: white;
+  min-height: 80vh;
+  width: 100%;
+}
+
 .perfil-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 50px 20px;
-  background-color: white;
   min-height: 80vh;
 
   .loading-msg {

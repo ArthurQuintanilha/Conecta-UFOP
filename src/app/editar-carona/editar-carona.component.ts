@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { AngularFirestore } from "@angular/fire/compat/firestore";
 import firebase from "firebase/compat/app";
 import { ToastrService } from "ngx-toastr";
+import { ViaCepService } from "../services/viacep.service";
 import { Carona, EnderecoCaronaDoc } from "../../types/Caronas";
 
 const UFS = [
@@ -57,6 +58,7 @@ export class EditarCaronaComponent implements OnInit {
     private location: Location,
     private firestore: AngularFirestore,
     private toastr: ToastrService,
+    private viaCep: ViaCepService,
   ) {
     this.caronaId = this.route.snapshot.params["id"] || "";
     this.form = this.buildForm();
@@ -170,6 +172,8 @@ export class EditarCaronaComponent implements OnInit {
       const data = snap.data() as Carona & { placa?: string };
       const origem = data.origem ?? ({} as EnderecoCaronaDoc);
       const destino = data.destino ?? ({} as EnderecoCaronaDoc);
+      const origemNome = origem.nome ?? (origem as { nomeLocal?: string }).nomeLocal ?? "";
+      const destinoNome = destino.nome ?? (destino as { nomeLocal?: string }).nomeLocal ?? "";
 
       this.form.patchValue({
         ...this.timestampToDateAndTime(data.dtPartida, "dataPartidaData", "dataPartidaHora"),
@@ -179,7 +183,7 @@ export class EditarCaronaComponent implements OnInit {
         vagasDisponiveis: data.vagas ?? 1,
         valorPassagem: this.formatValorDecimal(data.valor ?? 0),
         origem: {
-          nome: origem.nome ?? "",
+          nome: origemNome,
           cep: origem.cep ?? "",
           logradouro: origem.rua ?? "",
           numero: origem.numero != null ? String(origem.numero) : "",
@@ -188,7 +192,7 @@ export class EditarCaronaComponent implements OnInit {
           uf: origem.estado ?? "",
         },
         destino: {
-          nome: destino.nome ?? "",
+          nome: destinoNome,
           cep: destino.cep ?? "",
           logradouro: destino.rua ?? "",
           numero: destino.numero != null ? String(destino.numero) : "",
@@ -367,6 +371,28 @@ export class EditarCaronaComponent implements OnInit {
     } finally {
       this.saving = false;
     }
+  }
+
+  /** Busca endereço pelo CEP (ViaCEP) e preenche logradouro, bairro, cidade e UF. */
+  async buscarCep(group: "origem" | "destino"): Promise<void> {
+    const formGroup = this.form.get(group) as FormGroup | null;
+    if (!formGroup) return;
+    const cepControl = formGroup.get("cep");
+    const cep = (cepControl?.value ?? "").toString().trim();
+    const res = await this.viaCep.buscar(cep);
+    if (!res) {
+      const digits = cep.replace(/\D/g, "");
+      if (digits.length === 8) {
+        this.toastr.info("CEP não encontrado.");
+      }
+      return;
+    }
+    formGroup.patchValue({
+      logradouro: res.logradouro ?? "",
+      bairro: res.bairro ?? "",
+      cidade: res.localidade ?? "",
+      uf: (res.uf ?? "").toUpperCase(),
+    });
   }
 
   voltar(): void {

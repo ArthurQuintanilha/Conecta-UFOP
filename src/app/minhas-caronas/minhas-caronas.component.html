@@ -1,7 +1,7 @@
 <app-header></app-header>
 
 <div class="minhas-caronas-container">
-  <div class="content-wrapper">
+  <div class="content-wrapper page-max-width">
     <div class="page-header">
       <button type="button" class="btn-back" (click)="voltar()" aria-label="Voltar">
         <i class="fas fa-arrow-left"></i>
@@ -42,12 +42,10 @@
           <div class="info-motorista">
             <h3>{{ item.usuarioEhPassageiro ? nomeMotorista(item) : 'Minha carona' }}</h3>
             <p class="subtitle">{{ veiculoTexto(item) }}</p>
-            <!-- Avaliação do motorista (comentado)
-            <p class="avaliacao-motorista">
-              <span class="estrela">★</span>
-              <span>{{ getNotaMotorista(item) != null ? (getNotaMotorista(item) | number:'1.1-1') : '—' }}</span>
-            </p>
-            -->
+            <div class="rating-pill" *ngIf="getNotaMotorista(item) != null">
+              <span class="rating-star">★</span>
+              <span class="rating-num">{{ getNotaMotorista(item) | number:'1.1-1' }}</span>
+            </div>
           </div>
         </div>
 
@@ -73,7 +71,7 @@
             Ver Detalhes
             <i class="fas fa-chevron-right chevron"></i>
           </a>
-          <a *ngIf="!item.usuarioEhPassageiro" [routerLink]="['/editar-carona', item.id]" class="btn-editar">Editar</a>
+          <a *ngIf="!item.usuarioEhPassageiro && abaAtiva === 'proximas'" [routerLink]="['/editar-carona', item.id]" class="btn-editar">Editar</a>
           <button *ngIf="abaAtiva === 'historico' && podeAvaliar(item)" type="button" class="btn-avaliar" (click)="abrirAvaliar(item)">
             Avaliar motorista
           </button>

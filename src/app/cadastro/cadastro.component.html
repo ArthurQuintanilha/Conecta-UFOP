@@ -1,6 +1,7 @@
 <app-header></app-header>
 
-<main>
+<div class="cadastro-wrap">
+  <main class="page-max-width">
   <!-- Etapa 1: Nome, email, curso, data nascimento, senha -->
   <div class="card form-padrao" *ngIf="step === 1" [formGroup]="formStep1">
     <h1>Cadastro</h1>
@@ -167,6 +168,7 @@
       {{ submittingStep2 ? "Salvando..." : "Atualizar Dados" }}
     </button>
   </section>
-</main>
+  </main>
+</div>
 
 <app-footer></app-footer>

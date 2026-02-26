@@ -1,9 +1,14 @@
+.login-wrap {
+  background-color: white;
+  min-height: calc(90vh - 140px);
+  width: 100%;
+}
+
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 25px 0;
-  background-color: white;
   min-height: calc(90vh - 140px);
 }
 

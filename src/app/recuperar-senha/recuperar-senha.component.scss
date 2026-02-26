@@ -1,12 +1,17 @@
 $primary: #a31d32;
 $link-color: rgb(0, 119, 255);
 
+.recuperar-wrap {
+  background-color: white;
+  min-height: calc(90vh - 140px);
+  width: 100%;
+}
+
 .recuperar-container {
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 25px 0;
-  background-color: white;
   min-height: calc(90vh - 140px);
 }
 

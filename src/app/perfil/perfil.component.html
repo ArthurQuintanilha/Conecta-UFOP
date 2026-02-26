@@ -1,6 +1,7 @@
 <app-header></app-header>
 
-<div class="perfil-container">
+<div class="perfil-wrap">
+  <div class="perfil-container page-max-width">
   <p class="loading-msg" *ngIf="carregando">Carregando perfil...</p>
   <div class="profile-header" *ngIf="!carregando">
     <div class="title-group">
@@ -36,9 +37,9 @@
       <div class="input-field">
         <label>Gênero <span class="asterisk">*</span></label>
         <select [(ngModel)]="user.genero" name="genero" disabled class="input-readonly">
-          <option value="male">Masculino</option>
-          <option value="female">Feminino</option>
-          <option value="prefer-not-to-say">Prefiro não dizer</option>
+          <option value="Masculino">Masculino</option>
+          <option value="Feminino">Feminino</option>
+          <option value="Outro">Prefiro não dizer</option>
         </select>
       </div>
 
@@ -64,6 +65,7 @@
         {{ salvando ? "Salvando..." : "Salvar alterações" }}
       </button>
     </form>
+  </div>
   </div>
 </div>
 

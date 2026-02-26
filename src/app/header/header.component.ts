@@ -62,5 +62,5 @@ export class HeaderComponent {
     this.closeDropdown();
     this.closeMobileMenu();
     this.router.navigate([path]);
-  }
+  } 
 }

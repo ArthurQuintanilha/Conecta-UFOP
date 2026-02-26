@@ -23,8 +23,13 @@ $primary-red: #a31d32;
   position: relative;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
 
-  &::-webkit-scrollbar { width: 6px; }
-  &::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 10px;
+  }
 }
 
 .dialog-header {
@@ -126,18 +131,20 @@ $primary-red: #a31d32;
   cursor: pointer;
   color: #d1d5db;
   font-size: 28px;
-  transition: color 0.15s ease, transform 0.1s ease;
+  transition:
+    color 0.15s ease,
+    transform 0.1s ease;
 
   i {
     display: block;
   }
 
   &:hover {
-    color: #ffb800;
+    color: #ffc107;
   }
 
   &.filled {
-    color: #ffb800;
+    color: #ffc107;
   }
 
   &:active {
@@ -200,7 +207,9 @@ $primary-red: #a31d32;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s, opacity 0.2s;
+  transition:
+    background 0.2s,
+    opacity 0.2s;
 
   &:hover:not(:disabled) {
     background: darken($primary-red, 6%);

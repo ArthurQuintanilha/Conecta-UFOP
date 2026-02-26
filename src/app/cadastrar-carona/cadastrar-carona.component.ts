@@ -4,6 +4,7 @@ import { Location } from "@angular/common";
 import { Router } from "@angular/router";
 import { ToastrService } from "ngx-toastr";
 import { CaronasService } from "../services/caronas.service";
+import { ViaCepService } from "../services/viacep.service";
 import type { OrigemCarona } from "../models/api.models";
 
 const UFS = [
@@ -51,7 +52,8 @@ export class CadastrarCaronaComponent {
     private caronasService: CaronasService,
     private toastr: ToastrService,
     private router: Router,
-    private location: Location
+    private location: Location,
+    private viaCep: ViaCepService
   ) {
     this.form = this.buildForm();
   }
@@ -115,6 +117,28 @@ export class CadastrarCaronaComponent {
       if (n < min) return { min: { min } };
       return null;
     };
+  }
+
+  /** Busca endereço pelo CEP (ViaCEP) e preenche logradouro, bairro, cidade e UF. */
+  async buscarCep(group: "origem" | "destino"): Promise<void> {
+    const formGroup = this.form.get(group) as FormGroup | null;
+    if (!formGroup) return;
+    const cepControl = formGroup.get("cep");
+    const cep = (cepControl?.value ?? "").toString().trim();
+    const res = await this.viaCep.buscar(cep);
+    if (!res) {
+      const digits = cep.replace(/\D/g, "");
+      if (digits.length === 8) {
+        this.toastr.info("CEP não encontrado.");
+      }
+      return;
+    }
+    formGroup.patchValue({
+      logradouro: res.logradouro ?? "",
+      bairro: res.bairro ?? "",
+      cidade: res.localidade ?? "",
+      uf: (res.uf ?? "").toUpperCase(),
+    });
   }
 
   clampTimeField(controlName: string): void {

@@ -24,8 +24,19 @@ i[class^="fa-"] {
   min-height: 100vh;
 }
 
-main {
+.cadastro-wrap {
+  background-color: #fff;
+  width: 100%;
   flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.cadastro-wrap main {
+  flex: 1;
+}
+
+main {
   display: flex;
   flex-direction: column;
   align-items: center;

@@ -1,6 +1,6 @@
 <app-header></app-header>
 
-<main class="container">
+<main class="container page-max-width">
   <div class="page-header">
     <button type="button" class="btn-back" (click)="voltar()" aria-label="Voltar">
       <i class="fas fa-arrow-left"></i>
@@ -94,7 +94,7 @@
       </div>
       <div class="field">
         <label>CEP *</label>
-        <input type="text" formControlName="cep" mask="00000-000" />
+        <input type="text" formControlName="cep" mask="00000-000" (blur)="buscarCep('origem')" />
         <span class="error-text" *ngIf="getErrorMessage('origem.cep')">{{ getErrorMessage('origem.cep') }}</span>
       </div>
       <div class="field">
@@ -143,7 +143,7 @@
       </div>
       <div class="field">
         <label>CEP *</label>
-        <input type="text" formControlName="cep" mask="00000-000" />
+        <input type="text" formControlName="cep" mask="00000-000" (blur)="buscarCep('destino')" />
         <span class="error-text" *ngIf="getErrorMessage('destino.cep')">{{ getErrorMessage('destino.cep') }}</span>
       </div>
       <div class="field">

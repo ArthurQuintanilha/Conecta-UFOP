@@ -35,6 +35,17 @@ $transition:    all 0.2s ease;
 }
 
 // =============================================
+// Wrap externo (fundo em largura total, sem padding)
+// =============================================
+.chat-wrap {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  background: $white;
+  display: flex;
+}
+
+// =============================================
 // Wrapper principal (ocupa o espaço entre header e footer)
 // =============================================
 .chat-wrapper {
@@ -44,9 +55,6 @@ $transition:    all 0.2s ease;
   width: 100%;
   overflow: hidden;
   background: $white;
-  box-shadow: $shadow;
-  border-radius: $radius-md;
-  margin: 12px;
 }
 
 // =============================================

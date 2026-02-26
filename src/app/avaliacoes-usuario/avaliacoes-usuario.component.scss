@@ -2,14 +2,18 @@ $bg-page: #f0f2f5;
 $card-bg: #ffffff;
 $text-primary: #1c1e21;
 $text-secondary: #65676b;
-$star-color: #f0b429;
+$star-color: #ffc107;
 $divider: #e4e6eb;
 $shadow-card: 0 2px 12px rgba(0, 0, 0, 0.08);
 $shadow-btn: 0 2px 8px rgba(0, 0, 0, 0.1);
 
-.avaliacoes-page {
+.avaliacoes-page-wrap {
   min-height: 100vh;
   background: $bg-page;
+  width: 100%;
+}
+
+.avaliacoes-page {
   padding: 1rem 1rem 2rem;
   padding-top: calc(var(--header-height, 56px) + 1rem);
 }
