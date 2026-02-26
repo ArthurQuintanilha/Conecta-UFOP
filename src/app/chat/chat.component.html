@@ -4,7 +4,7 @@
   <div class="chat-wrapper">
 
   <!-- ===== SIDEBAR ===== -->
-  <aside class="sidebar">
+  <aside class="sidebar" [class.hidden-mobile]="showChatWindow">
 
     <div class="sidebar-header">
       <button type="button" class="btn-back" (click)="voltar()" aria-label="Voltar">
@@ -71,10 +71,13 @@
   </aside>
 
   <!-- ===== CHAT WINDOW ===== -->
-  <section class="chat-window">
+  <section class="chat-window" [class.visible-mobile]="showChatWindow">
 
     <ng-container *ngIf="activeConversa; else noConversation">
       <div class="chat-header">
+        <button type="button" class="btn-back-mobile" (click)="voltarParaLista()" aria-label="Voltar para lista">
+          <i class="fas fa-arrow-left"></i>
+        </button>
         <div class="avatar">
           <img *ngIf="activeContactPhotoUrl" [src]="activeContactPhotoUrl" alt="" class="avatar-img" />
           <span *ngIf="!activeContactPhotoUrl">{{ activeContactAvatar }}</span>

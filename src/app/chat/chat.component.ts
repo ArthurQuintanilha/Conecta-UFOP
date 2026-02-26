@@ -53,6 +53,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   messages: ChatMessageDisplay[] = [];
   caronaFinalizada = false;
   loading = true;
+  showChatWindow = false; // Controla visibilidade do chat no mobile
 
   readonly remetenteSistema = REMETENTE_SISTEMA;
 
@@ -167,11 +168,18 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
             this.conversas = [synthetic, ...this.conversas];
             this.selectConversa(synthetic);
           } else {
-            await this.selectOrCreateConversaByCaronaId(caronaIdFromUrl, uid);
+            const conversa = await this.selectOrCreateConversaByCaronaId(caronaIdFromUrl, uid);
+            if (conversa) {
+              this.selectConversa(conversa);
+            }
           }
         }
       } else if (this.conversas.length > 0 && !this.activeCaronaId) {
-        this.selectConversa(this.conversas[0]);
+        // No desktop, seleciona a primeira conversa automaticamente
+        // No mobile, deixa a lista visível
+        if (window.innerWidth > 768) {
+          this.selectConversa(this.conversas[0]);
+        }
       }
     } catch (err) {
       console.error("Erro ao carregar conversas:", err);
@@ -184,13 +192,14 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   /**
    * Quando não há mensagens na carona ainda: busca dados da carona, cria item de conversa
    * com o motorista como "outro" e seleciona para permitir enviar a primeira mensagem.
+   * Retorna o item de conversa criado ou null se não foi possível criar.
    */
   private async selectOrCreateConversaByCaronaId(
     caronaId: string,
     uid: string,
-  ): Promise<void> {
+  ): Promise<ConversaListItem | null> {
     const podeAcessar = await this.mensagensService.canAcessarChatCarona(caronaId, uid);
-    if (!podeAcessar) return;
+    if (!podeAcessar) return null;
     try {
       const carona = await this.caronasService.getCaronaById(caronaId);
       let motoristaId = carona.motoristaId ?? carona.motorista?.id;
@@ -202,7 +211,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         const data = caronaSnap.data() as { motoristaId?: string } | undefined;
         motoristaId = data?.motoristaId;
       }
-      if (!motoristaId || motoristaId === uid) return;
+      if (!motoristaId || motoristaId === uid) return null;
       const origem =
         carona.origem &&
         typeof carona.origem === "object" &&
@@ -225,9 +234,10 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         caronaSubtitle,
       };
       this.conversas = [synthetic, ...this.conversas];
-      this.selectConversa(synthetic);
+      return synthetic;
     } catch {
       // Carona não encontrada ou erro de API: não adiciona conversa inicial
+      return null;
     }
   }
 
@@ -252,6 +262,10 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.caronaStatusSub = null;
         return;
       }
+    }
+    // No mobile, mostra a janela de chat ao selecionar conversa
+    if (window.innerWidth <= 768) {
+      this.showChatWindow = true;
     }
     this.mensagensSub?.unsubscribe();
     this.mensagensSub = null;
@@ -432,6 +446,27 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   voltar(): void {
+    // No mobile, se estiver na janela de chat, volta para a lista
+    if (window.innerWidth <= 768 && this.showChatWindow) {
+      this.showChatWindow = false;
+      return;
+    }
     this.location.back();
+  }
+
+  voltarParaLista(): void {
+    // No mobile, esconde a janela de chat e mostra a lista
+    if (window.innerWidth <= 768) {
+      this.showChatWindow = false;
+    } else {
+      // No desktop, limpa a seleção para mostrar a lista novamente
+      this.selectedConversa = null;
+      this.activeCaronaId = null;
+      this.messages = [];
+      this.mensagensSub?.unsubscribe();
+      this.mensagensSub = null;
+      this.caronaStatusSub?.unsubscribe();
+      this.caronaStatusSub = null;
+    }
   }
 }
